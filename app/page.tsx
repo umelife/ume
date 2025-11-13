@@ -18,13 +18,13 @@ export default async function Home() {
                 <>
                   <Link
                     href="/marketplace"
-                    className="text-gray-700 hover:text-gray-900 px-3 py-2"
+                    className="text-black hover:text-blue-600 px-3 py-2"
                   >
                     Marketplace
                   </Link>
                   <Link
                     href={`/profile/${user.id}`}
-                    className="text-gray-700 hover:text-gray-900 px-3 py-2"
+                    className="text-black hover:text-blue-600 px-3 py-2"
                   >
                     Profile
                   </Link>
@@ -33,7 +33,7 @@ export default async function Home() {
                 <>
                   <Link
                     href="/login"
-                    className="text-gray-700 hover:text-gray-900 px-3 py-2"
+                    className="text-black hover:text-blue-600 px-3 py-2"
                   >
                     Sign in
                   </Link>
@@ -53,10 +53,10 @@ export default async function Home() {
       {/* Hero Section */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
         <div className="text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <h1 className="text-5xl font-bold text-black mb-6">
             Your Campus Marketplace
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-xl text-black mb-8 max-w-2xl mx-auto">
             Buy and sell items safely within your university community.
             Verified .edu students only.
           </p>
@@ -70,7 +70,7 @@ export default async function Home() {
               </Link>
               <Link
                 href="/login"
-                className="bg-white text-blue-600 hover:bg-gray-50 px-8 py-3 rounded-lg font-medium text-lg border-2 border-blue-600"
+                className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-3 rounded-lg font-medium text-lg border-2 border-blue-600"
               >
                 Sign in
               </Link>
@@ -89,20 +89,20 @@ export default async function Home() {
         {/* Features */}
         <div className="mt-20 grid md:grid-cols-3 gap-8">
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-2">Verified Students Only</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold mb-2 text-black">Verified Students Only</h3>
+            <p className="text-black">
               .edu email verification ensures you're trading within your campus community
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-2">Real-time Chat</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold mb-2 text-black">Real-time Chat</h3>
+            <p className="text-black">
               Message sellers instantly and arrange pickups easily
             </p>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <h3 className="text-xl font-semibold mb-2">Safe & Simple</h3>
-            <p className="text-gray-600">
+            <h3 className="text-xl font-semibold mb-2 text-black">Safe & Simple</h3>
+            <p className="text-black">
               Report inappropriate listings and trade with confidence
             </p>
           </div>

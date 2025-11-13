@@ -91,9 +91,9 @@ export default function ImageUploader({
           multiple
           onChange={handleFiles}
           disabled={isAtLimit}
-          className="disabled:opacity-50 disabled:cursor-not-allowed"
+          className="disabled:opacity-50 disabled:cursor-not-allowed text-black file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
         />
-        <span className="text-sm text-gray-600">
+        <span className="text-sm text-black">
           {urls.length} / {MAX_IMAGES} images
         </span>
       </div>
@@ -124,7 +124,7 @@ export default function ImageUploader({
       {/* Hidden input so server action receives imageUrls JSON */}
       <input type="hidden" name={inputName} value={JSON.stringify(urls)} />
 
-      {uploading && <p className="text-sm text-gray-500">Uploading...</p>}
+      {uploading && <p className="text-sm text-black">Uploading...</p>}
     </div>
   )
 }

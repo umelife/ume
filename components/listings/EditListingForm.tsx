@@ -101,7 +101,7 @@ export default function EditListingForm({ listing }: EditListingFormProps) {
       <div className="flex justify-end gap-3">
         <a
           href={`/item/${listing.id}`}
-          className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-black bg-white hover:bg-gray-50"
+          className="inline-flex items-center px-4 py-2 border border-black text-sm font-medium rounded-md text-black bg-white hover:bg-blue-50"
         >
           Cancel
         </a>

@@ -9,6 +9,10 @@ create policy "Users can view all users"
   on public.users for select
   using (true);
 
+create policy "Users can insert own profile"
+  on public.users for insert
+  with check (auth.uid() = id);
+
 create policy "Users can update own profile"
   on public.users for update
   using (auth.uid() = id);
@@ -38,6 +42,10 @@ create policy "Users can view messages where they are sender or receiver"
 create policy "Authenticated users can create messages"
   on public.messages for insert
   with check (auth.uid() = sender_id);
+
+create policy "Users can update messages where they are receiver"
+  on public.messages for update
+  using (auth.uid() = receiver_id);
 
 -- Reports policies
 create policy "Users can view their own reports"

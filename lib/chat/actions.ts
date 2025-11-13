@@ -84,7 +84,7 @@ export async function getAllConversations() {
   // Get all messages involving the current user
   const { data: messages, error } = await supabase
     .from('messages')
-    .select('*, sender:users!messages_sender_id_fkey(*), receiver:users!messages_receiver_id_fkey(*), listing:listings(*)')
+    .select('*')
     .or('sender_id.eq.' + user.id + ',receiver_id.eq.' + user.id)
     .order('created_at', { ascending: false })
 
@@ -92,18 +92,48 @@ export async function getAllConversations() {
     return { conversations: [], error: error.message }
   }
 
+  if (!messages || messages.length === 0) {
+    return { conversations: [] }
+  }
+
+  // Get unique user IDs and listing IDs
+  const userIds = new Set<string>()
+  const listingIds = new Set<string>()
+
+  messages.forEach((message: any) => {
+    userIds.add(message.sender_id)
+    userIds.add(message.receiver_id)
+    listingIds.add(message.listing_id)
+  })
+
+  // Fetch all users and listings in batch
+  const { data: users } = await supabase
+    .from('users')
+    .select('*')
+    .in('id', Array.from(userIds))
+
+  const { data: listings } = await supabase
+    .from('listings')
+    .select('*')
+    .in('id', Array.from(listingIds))
+
+  // Create lookup maps
+  const usersMap = new Map(users?.map(u => [u.id, u]) || [])
+  const listingsMap = new Map(listings?.map(l => [l.id, l]) || [])
+
   // Group messages by listing and other user
   const conversationsMap = new Map()
 
-  messages?.forEach((message: any) => {
+  messages.forEach((message: any) => {
     const otherUserId = message.sender_id === user.id ? message.receiver_id : message.sender_id
-    const otherUser = message.sender_id === user.id ? message.receiver : message.sender
+    const otherUser = usersMap.get(otherUserId)
+    const listing = listingsMap.get(message.listing_id)
     const key = `${message.listing_id}-${otherUserId}`
 
     if (!conversationsMap.has(key)) {
       conversationsMap.set(key, {
         listingId: message.listing_id,
-        listing: message.listing,
+        listing,
         otherUserId,
         otherUser,
         lastMessage: message.body,

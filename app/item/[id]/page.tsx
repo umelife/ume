@@ -20,13 +20,23 @@ export default async function ListingDetailPage({
 
   const { data: listing, error } = await supabase
     .from('listings')
-    .select('*, user:users!user_id(*)')
+    .select('*')
     .eq('id', id)
     .single()
 
   if (error || !listing) {
     notFound()
   }
+
+  // Fetch the seller/user data separately
+  const { data: user } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', listing.user_id)
+    .single()
+
+  // Add user to listing object
+  listing.user = user
 
   const isOwner = currentUser?.id === listing.user_id
 

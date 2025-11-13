@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { isEduEmail, extractUniversityDomain } from '@/lib/utils/helpers'
 import { NextResponse } from 'next/server'
 
@@ -31,9 +31,10 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: authError.message }, { status: 400 })
     }
 
-    // Create user profile
+    // Create user profile using service role to bypass RLS
     if (authData.user) {
-      const { error: profileError } = await supabase
+      const serviceSupabase = await createServiceClient()
+      const { error: profileError } = await serviceSupabase
         .from('users')
         .insert({
           id: authData.user.id,
@@ -43,15 +44,20 @@ export async function POST(request: Request) {
         })
 
       if (profileError) {
-        return NextResponse.json({ error: profileError.message }, { status: 400 })
+        console.error('Profile creation error:', profileError)
+        return NextResponse.json({
+          error: 'Account created but profile setup failed. Please contact support.',
+          details: profileError.message
+        }, { status: 400 })
       }
     }
 
-    return NextResponse.json({ 
+    return NextResponse.json({
       message: 'Signup successful! Please check your email to verify your account.',
-      user: authData.user 
+      user: authData.user
     })
   } catch (error) {
+    console.error('Signup error:', error)
     return NextResponse.json(
       { error: 'An unexpected error occurred' },
       { status: 500 }

@@ -68,7 +68,7 @@ interface UseMessagesReturn {
   editMessage: (messageId: string, newBody: string) => Promise<boolean>
   deleteMessage: (messageId: string) => Promise<boolean>
   markAsRead: () => Promise<void>
-  messagesEndRef: React.RefObject<HTMLDivElement>
+  messagesEndRef: React.RefObject<HTMLDivElement | null>
   refetch: () => Promise<void>
 }
 

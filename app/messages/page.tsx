@@ -17,7 +17,7 @@ interface Conversation {
   otherUser: any
   lastMessage: string
   lastMessageTime: string
-  unread: boolean
+  unreadCount: number
 }
 
 export default function MessagesPage() {
@@ -106,6 +106,31 @@ export default function MessagesPage() {
       supabase.removeChannel(channel)
     }
   }, [selectedConversation, currentUserId, supabase])
+
+  // Global real-time subscription for all messages to update unread counts
+  useEffect(() => {
+    if (!currentUserId) return
+
+    const channel = supabase
+      .channel('all-messages')
+      .on(
+        'postgres_changes',
+        {
+          event: '*', // Listen to INSERT, UPDATE, DELETE
+          schema: 'public',
+          table: 'messages',
+        },
+        () => {
+          // Reload conversations whenever any message changes
+          loadConversations()
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [currentUserId, supabase])
 
   async function loadConversations() {
     const result = await getAllConversations()
@@ -221,17 +246,19 @@ export default function MessagesPage() {
                           <p className="font-semibold text-black text-sm truncate">
                             {conversation.listing?.title || 'Unknown Listing'}
                           </p>
-                          {conversation.unread && (
-                            <span className="flex-shrink-0 w-2 h-2 bg-blue-600 rounded-full mt-1"></span>
+                          {conversation.unreadCount > 0 && (
+                            <span className="flex-shrink-0 min-w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center px-1.5 animate-fade-in">
+                              {conversation.unreadCount > 99 ? '99+' : conversation.unreadCount}
+                            </span>
                           )}
                         </div>
-                        <p className="text-sm text-gray-600 mb-1">
+                        <p className="text-sm text-black mb-1">
                           {conversation.otherUser?.display_name || 'Unknown User'}
                         </p>
-                        <p className="text-sm text-gray-500 truncate">
+                        <p className="text-sm text-black truncate">
                           {conversation.lastMessage}
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-black mt-1">
                           {new Date(conversation.lastMessageTime).toLocaleDateString()}
                         </p>
                       </div>

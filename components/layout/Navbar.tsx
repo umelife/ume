@@ -56,13 +56,13 @@ export default function Navbar() {
       }
     })
 
-    // Subscribe to new messages
+    // Subscribe to message changes (new messages and read status updates)
     const channel = supabase
       .channel('navbar-messages')
       .on(
         'postgres_changes',
         {
-          event: 'INSERT',
+          event: '*', // Listen to INSERT and UPDATE events
           schema: 'public',
           table: 'messages',
         },
@@ -119,8 +119,8 @@ export default function Navbar() {
                 <Link href="/messages" className="text-black hover:text-blue-600 relative">
                   Messages
                   {unreadCount > 0 && (
-                    <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                      {unreadCount > 9 ? '9+' : unreadCount}
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-5 h-5 flex items-center justify-center font-bold px-1.5 animate-fade-in">
+                      {unreadCount > 99 ? '99+' : unreadCount}
                     </span>
                   )}
                 </Link>

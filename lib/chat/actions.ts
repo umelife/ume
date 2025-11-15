@@ -121,7 +121,7 @@ export async function getAllConversations() {
   const usersMap = new Map(users?.map(u => [u.id, u]) || [])
   const listingsMap = new Map(listings?.map(l => [l.id, l]) || [])
 
-  // Group messages by listing and other user
+  // Group messages by listing and other user, and count unread messages
   const conversationsMap = new Map()
 
   messages.forEach((message: any) => {
@@ -138,8 +138,14 @@ export async function getAllConversations() {
         otherUser,
         lastMessage: message.body,
         lastMessageTime: message.created_at,
-        unread: message.receiver_id === user.id && !message.read,
+        unreadCount: 0,
       })
+    }
+
+    // Count unread messages for this conversation
+    const conversation = conversationsMap.get(key)
+    if (message.receiver_id === user.id && !message.read) {
+      conversation.unreadCount++
     }
   })
 

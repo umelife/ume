@@ -4,7 +4,7 @@ import Navbar from '@/components/layout/Navbar'
 import ChatBox from '@/components/chat/ChatBox'
 import ReportButton from '@/components/listings/ReportButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
-import ImageCarousel from '@/components/listings/ImageCarousel'
+import ListingImages from '@/components/listings/ListingImages'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -47,7 +47,7 @@ export default async function ListingDetailPage({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid md:grid-cols-2 gap-8">
           <div>
-            <ImageCarousel images={listing.image_urls || []} title={listing.title} />
+            <ListingImages listingId={listing.id} altText={listing.title} />
           </div>
 
           <div className="space-y-6">

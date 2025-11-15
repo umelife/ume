@@ -1,43 +1,45 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
-import { getAllConversations, getMessages, sendMessage, markMessagesAsRead, deleteMessage, editMessage } from '@/lib/chat/actions'
+import { useConversations, type Conversation } from '@/lib/hooks/useConversations'
+import { useMessages } from '@/lib/hooks/useMessages'
+import MessageBubble from '@/components/chat/MessageBubble'
 import { trackEvent } from '@/lib/mixpanel/client'
 import Navbar from '@/components/layout/Navbar'
-import type { Message } from '@/types/database'
-
-interface Conversation {
-  listingId: string
-  listing: any
-  otherUserId: string
-  otherUser: any
-  lastMessage: string
-  lastMessageTime: string
-  unreadCount: number
-}
 
 export default function MessagesPage() {
   const [supabase] = useState(() => createClient())
-  const [conversations, setConversations] = useState<Conversation[]>([])
   const [selectedConversation, setSelectedConversation] = useState<Conversation | null>(null)
-  const [messages, setMessages] = useState<any[]>([])
-  const [newMessage, setNewMessage] = useState('')
-  const [loading, setLoading] = useState(true)
-  const [sending, setSending] = useState(false)
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
-  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null)
-  const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
-  const [editedText, setEditedText] = useState('')
   const [fadingBadges, setFadingBadges] = useState<Set<string>>(new Set())
-  const [otherUserTyping, setOtherUserTyping] = useState(false)
-  const typingTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
 
+  // Enhanced hooks
+  const { conversations, loading: conversationsLoading, error: conversationsError } = useConversations()
+
+  const {
+    messages,
+    loading: messagesLoading,
+    sending,
+    error: messagesError,
+    sendMessage,
+    editMessage,
+    deleteMessage,
+    messagesEndRef
+  } = useMessages(
+    selectedConversation?.listingId || null,
+    selectedConversation?.otherUserId || null,
+    {
+      autoMarkRead: true,
+      autoScroll: true
+    }
+  )
+
+  // Get current user
   useEffect(() => {
     let mounted = true
 
@@ -51,8 +53,6 @@ export default function MessagesPage() {
 
       if (mounted) {
         setCurrentUserId(user.id)
-        await loadConversations()
-        setLoading(false)
       }
     }
 
@@ -63,216 +63,20 @@ export default function MessagesPage() {
     }
   }, [supabase, router])
 
-  useEffect(() => {
-    if (selectedConversation) {
-      loadConversationMessages()
-      markMessagesAsRead(selectedConversation.listingId, selectedConversation.otherUserId)
-    }
-  }, [selectedConversation])
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [messages])
-
-  useEffect(() => {
-    if (!selectedConversation) return
-
-    // Subscribe to new messages for the selected conversation
-    const channel = supabase
-      .channel('messages:' + selectedConversation.listingId)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'messages',
-          filter: 'listing_id=eq.' + selectedConversation.listingId,
-        },
-        async (payload) => {
-          const { data: sender } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', payload.new.sender_id)
-            .single()
-
-          setMessages((prev) => [...prev, { ...payload.new, sender }])
-
-          // Mark as read if we're viewing this conversation
-          if (payload.new.receiver_id === currentUserId) {
-            await markMessagesAsRead(selectedConversation.listingId, selectedConversation.otherUserId)
-          }
-
-          // Reload conversations to update unread status
-          loadConversations()
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'messages',
-          filter: 'listing_id=eq.' + selectedConversation.listingId,
-        },
-        (payload) => {
-          setMessages((prev) =>
-            prev.map((m) => (m.id === payload.new.id ? { ...m, ...payload.new } : m))
-          )
-          loadConversations()
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'messages',
-          filter: 'listing_id=eq.' + selectedConversation.listingId,
-        },
-        (payload) => {
-          setMessages((prev) => prev.filter((m) => m.id !== payload.old.id))
-          loadConversations()
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [selectedConversation, currentUserId, supabase])
-
-  // Global real-time subscription for all messages to update unread counts
-  useEffect(() => {
-    if (!currentUserId) return
-
-    const channel = supabase
-      .channel('all-messages')
-      .on(
-        'postgres_changes',
-        {
-          event: '*', // Listen to INSERT, UPDATE, DELETE
-          schema: 'public',
-          table: 'messages',
-        },
-        () => {
-          // Reload conversations whenever any message changes
-          loadConversations()
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-    }
-  }, [currentUserId, supabase])
-
-  // Typing indicator listener
-  useEffect(() => {
-    if (!selectedConversation || !currentUserId) return
-
-    const channel = supabase
-      .channel('typing:' + selectedConversation.listingId)
-      .on(
-        'postgres_changes',
-        {
-          event: 'INSERT',
-          schema: 'public',
-          table: 'typing_indicators',
-          filter: 'listing_id=eq.' + selectedConversation.listingId,
-        },
-        (payload) => {
-          // Show typing indicator if it's from the other user
-          if (payload.new.user_id === selectedConversation.otherUserId) {
-            setOtherUserTyping(true)
-
-            // Auto-hide after 3 seconds
-            if (typingTimeoutRef.current) {
-              clearTimeout(typingTimeoutRef.current)
-            }
-            typingTimeoutRef.current = setTimeout(() => {
-              setOtherUserTyping(false)
-            }, 3000)
-          }
-        }
-      )
-      .on(
-        'postgres_changes',
-        {
-          event: 'DELETE',
-          schema: 'public',
-          table: 'typing_indicators',
-          filter: 'listing_id=eq.' + selectedConversation.listingId,
-        },
-        (payload) => {
-          if (payload.old.user_id === selectedConversation.otherUserId) {
-            setOtherUserTyping(false)
-            if (typingTimeoutRef.current) {
-              clearTimeout(typingTimeoutRef.current)
-            }
-          }
-        }
-      )
-      .subscribe()
-
-    return () => {
-      supabase.removeChannel(channel)
-      if (typingTimeoutRef.current) {
-        clearTimeout(typingTimeoutRef.current)
-      }
-      setOtherUserTyping(false)
-    }
-  }, [selectedConversation, currentUserId, supabase])
-
-  async function loadConversations() {
-    const result = await getAllConversations()
-    if (result.conversations) {
-      setConversations(result.conversations)
-
-      // If we had a selected conversation, update it with the new data
-      if (selectedConversation) {
-        const updated = result.conversations.find(
-          c => c.listingId === selectedConversation.listingId && c.otherUserId === selectedConversation.otherUserId
-        )
-        if (updated) {
-          setSelectedConversation(updated)
-        }
-      }
-    }
-  }
-
-  async function loadConversationMessages() {
-    if (!selectedConversation) return
-
-    const result = await getMessages(selectedConversation.listingId, selectedConversation.otherUserId)
-    if (result.messages) {
-      setMessages(result.messages)
-    }
-  }
-
-  async function handleSendMessage(e: React.FormEvent) {
+  // Handle message send
+  async function handleSendMessage(e: React.FormEvent, messageText: string) {
     e.preventDefault()
-    if (!newMessage.trim() || !selectedConversation || !currentUserId) return
+    if (!messageText.trim() || !selectedConversation || !currentUserId) return
 
-    setSending(true)
+    await sendMessage(messageText)
 
-    const result = await sendMessage(
-      selectedConversation.listingId,
-      selectedConversation.otherUserId,
-      newMessage
-    )
-
-    if (!result.error) {
-      trackEvent('send_message', {
-        listing_id: selectedConversation.listingId,
-        message_length: newMessage.length,
-      })
-      setNewMessage('')
-      loadConversations() // Refresh to update last message
-    }
-
-    setSending(false)
+    trackEvent('send_message', {
+      listing_id: selectedConversation.listingId,
+      message_length: messageText.length,
+    })
   }
 
+  // Handle conversation selection
   function handleSelectConversation(conversation: Conversation) {
     // If the conversation has unread messages, trigger fade-out animation
     if (conversation.unreadCount > 0) {
@@ -292,84 +96,49 @@ export default function MessagesPage() {
     setSelectedConversation(conversation)
   }
 
-  async function handleDeleteMessage(messageId: string) {
-    if (!confirm('Are you sure you want to delete this message?')) {
-      return
-    }
+  // Handle message edit
+  async function handleEditMessage(messageId: string, newBody: string): Promise<boolean> {
+    const success = await editMessage(messageId, newBody)
 
-    const result = await deleteMessage(messageId)
-    if (!result.error) {
-      setMessages((prev) => prev.filter((m) => m.id !== messageId))
-      loadConversations() // Update last message in conversations
-      trackEvent('delete_message', { message_id: messageId })
-    } else {
-      alert('Failed to delete message: ' + result.error)
-    }
-  }
-
-  function handleStartEdit(message: any) {
-    setEditingMessageId(message.id)
-    setEditedText(message.body)
-  }
-
-  async function handleSaveEdit(messageId: string) {
-    if (!editedText.trim()) {
-      alert('Message cannot be empty')
-      return
-    }
-
-    const result = await editMessage(messageId, editedText)
-    if (!result.error) {
-      setMessages((prev) =>
-        prev.map((m) => (m.id === messageId ? { ...m, body: editedText } : m))
-      )
-      setEditingMessageId(null)
-      setEditedText('')
-      loadConversations() // Update last message in conversations
+    if (success) {
       trackEvent('edit_message', { message_id: messageId })
-    } else {
-      alert('Failed to edit message: ' + result.error)
     }
+
+    return success
   }
 
-  function handleCancelEdit() {
-    setEditingMessageId(null)
-    setEditedText('')
-  }
+  // Handle message delete
+  async function handleDeleteMessage(messageId: string): Promise<boolean> {
+    const success = await deleteMessage(messageId)
 
-  async function handleTyping() {
-    if (!selectedConversation || !currentUserId) return
-
-    try {
-      // Upsert typing indicator
-      await supabase
-        .from('typing_indicators')
-        .upsert({
-          listing_id: selectedConversation.listingId,
-          user_id: currentUserId,
-        }, {
-          onConflict: 'listing_id,user_id'
-        })
-
-      // Auto-delete after 2 seconds
-      setTimeout(async () => {
-        await supabase
-          .from('typing_indicators')
-          .delete()
-          .eq('listing_id', selectedConversation.listingId)
-          .eq('user_id', currentUserId)
-      }, 2000)
-    } catch (error) {
-      console.error('Error updating typing indicator:', error)
+    if (success) {
+      trackEvent('delete_message', { message_id: messageId })
     }
+
+    return success
   }
 
-  if (loading) {
+  // Loading state
+  if (conversationsLoading) {
     return (
       <div className="min-h-screen bg-gray-50">
         <Navbar />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <p className="text-black">Loading messages...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (conversationsError) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+            <p className="text-red-800">Error loading conversations: {conversationsError}</p>
+          </div>
         </div>
       </div>
     )
@@ -475,138 +244,35 @@ export default function MessagesPage() {
 
                   {/* Messages */}
                   <div className="flex-1 overflow-y-auto p-4 space-y-4">
-                    {messages.length === 0 ? (
+                    {messagesLoading ? (
+                      <p className="text-center text-gray-500">Loading messages...</p>
+                    ) : messagesError ? (
+                      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p className="text-red-800 text-sm">Error: {messagesError}</p>
+                      </div>
+                    ) : messages.length === 0 ? (
                       <p className="text-center text-gray-500">No messages yet</p>
                     ) : (
                       <>
-                      {messages.map((message) => (
-                        <div
-                          key={message.id}
-                          className={
-                            'flex group ' +
-                            (message.sender_id === currentUserId ? 'justify-end' : 'justify-start')
-                          }
-                          onMouseEnter={() => setHoveredMessageId(message.id)}
-                          onMouseLeave={() => setHoveredMessageId(null)}
-                        >
-                          <div className="flex items-start gap-2">
-                            {message.sender_id === currentUserId && (
-                              <div className={
-                                'flex gap-1 mt-1 transition-opacity duration-200 ' +
-                                (hoveredMessageId === message.id && editingMessageId !== message.id ? 'opacity-100' : 'opacity-0')
-                              }>
-                                <button
-                                  onClick={() => handleStartEdit(message)}
-                                  className="p-1 hover:bg-gray-200 rounded transition-colors"
-                                  title="Edit message"
-                                >
-                                  <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                  </svg>
-                                </button>
-                                <button
-                                  onClick={() => handleDeleteMessage(message.id)}
-                                  className="p-1 hover:bg-red-100 rounded transition-colors"
-                                  title="Delete message"
-                                >
-                                  <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                  </svg>
-                                </button>
-                              </div>
-                            )}
-                            <div
-                              className={
-                                'max-w-xs lg:max-w-md rounded-lg px-4 py-2 ' +
-                                (message.sender_id === currentUserId
-                                  ? 'bg-blue-600 text-white'
-                                  : 'bg-gray-100 text-black')
-                              }
-                            >
-                              {editingMessageId === message.id ? (
-                                <div className="space-y-2">
-                                  <textarea
-                                    value={editedText}
-                                    onChange={(e) => setEditedText(e.target.value)}
-                                    className="w-full px-2 py-1 text-sm text-black border border-gray-300 rounded resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                    rows={3}
-                                    autoFocus
-                                  />
-                                  <div className="flex gap-2 justify-end">
-                                    <button
-                                      onClick={handleCancelEdit}
-                                      className="px-2 py-1 text-xs bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-                                    >
-                                      Cancel
-                                    </button>
-                                    <button
-                                      onClick={() => handleSaveEdit(message.id)}
-                                      className="px-2 py-1 text-xs bg-blue-500 text-white rounded hover:bg-blue-600"
-                                    >
-                                      Save
-                                    </button>
-                                  </div>
-                                </div>
-                              ) : (
-                                <>
-                                  <p className="text-sm break-words">{message.body}</p>
-                                  <p
-                                    className={
-                                      'text-xs mt-1 ' +
-                                      (message.sender_id === currentUserId
-                                        ? 'text-blue-100'
-                                        : 'text-gray-500')
-                                    }
-                                  >
-                                    {new Date(message.created_at).toLocaleTimeString([], {
-                                      hour: '2-digit',
-                                      minute: '2-digit',
-                                    })}
-                                  </p>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      {otherUserTyping && (
-                        <div className="flex justify-start">
-                          <div className="bg-gray-100 text-black rounded-lg px-4 py-2 max-w-xs">
-                            <div className="flex gap-1 items-center">
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                              <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
+                        {messages.map((message) => (
+                          <MessageBubble
+                            key={message.id}
+                            message={message}
+                            isOwnMessage={message.sender_id === currentUserId}
+                            onEdit={handleEditMessage}
+                            onDelete={handleDeleteMessage}
+                          />
+                        ))}
                       </>
                     )}
                     <div ref={messagesEndRef} />
                   </div>
 
                   {/* Input */}
-                  <form onSubmit={handleSendMessage} className="p-4 border-t border-gray-200">
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={newMessage}
-                        onChange={(e) => {
-                          setNewMessage(e.target.value)
-                          handleTyping()
-                        }}
-                        placeholder="Type a message..."
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-gray-400"
-                      />
-                      <button
-                        type="submit"
-                        disabled={sending || !newMessage.trim()}
-                        className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Send
-                      </button>
-                    </div>
-                  </form>
+                  <MessageInput
+                    onSend={handleSendMessage}
+                    disabled={sending}
+                  />
                 </>
               ) : (
                 <div className="flex-1 flex items-center justify-center text-gray-500">
@@ -618,5 +284,46 @@ export default function MessagesPage() {
         )}
       </div>
     </div>
+  )
+}
+
+// Message Input Component
+function MessageInput({
+  onSend,
+  disabled
+}: {
+  onSend: (e: React.FormEvent, text: string) => void
+  disabled: boolean
+}) {
+  const [text, setText] = useState('')
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!text.trim()) return
+
+    onSend(e, text)
+    setText('')
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type a message..."
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black placeholder-gray-400"
+          disabled={disabled}
+        />
+        <button
+          type="submit"
+          disabled={disabled || !text.trim()}
+          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+        >
+          {disabled ? 'Sending...' : 'Send'}
+        </button>
+      </div>
+    </form>
   )
 }

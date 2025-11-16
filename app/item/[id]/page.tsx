@@ -3,6 +3,7 @@ import { getUser } from '@/lib/auth/actions'
 import Navbar from '@/components/layout/Navbar'
 import ChatBox from '@/components/chat/ChatBox'
 import ReportButton from '@/components/listings/ReportButton'
+import BuyButton from '@/components/listings/BuyButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
 import ListingImages from '@/components/listings/ListingImages'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
@@ -83,12 +84,17 @@ export default async function ListingDetailPage({
                 </div>
               )}
 
+              {/* Buy Button for non-owners */}
               {currentUser && !isOwner && (
                 <div className="border-t pt-4 mt-4">
-                  <ReportButton listingId={listing.id} />
+                  <BuyButton listing={listing} />
+                  <div className="mt-4">
+                    <ReportButton listingId={listing.id} />
+                  </div>
                 </div>
               )}
 
+              {/* Edit Button for owners */}
               {isOwner && (
                 <div className="border-t pt-4 mt-4">
                   <Link
@@ -97,6 +103,13 @@ export default async function ListingDetailPage({
                   >
                     Edit Listing
                   </Link>
+                </div>
+              )}
+
+              {/* Guest users - show buy button with login redirect */}
+              {!currentUser && (
+                <div className="border-t pt-4 mt-4">
+                  <BuyButton listing={listing} />
                 </div>
               )}
             </div>

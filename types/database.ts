@@ -7,6 +7,8 @@ export interface User {
   seller_rating?: number;
   total_sales?: number;
   verified_seller?: boolean;
+  stripe_account_id?: string;
+  stripe_onboarding_completed?: boolean;
 }
 
 export type ListingCondition = 'New' | 'Like New' | 'Used' | 'Refurbished' | 'For Parts';
@@ -61,3 +63,31 @@ export type ListingCategory =
   | 'Books'
   | 'Clothing and Accessories'
   | 'Giveaways';
+
+export type OrderStatus = 'pending' | 'paid' | 'processing' | 'completed' | 'refunded' | 'cancelled';
+
+export interface Order {
+  id: string;
+  buyer_id: string;
+  seller_id: string;
+  listing_id: string;
+  stripe_checkout_session_id?: string;
+  stripe_payment_intent_id?: string;
+  stripe_charge_id?: string;
+  stripe_refund_id?: string;
+  amount_cents: number;
+  currency: string;
+  platform_fee_cents: number;
+  seller_amount_cents: number;
+  status: OrderStatus;
+  payment_method?: string;
+  buyer_email?: string;
+  buyer_name?: string;
+  completed_at?: string;
+  refunded_at?: string;
+  created_at: string;
+  updated_at: string;
+  buyer?: User;
+  seller?: User;
+  listing?: Listing;
+}

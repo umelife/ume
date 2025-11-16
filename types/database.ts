@@ -4,7 +4,12 @@ export interface User {
   display_name: string;
   university_domain: string;
   created_at: string;
+  seller_rating?: number;
+  total_sales?: number;
+  verified_seller?: boolean;
 }
+
+export type ListingCondition = 'New' | 'Like New' | 'Used' | 'Refurbished' | 'For Parts';
 
 export interface Listing {
   id: string;
@@ -15,6 +20,12 @@ export interface Listing {
   price: number;
   image_urls: string[];
   created_at: string;
+  condition?: ListingCondition;
+  features?: string[];
+  brand?: string;
+  color?: string;
+  size?: string;
+  material?: string;
   user?: User;
 }
 

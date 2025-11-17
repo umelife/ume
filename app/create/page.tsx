@@ -55,17 +55,28 @@ export default function CreateListingPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-black">Price (USD)</label>
-              <input
-                name="price"
-                type="number"
-                step="0.01"
-                min="0"
-                defaultValue="0"
-                className="mt-1 block w-full border rounded px-3 py-2 text-black"
-              />
-              <p className="text-xs text-black mt-1">Price will be stored in cents.</p>
+              <label className="block text-sm font-medium text-black">Condition</label>
+              <select name="condition" required className="mt-1 block w-full border rounded px-3 py-2 text-black">
+                <option value="">Select condition</option>
+                <option value="New">New</option>
+                <option value="Like New">Like New</option>
+                <option value="Used">Used</option>
+                <option value="Refurbished">Refurbished</option>
+              </select>
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-black">Price (USD)</label>
+            <input
+              name="price"
+              type="number"
+              step="0.01"
+              min="0"
+              defaultValue="0"
+              className="mt-1 block w-full border rounded px-3 py-2 text-black"
+            />
+            <p className="text-xs text-black mt-1">Price will be stored in cents.</p>
           </div>
 
           {/* If you add ImageUploader later, include a hidden input named "imageUrls" with JSON array of URLs */}

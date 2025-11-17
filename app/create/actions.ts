@@ -34,6 +34,7 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
   const title = (formData.get('title') as string) || ''
   const description = (formData.get('description') as string) || ''
   const category = (formData.get('category') as string) || 'Other'
+  const condition = (formData.get('condition') as string) || 'Used'
   const priceRaw = (formData.get('price') as string) || '0'
   const priceNumber = Number(priceRaw)
   const price_cents = Math.round(priceNumber * 100)
@@ -65,6 +66,7 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
         title,
         description,
         category,
+        condition,
         price: price_cents,
         image_urls: imageUrls,
         created_at: new Date().toISOString(),

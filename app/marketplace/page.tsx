@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Navbar from '@/components/layout/Navbar'
 import ListingCard from '@/components/listings/ListingCard'
@@ -10,6 +11,7 @@ import type { Listing } from '@/types/database'
 import type { FilterOptions, SortConfig } from '@/lib/utils/listingFilters'
 
 export default function MarketplacePage() {
+  const searchParams = useSearchParams()
   const [supabase] = useState(() => createClient())
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
@@ -21,6 +23,14 @@ export default function MarketplacePage() {
     option: 'newest',
     direction: 'desc'
   })
+
+  // Initialize search from URL parameter
+  useEffect(() => {
+    const searchQuery = searchParams.get('search')
+    if (searchQuery) {
+      setFilters(prev => ({ ...prev, search: searchQuery }))
+    }
+  }, [searchParams])
 
   // Fetch all listings on mount
   useEffect(() => {

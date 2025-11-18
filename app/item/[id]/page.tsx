@@ -1,7 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import Navbar from '@/components/layout/Navbar'
-import ChatBox from '@/components/chat/ChatBox'
 import FloatingChatWidget from '@/components/chat/FloatingChatWidget'
 import ReportButton from '@/components/listings/ReportButton'
 import BuyButton from '@/components/listings/BuyButton'
@@ -120,20 +119,6 @@ export default async function ListingDetailPage({
               )}
             </div>
 
-            {/* Keep the full chat box for desktop, hidden on mobile since we have the widget */}
-            {currentUser && (
-              <div className="hidden lg:block bg-white rounded-lg shadow-md p-6">
-                <h3 className="font-semibold mb-4 text-black">
-                  {isOwner ? 'Messages from Buyers' : 'Contact Seller'}
-                </h3>
-                <ChatBox
-                  listingId={listing.id}
-                  sellerId={listing.user_id}
-                  currentUserId={currentUser.id}
-                  isOwner={isOwner}
-                />
-              </div>
-            )}
           </div>
         </div>
       </div>

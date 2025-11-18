@@ -76,6 +76,7 @@ export default function FloatingChatWidget({
   useEffect(() => {
     if (!currentUserId) return
 
+    console.log('[FloatingWidget] Setting up real-time for listing:', listingId)
     loadMessages()
 
     const channel = supabase
@@ -89,18 +90,25 @@ export default function FloatingChatWidget({
           filter: 'listing_id=eq.' + listingId,
         },
         async (payload) => {
+          console.log('[FloatingWidget] Real-time message received:', payload.new)
           const { data: sender } = await supabase
             .from('users')
             .select('*')
             .eq('id', payload.new.sender_id)
             .single()
 
-          setMessages((prev) => [...prev, { ...payload.new, sender }])
+          setMessages((prev) => {
+            console.log('[FloatingWidget] Adding message to state')
+            return [...prev, { ...payload.new, sender }]
+          })
         }
       )
-      .subscribe()
+      .subscribe((status) => {
+        console.log('[FloatingWidget] Subscription status:', status)
+      })
 
     return () => {
+      console.log('[FloatingWidget] Cleaning up subscription')
       supabase.removeChannel(channel)
     }
   }, [listingId, currentUserId, supabase])

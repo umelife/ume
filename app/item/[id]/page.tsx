@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import Navbar from '@/components/layout/Navbar'
 import ChatBox from '@/components/chat/ChatBox'
+import FloatingChatWidget from '@/components/chat/FloatingChatWidget'
 import ReportButton from '@/components/listings/ReportButton'
 import BuyButton from '@/components/listings/BuyButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
@@ -63,6 +64,11 @@ export default async function ListingDetailPage({
                 <span className="bg-gray-100 px-3 py-1 rounded-full text-sm text-black">
                   {listing.category}
                 </span>
+                {listing.condition && (
+                  <span className="bg-green-100 px-3 py-1 rounded-full text-sm text-green-800">
+                    {listing.condition}
+                  </span>
+                )}
                 <span className="text-black text-sm py-1">
                   Posted {getTimeAgo(listing.created_at)}
                 </span>
@@ -114,8 +120,9 @@ export default async function ListingDetailPage({
               )}
             </div>
 
+            {/* Keep the full chat box for desktop, hidden on mobile since we have the widget */}
             {currentUser && (
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="hidden lg:block bg-white rounded-lg shadow-md p-6">
                 <h3 className="font-semibold mb-4 text-black">
                   {isOwner ? 'Messages from Buyers' : 'Contact Seller'}
                 </h3>
@@ -130,6 +137,17 @@ export default async function ListingDetailPage({
           </div>
         </div>
       </div>
+
+      {/* Floating Chat Widget - Only show for non-owners when logged in */}
+      {currentUser && !isOwner && (
+        <FloatingChatWidget
+          listingId={listing.id}
+          sellerId={listing.user_id}
+          sellerName={listing.user?.display_name || 'Seller'}
+          listingTitle={listing.title}
+          currentUserId={currentUser.id}
+        />
+      )}
     </div>
   )
 }

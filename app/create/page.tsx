@@ -56,8 +56,7 @@ export default function CreateListingPage() {
 
             <div>
               <label className="block text-sm font-medium text-black">Condition</label>
-              <select name="condition" required className="mt-1 block w-full border rounded px-3 py-2 text-black">
-                <option value="">Select condition</option>
+              <select name="condition" required defaultValue="Used" className="mt-1 block w-full border rounded px-3 py-2 text-black">
                 <option value="New">New</option>
                 <option value="Like New">Like New</option>
                 <option value="Used">Used</option>

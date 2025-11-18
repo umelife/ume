@@ -120,7 +120,7 @@ export default async function ListingDetailPage({
               )}
             </div>
 
-            {/* Keep the full chat box for desktop, hidden on mobile since we have the widget */}
+            {/* Optional: Keep the full chat box for desktop, or remove it entirely */}
             {currentUser && (
               <div className="hidden lg:block bg-white rounded-lg shadow-md p-6">
                 <h3 className="font-semibold mb-4 text-black">
@@ -138,15 +138,14 @@ export default async function ListingDetailPage({
         </div>
       </div>
 
-      {/* Floating Chat Widget - Shows for all logged-in users (buyers AND sellers) */}
-      {currentUser && (
+      {/* Floating Chat Widget - Only show for non-owners when logged in */}
+      {currentUser && !isOwner && (
         <FloatingChatWidget
           listingId={listing.id}
           sellerId={listing.user_id}
           sellerName={listing.user?.display_name || 'Seller'}
           listingTitle={listing.title}
           currentUserId={currentUser.id}
-          isOwner={isOwner}
         />
       )}
     </div>

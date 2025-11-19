@@ -45,6 +45,34 @@ export default function ChatBox({ listingId, sellerId, currentUserId, isOwner = 
           setMessages((prev) => [...prev, { ...payload.new, sender }])
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: 'listing_id=eq.' + listingId,
+        },
+        (payload) => {
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === payload.new.id ? { ...msg, ...payload.new } : msg
+            ).filter((msg) => !msg.deleted) // Remove soft-deleted messages
+          )
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages',
+          filter: 'listing_id=eq.' + listingId,
+        },
+        (payload) => {
+          setMessages((prev) => prev.filter((msg) => msg.id !== payload.old.id))
+        }
+      )
       .subscribe()
 
     return () => {

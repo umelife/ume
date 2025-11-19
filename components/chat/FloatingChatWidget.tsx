@@ -103,6 +103,36 @@ export default function FloatingChatWidget({
           })
         }
       )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages',
+          filter: 'listing_id=eq.' + listingId,
+        },
+        (payload) => {
+          console.log('[FloatingWidget] Message updated:', payload.new)
+          setMessages((prev) =>
+            prev.map((msg) =>
+              msg.id === payload.new.id ? { ...msg, ...payload.new } : msg
+            ).filter((msg) => !msg.deleted) // Remove soft-deleted messages
+          )
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages',
+          filter: 'listing_id=eq.' + listingId,
+        },
+        (payload) => {
+          console.log('[FloatingWidget] Message deleted:', payload.old.id)
+          setMessages((prev) => prev.filter((msg) => msg.id !== payload.old.id))
+        }
+      )
       .subscribe((status) => {
         console.log('[FloatingWidget] Subscription status:', status)
       })

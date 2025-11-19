@@ -104,7 +104,7 @@ export function useConversations(): UseConversationsReturn {
 
     channelsRef.current.push(conversationsChannel)
 
-    // Also subscribe to messages table to detect new conversations
+    // Also subscribe to messages table to detect new conversations and deletions
     const messagesChannel = supabase
       .channel('realtime:messages-for-conversations')
       .on(
@@ -118,6 +118,34 @@ export function useConversations(): UseConversationsReturn {
           console.log('[useConversations] New message detected')
           // Refetch conversations when new message arrives
           // Trigger will create/update conversation
+          await fetchConversations()
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'messages'
+        },
+        async (payload) => {
+          console.log('[useConversations] Message updated (possibly soft-deleted)')
+          // Refetch when message is soft-deleted (deleted=true)
+          // Trigger will update conversation's last_message
+          await fetchConversations()
+        }
+      )
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'messages'
+        },
+        async (payload) => {
+          console.log('[useConversations] Message hard-deleted')
+          // Refetch when message is hard-deleted
+          // Trigger will update conversation's last_message
           await fetchConversations()
         }
       )

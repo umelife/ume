@@ -46,6 +46,8 @@ interface EnhancedSearchFilterProps {
   sortConfig: SortConfig
   onFiltersChange: (filters: FilterOptions) => void
   onSortChange: (sortConfig: SortConfig) => void
+  sidebarOpen: boolean
+  onSidebarClose: () => void
 }
 
 export default function EnhancedSearchFilter({
@@ -53,10 +55,11 @@ export default function EnhancedSearchFilter({
   filters,
   sortConfig,
   onFiltersChange,
-  onSortChange
+  onSortChange,
+  sidebarOpen,
+  onSidebarClose
 }: EnhancedSearchFilterProps) {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
-  const [showSortDropdown, setShowSortDropdown] = useState(false)
 
   // Get available filter options from listings
   const availableOptions = getUniqueFilterOptions(allListings)
@@ -121,78 +124,57 @@ export default function EnhancedSearchFilter({
     onFiltersChange({})
   }
 
-  // Handle sort change
-  const handleSortChange = (option: SortOption) => {
-    onSortChange({ option })
-    setShowSortDropdown(false)
-  }
-
-  const currentSortOption = SORT_OPTIONS.find(opt => opt.value === sortConfig.option)
-
   return (
-    <div className="space-y-4">
-      {/* Show current search query if exists */}
-      {filters.search && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <span className="text-blue-900 font-medium">Searching for: "{filters.search}"</span>
-          </div>
-          <button
-            onClick={() => handleSearchChange('')}
-            className="text-blue-700 hover:text-blue-900 font-medium text-sm"
-          >
-            Clear search
-          </button>
-        </div>
+    <>
+      {/* Backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 z-40"
+          onClick={onSidebarClose}
+        />
       )}
 
-      {/* Sort Dropdown */}
-      <div className="flex gap-3">
-        <div className="relative w-full sm:w-64">
+      {/* Sidebar */}
+      <div
+        className={`fixed top-0 left-0 h-full w-80 bg-white shadow-2xl z-50 transform transition-transform duration-300 ease-in-out overflow-y-auto ${
+          sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        }`}
+      >
+        {/* Sidebar Header */}
+        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+          <h2 className="text-xl font-bold text-gray-900">Filters</h2>
           <button
-            onClick={() => setShowSortDropdown(!showSortDropdown)}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 text-left flex items-center justify-between text-gray-900"
+            onClick={onSidebarClose}
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            aria-label="Close filters"
           >
-            <span className="flex items-center gap-2">
-              <span>{currentSortOption?.icon}</span>
-              <span className="font-medium">{currentSortOption?.label || 'Sort by'}</span>
-            </span>
-            <svg className={`w-5 h-5 transition-transform ${showSortDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-
-          {showSortDropdown && (
-            <>
-              <div className="fixed inset-0 z-10" onClick={() => setShowSortDropdown(false)} />
-              <div className="absolute top-full mt-2 w-full bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-20 max-h-64 overflow-y-auto">
-                {SORT_OPTIONS.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleSortChange(option.value)}
-                    className={`w-full px-4 py-2.5 text-left hover:bg-gray-50 flex items-center gap-3 ${
-                      sortConfig.option === option.value ? 'bg-blue-50 text-blue-700' : 'text-gray-900'
-                    }`}
-                  >
-                    <span className="text-xl">{option.icon}</span>
-                    <span className="font-medium">{option.label}</span>
-                    {sortConfig.option === option.value && (
-                      <svg className="w-5 h-5 ml-auto text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                      </svg>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </>
-          )}
         </div>
-      </div>
 
-      {/* Category Pills */}
+        {/* Sidebar Content */}
+        <div className="px-6 py-4 space-y-6">
+          {/* Show current search query if exists */}
+          {filters.search && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span className="text-blue-900 font-medium text-sm">"{filters.search}"</span>
+              </div>
+              <button
+                onClick={() => handleSearchChange('')}
+                className="text-blue-700 hover:text-blue-900 font-medium text-sm"
+              >
+                Clear
+              </button>
+            </div>
+          )}
+
+          {/* Category Pills */}
       <div className="flex gap-2 flex-wrap">
         {CATEGORIES.map((cat) => (
           <button
@@ -209,26 +191,24 @@ export default function EnhancedSearchFilter({
         ))}
       </div>
 
-      {/* Active Filters Badge & Clear All */}
-      {activeFilterCount > 0 && (
-        <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
-          <span className="text-sm font-medium text-blue-900">
-            {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active
-          </span>
-          <button
-            onClick={handleClearAll}
-            className="ml-auto text-sm text-blue-700 hover:text-blue-900 font-medium underline"
-          >
-            Clear all
-          </button>
-        </div>
-      )}
+          {/* Active Filters Badge & Clear All */}
+          {activeFilterCount > 0 && (
+            <div className="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border border-blue-200">
+              <span className="text-sm font-medium text-blue-900">
+                {activeFilterCount} filter{activeFilterCount !== 1 ? 's' : ''} active
+              </span>
+              <button
+                onClick={handleClearAll}
+                className="ml-auto text-sm text-blue-700 hover:text-blue-900 font-medium underline"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
 
-      {/* Condition Filter */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <span>✨</span> Condition
-        </h3>
+          {/* Condition Filter */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">Condition</h3>
         <div className="flex gap-2 flex-wrap">
           {CONDITIONS.map((condition) => {
             const isSelected = filters.conditions?.includes(condition)
@@ -252,11 +232,9 @@ export default function EnhancedSearchFilter({
         </div>
       </div>
 
-      {/* Seller Rating Filter */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <span>⭐</span> Seller Rating
-        </h3>
+          {/* Seller Rating Filter */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">Seller Rating</h3>
         <div className="flex gap-2 flex-wrap">
           {[5, 4, 3].map((rating) => {
             const isSelected = filters.sellerRating === rating
@@ -289,11 +267,9 @@ export default function EnhancedSearchFilter({
         </div>
       </div>
 
-      {/* Price Range Filter */}
-      <div className="bg-white rounded-lg border border-gray-200 p-4">
-        <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-          <span>💰</span> Price Range
-        </h3>
+          {/* Price Range Filter */}
+          <div>
+            <h3 className="font-semibold text-gray-900 mb-3">Price Range</h3>
         <div className="flex gap-3 items-center">
           <input
             type="number"
@@ -313,27 +289,25 @@ export default function EnhancedSearchFilter({
         </div>
       </div>
 
-      {/* More Filters (Collapsible) */}
-      <div className="bg-white rounded-lg border border-gray-200">
-        <button
-          onClick={() => setShowMoreFilters(!showMoreFilters)}
-          className="w-full px-4 py-3 flex items-center justify-between hover:bg-gray-50 rounded-lg transition-colors"
-        >
-          <span className="font-semibold text-gray-900 flex items-center gap-2">
-            <span>🔍</span> More Filters
-          </span>
-          <svg
-            className={`w-5 h-5 text-gray-600 transition-transform ${showMoreFilters ? 'rotate-180' : ''}`}
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </button>
+          {/* More Filters (Collapsible) */}
+          <div>
+            <button
+              onClick={() => setShowMoreFilters(!showMoreFilters)}
+              className="w-full py-2 flex items-center justify-between hover:bg-gray-50 rounded-lg transition-colors"
+            >
+              <span className="font-semibold text-gray-900">More Filters</span>
+              <svg
+                className={`w-5 h-5 text-gray-600 transition-transform ${showMoreFilters ? 'rotate-180' : ''}`}
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
-        {showMoreFilters && (
-          <div className="p-4 border-t border-gray-200 space-y-4">
+            {showMoreFilters && (
+              <div className="mt-4 space-y-4">
             {/* Brands */}
             {availableOptions.brands.length > 0 && (
               <div>
@@ -457,10 +431,12 @@ export default function EnhancedSearchFilter({
                   })}
                 </div>
               </div>
+                )}
+              </div>
             )}
           </div>
-        )}
+        </div>
       </div>
-    </div>
+    </>
   )
 }

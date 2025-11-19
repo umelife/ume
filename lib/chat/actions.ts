@@ -41,6 +41,7 @@ export async function getMessages(listingId: string, otherUserId: string) {
     .from('messages')
     .select('*, sender:users!messages_sender_id_fkey(*)')
     .eq('listing_id', listingId)
+    .eq('deleted', false) // Filter out soft-deleted messages
     .or('sender_id.eq.' + user.id + ',receiver_id.eq.' + user.id)
     .order('created_at', { ascending: true })
 
@@ -85,6 +86,7 @@ export async function getAllConversations() {
   const { data: messages, error } = await supabase
     .from('messages')
     .select('*')
+    .eq('deleted', false) // Filter out soft-deleted messages
     .or('sender_id.eq.' + user.id + ',receiver_id.eq.' + user.id)
     .order('created_at', { ascending: false })
 
@@ -200,9 +202,11 @@ export async function deleteMessage(messageId: string) {
     return { error: 'Unauthorized to delete this message' }
   }
 
+  // Soft delete: set deleted=true instead of hard delete
+  // This triggers the database trigger to update conversation.last_message
   const { error } = await supabase
     .from('messages')
-    .delete()
+    .update({ deleted: true })
     .eq('id', messageId)
 
   if (error) {

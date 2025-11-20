@@ -9,42 +9,54 @@ export default async function Home() {
       {/* Navigation */}
       <nav className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between h-16 items-center">
-            <div className="flex-shrink-0">
-              <h1 className="text-2xl font-bold text-blue-600">Reclaim</h1>
+          {/* Three-column grid layout: left | center | right */}
+          <div className="grid h-[55px] items-center grid-cols-[1fr_auto_1fr]">
+            {/* Left slot */}
+            <div className="flex flex-1 justify-start shrink-0 max-w-[30%] min-w-fit px-[11px]">
+              {user && (
+                <Link
+                  href="/marketplace"
+                  className="text-black hover:text-blue-600 px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis"
+                >
+                  Marketplace
+                </Link>
+              )}
             </div>
-            <div className="flex gap-4">
-              {user ? (
-                <>
-                  <Link
-                    href="/marketplace"
-                    className="text-black hover:text-blue-600 px-3 py-2"
-                  >
-                    Marketplace
-                  </Link>
+
+            {/* Center slot */}
+            <div className="flex flex-grow h-[55px] items-center justify-self-center overflow-hidden">
+              <div className="w-full text-sm font-medium overflow-hidden whitespace-nowrap text-center text-ellipsis">
+                <h1 className="text-2xl font-bold text-blue-600">Reclaim</h1>
+              </div>
+            </div>
+
+            {/* Right slot */}
+            <div className="flex shrink-0 max-w-[30%] min-w-fit px-[11px] justify-self-end">
+              <div className="flex gap-4">
+                {user ? (
                   <Link
                     href={`/profile/${user.id}`}
-                    className="text-black hover:text-blue-600 px-3 py-2"
+                    className="text-black hover:text-blue-600 px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis"
                   >
                     Profile
                   </Link>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="text-black hover:text-blue-600 px-3 py-2"
-                  >
-                    Sign in
-                  </Link>
-                  <Link
-                    href="/signup"
-                    className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg"
-                  >
-                    Get started
-                  </Link>
-                </>
-              )}
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      className="text-black hover:text-blue-600 px-3 py-2 whitespace-nowrap overflow-hidden text-ellipsis"
+                    >
+                      Sign in
+                    </Link>
+                    <Link
+                      href="/signup"
+                      className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg whitespace-nowrap overflow-hidden text-ellipsis"
+                    >
+                      Get started
+                    </Link>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>

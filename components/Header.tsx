@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useState } from 'react'
+import SearchModal from './search/SearchModal'
 
 interface HeaderProps {
   unreadMessages?: number
@@ -41,8 +43,10 @@ function getRouteLabel(pathname: string): string {
 export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvatar, userId }: HeaderProps) {
   const pathname = usePathname()
   const currentLabel = getRouteLabel(pathname)
+  const [searchOpen, setSearchOpen] = useState(false)
 
   return (
+    <>
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
       <div className="px-12 py-6">
         <div className="flex items-center justify-between">
@@ -59,8 +63,8 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
           {/* Right - Icons */}
           <div className="flex items-center gap-8">
             {/* Search */}
-            <Link
-              href="/marketplace"
+            <button
+              onClick={() => setSearchOpen(true)}
               className="text-black hover:opacity-60 transition-opacity relative group"
               aria-label="Search"
             >
@@ -71,7 +75,7 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
               <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                 Search
               </span>
-            </Link>
+            </button>
 
             {/* Create Listing */}
             {userId && (
@@ -133,7 +137,7 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
 
             {/* Cart with Badge */}
             <Link
-              href="/marketplace"
+              href="/cart"
               className="text-black hover:opacity-60 transition-opacity relative group"
               aria-label="Cart"
             >
@@ -155,5 +159,9 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
         </div>
       </div>
     </header>
+
+    {/* Search Modal */}
+    <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   )
 }

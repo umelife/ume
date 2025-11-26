@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
+import HeaderWrapper from "@/components/HeaderWrapper";
 
 export const metadata: Metadata = {
   title: "Reclaim - Campus Marketplace",
@@ -16,6 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body style={{ isolation: 'isolate' }} suppressHydrationWarning>
         <MixpanelProvider />
+        <HeaderWrapper />
         {children}
       </body>
     </html>

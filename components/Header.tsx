@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
-import SearchModal from './search/SearchModal'
+import HeaderInlineSearch from './search/HeaderInlineSearch'
 
 interface HeaderProps {
   unreadMessages?: number
@@ -62,20 +62,25 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
 
           {/* Right - Icons */}
           <div className="flex items-center gap-8">
-            {/* Search */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="text-black hover:opacity-60 transition-opacity relative group"
-              aria-label="Search"
-            >
-              <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="8"/>
-                <path d="m21 21-4.35-4.35"/>
-              </svg>
-              <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                Search
-              </span>
-            </button>
+            {/* Search - with inline dropdown */}
+            <div className="relative">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="text-black hover:opacity-60 transition-opacity relative group"
+                aria-label="Search"
+              >
+                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <circle cx="11" cy="11" r="8"/>
+                  <path d="m21 21-4.35-4.35"/>
+                </svg>
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Search
+                </span>
+              </button>
+
+              {/* Inline Search Dropdown */}
+              <HeaderInlineSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
+            </div>
 
             {/* Create Listing */}
             {userId && (
@@ -159,9 +164,6 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
         </div>
       </div>
     </header>
-
-    {/* Search Modal */}
-    <SearchModal isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   )
 }

@@ -7,6 +7,8 @@ import { NextRequest, NextResponse } from 'next/server'
  * Currently logs to console - can be extended to send emails, save to database, etc.
  */
 
+export const runtime = 'nodejs'
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()

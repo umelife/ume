@@ -15,6 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link href="https://fonts.cdnfonts.com/css/marianina-fy-black" rel="stylesheet" />
+      </head>
       <body style={{ isolation: 'isolate' }} suppressHydrationWarning>
         <MixpanelProvider />
         <HeaderWrapper />

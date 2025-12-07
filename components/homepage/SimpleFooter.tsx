@@ -19,7 +19,7 @@ export default function SimpleFooter() {
             href="/about"
             className="text-sm text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:underline"
           >
-            About
+            About Us
           </Link>
           <Link
             href="/marketplace"
@@ -37,7 +37,7 @@ export default function SimpleFooter() {
             href="/privacy"
             className="text-sm text-gray-600 hover:text-gray-900 transition-colors focus:outline-none focus:underline"
           >
-            Privacy
+            Privacy Policy
           </Link>
           <Link
             href="/terms"

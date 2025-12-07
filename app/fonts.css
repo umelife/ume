@@ -1,9 +1,7 @@
 /* Maintanker Font - Local Font Face */
 @font-face {
   font-family: 'Maintanker';
-  src: url('/fonts/Maintanker.woff2') format('woff2'),
-       url('/fonts/Maintanker.woff') format('woff'),
-       url('/fonts/Maintanker.ttf') format('truetype');
+  src: url('/fonts/Maintanker.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
   font-display: swap;
@@ -11,9 +9,7 @@
 
 @font-face {
   font-family: 'Maintanker';
-  src: url('/fonts/Maintanker-Bold.woff2') format('woff2'),
-       url('/fonts/Maintanker-Bold.woff') format('woff'),
-       url('/fonts/Maintanker-Bold.ttf') format('truetype');
+  src: url('/fonts/Maintanker.ttf') format('truetype');
   font-weight: bold;
   font-style: normal;
   font-display: swap;

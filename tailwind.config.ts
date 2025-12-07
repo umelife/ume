@@ -9,7 +9,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['Maintanker', 'sans-serif'],
+        sans: ['"BR Shape"', 'sans-serif'],
+        display: ['Maintanker', 'sans-serif'],
       },
       colors: {
         background: "var(--background)",

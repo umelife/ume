@@ -17,7 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body style={{ isolation: 'isolate', fontFamily: 'Maintanker, sans-serif' }} suppressHydrationWarning>
+      <body style={{ isolation: 'isolate', fontFamily: '"BR Shape", sans-serif', fontWeight: 300 }} suppressHydrationWarning>
         <MixpanelProvider />
         <HeaderWrapper />
         {children}

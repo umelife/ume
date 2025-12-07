@@ -52,7 +52,7 @@ export default function Hero({
         </p>
 
         {/* Headline */}
-        <h1 className="text-center font-black tracking-tight text-gray-900 mb-8 sm:mb-12 leading-[0.9] max-w-5xl" style={{ fontFamily: '"Marianina FY", system-ui, -apple-system, sans-serif' }}>
+        <h1 className="font-display text-center font-black tracking-tight text-gray-900 mb-8 sm:mb-12 leading-[0.9] max-w-5xl">
           <span className="block text-[clamp(3rem,8vw,7rem)]">
             YOUR UNIVERSITY
           </span>

@@ -147,7 +147,7 @@ export default function FeatureSlider({
 
       {/* Content - Centered */}
       <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 sm:px-6">
-        <h2 className="text-[clamp(2.5rem,6vw,5rem)] font-black tracking-tight text-gray-900 mb-4 text-center leading-tight" style={{ fontFamily: '"Marianina FY", system-ui, -apple-system, sans-serif' }}>
+        <h2 className="font-display text-[clamp(2.5rem,6vw,5rem)] font-black tracking-tight text-gray-900 mb-4 text-center leading-tight">
           {currentSlide.headline}
         </h2>
         <p className="text-base sm:text-lg text-gray-800 font-light max-w-2xl text-center">

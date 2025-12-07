@@ -1,8 +1,7 @@
 // app/create/page.tsx
 import type { Metadata } from 'next'
 import { handleCreateListing } from './actions' // server action (Note relative path)
-// near other imports in app/create/page.tsx (server file)
-import ImageUploader from '@/components/listings/imageuploader'
+import ImageUploaderClean from '@/components/listings/ImageUploaderClean'
 
 
 export const metadata: Metadata = {
@@ -22,51 +21,60 @@ export default function CreateListingPage() {
         <form action={handleCreateListing} className="space-y-6">
           {/* Title */}
           <div>
-            <label className="block text-sm text-gray-700 mb-2">
+            <label htmlFor="title" className="block text-sm text-gray-700 mb-2">
               Title <span className="text-gray-500">(required)</span>
             </label>
             <input
+              id="title"
               name="title"
+              type="text"
               required
-              className="w-full border border-gray-900 rounded-full px-6 py-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
+              aria-required="true"
+              className="w-full border border-gray-900 rounded-full px-6 py-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 placeholder-gray-400"
+              placeholder="Enter listing title"
             />
           </div>
 
           {/* Description */}
           <div>
-            <label className="block text-sm text-gray-700 mb-2">
+            <label htmlFor="description" className="block text-sm text-gray-700 mb-2">
               Description
             </label>
             <textarea
+              id="description"
               name="description"
               required
+              aria-required="true"
               rows={4}
-              className="w-full border border-gray-900 rounded-3xl px-6 py-4 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none"
+              className="w-full border border-gray-900 rounded-3xl px-6 py-4 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 resize-none placeholder-gray-400"
+              placeholder="Describe your item"
             />
           </div>
 
           {/* Category */}
           <div>
-            <label className="block text-sm text-gray-700 mb-2">
+            <label htmlFor="category" className="block text-sm text-gray-700 mb-2">
               Category <span className="text-gray-500">(required)</span>
             </label>
             <div className="relative">
               <select
+                id="category"
                 name="category"
                 required
+                aria-required="true"
                 className="w-full border border-gray-900 rounded-full px-6 py-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 appearance-none cursor-pointer"
               >
                 <option value="">Select an option</option>
-                <option>Dorm and Decor</option>
-                <option>Fun and Craft</option>
-                <option>Transportation</option>
-                <option>Tech and Gadgets</option>
-                <option>Books</option>
-                <option>Clothing and Accessories</option>
-                <option>Giveaways</option>
-                <option>Other</option>
+                <option value="Dorm and Decor">Dorm and Decor</option>
+                <option value="Fun and Craft">Fun and Craft</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Tech and Gadgets">Tech and Gadgets</option>
+                <option value="Books">Books</option>
+                <option value="Clothing and Accessories">Clothing and Accessories</option>
+                <option value="Giveaways">Giveaways</option>
+                <option value="Other">Other</option>
               </select>
-              <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none">
+              <div className="absolute right-6 top-1/2 -translate-y-1/2 pointer-events-none" aria-hidden="true">
                 <svg width="12" height="8" viewBox="0 0 12 8" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M1 1L6 6L11 1" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
@@ -75,76 +83,80 @@ export default function CreateListingPage() {
           </div>
 
           {/* Condition */}
-          <div>
-            <label className="block text-sm text-gray-700 mb-2">
+          <div role="group" aria-labelledby="condition-label">
+            <label id="condition-label" className="block text-sm text-gray-700 mb-2">
               Condition <span className="text-gray-500">(required)</span>
             </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="flex flex-wrap gap-4">
+              <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="radio"
                   name="condition"
                   value="New"
-                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-gray-900"
+                  required
+                  aria-required="true"
+                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 cursor-pointer"
                 />
-                <span className="text-sm text-gray-900">New</span>
+                <span className="text-sm text-gray-900 group-hover:text-gray-700">New</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="radio"
                   name="condition"
                   value="Like New"
-                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-gray-900"
+                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 cursor-pointer"
                 />
-                <span className="text-sm text-gray-900">Like New</span>
+                <span className="text-sm text-gray-900 group-hover:text-gray-700">Like New</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="radio"
                   name="condition"
                   value="Used"
                   defaultChecked
-                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-gray-900"
+                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 cursor-pointer"
                 />
-                <span className="text-sm text-gray-900">Used</span>
+                <span className="text-sm text-gray-900 group-hover:text-gray-700">Used</span>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-center gap-2 cursor-pointer group">
                 <input
                   type="radio"
                   name="condition"
                   value="Refurbished"
-                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-gray-900"
+                  className="w-4 h-4 border-2 border-gray-900 text-gray-900 focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 cursor-pointer"
                 />
-                <span className="text-sm text-gray-900">Refurbished</span>
+                <span className="text-sm text-gray-900 group-hover:text-gray-700">Refurbished</span>
               </label>
             </div>
           </div>
 
           {/* Photos */}
           <div>
-            <label className="block text-sm text-gray-700 mb-2">
+            <label className="block text-sm text-gray-700 mb-2" htmlFor="image-upload">
               Photos <span className="text-gray-500">(required)</span>
             </label>
-            <div className="border-2 border-dashed border-gray-900 rounded-3xl p-12 bg-white">
-              <ImageUploader />
-            </div>
+            <ImageUploaderClean />
           </div>
 
           {/* Price */}
           <div>
-            <label className="block text-sm text-gray-700 mb-2">
+            <label htmlFor="price" className="block text-sm text-gray-700 mb-2">
               Price <span className="text-gray-500">(required)</span>
             </label>
             <div className="relative">
-              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-900">$</span>
+              <span className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-900 font-medium" aria-hidden="true">$</span>
               <input
+                id="price"
                 name="price"
                 type="number"
                 step="0.01"
                 min="0"
                 defaultValue="0"
                 required
-                className="w-full border border-gray-900 rounded-full pl-10 pr-6 py-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900"
+                aria-required="true"
+                aria-label="Price in dollars"
+                className="w-full border border-gray-900 rounded-full pl-10 pr-6 py-3 text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-gray-900 placeholder-gray-400"
+                placeholder="0"
               />
             </div>
           </div>
@@ -153,7 +165,8 @@ export default function CreateListingPage() {
           <div className="pt-4">
             <button
               type="submit"
-              className="bg-black text-white font-semibold px-12 py-4 rounded-full hover:bg-gray-800 transition-colors text-lg"
+              className="bg-black text-white font-semibold px-12 py-4 rounded-full hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2 transition-all text-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Submit listing"
             >
               Post Listing
             </button>

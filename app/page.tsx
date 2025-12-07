@@ -22,7 +22,7 @@ export default async function Home() {
       <Hero
         backgroundImage="/placeholders/hero-city.jpg"
         subtitle="For students, by students"
-        headline="YOUR UNIVERSITY\nMARKETPLACE"
+        headline="YOUR UNIVERSITY MARKETPLACE"
         ctaText="Browse Marketplace"
         ctaHref="/marketplace"
       />

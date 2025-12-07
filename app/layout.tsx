@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./fonts.css";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
@@ -16,10 +17,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
-        <link href="https://fonts.cdnfonts.com/css/hk-grotesk" rel="stylesheet" />
-      </head>
-      <body style={{ isolation: 'isolate', fontFamily: '"HK Grotesk", sans-serif', fontWeight: 900 }} suppressHydrationWarning>
+      <body style={{ isolation: 'isolate', fontFamily: 'Maintanker, sans-serif' }} suppressHydrationWarning>
         <MixpanelProvider />
         <HeaderWrapper />
         {children}

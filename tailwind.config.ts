@@ -9,7 +9,7 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"HK Grotesk"', 'sans-serif'],
+        sans: ['Maintanker', 'sans-serif'],
       },
       colors: {
         background: "var(--background)",

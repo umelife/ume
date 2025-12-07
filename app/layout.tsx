@@ -17,9 +17,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <link href="https://fonts.cdnfonts.com/css/marianina-fy-black" rel="stylesheet" />
+        <link href="https://fonts.cdnfonts.com/css/hk-grotesk" rel="stylesheet" />
       </head>
-      <body style={{ isolation: 'isolate' }} suppressHydrationWarning>
+      <body style={{ isolation: 'isolate', fontFamily: '"HK Grotesk", sans-serif', fontWeight: 900 }} suppressHydrationWarning>
         <MixpanelProvider />
         <HeaderWrapper />
         {children}

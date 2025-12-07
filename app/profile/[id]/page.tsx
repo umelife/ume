@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import ListingCard from '@/components/listings/ListingCard'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
+import ProfileSettings from '@/components/profile/ProfileSettings'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -44,6 +45,14 @@ export default async function ProfilePage({
             Member since {new Date(profileUser.created_at).toLocaleDateString()}
           </p>
         </div>
+
+        {/* Profile Settings - Only show for own profile */}
+        {isOwnProfile && (
+          <ProfileSettings
+            currentDisplayName={profileUser.display_name}
+            userId={id}
+          />
+        )}
 
         <div className="mb-4 flex justify-between items-center">
           <h2 className="text-2xl font-bold text-black">

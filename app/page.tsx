@@ -43,6 +43,13 @@ export default async function Home() {
             headline: 'VERIFIED STUDENTS ONLY',
             subtitle: 'Safe and simple',
             alt: 'Verified students only feature'
+          },
+          {
+            id: '3',
+            image: '/placeholders/feature-safe.jpg',
+            headline: 'SAFE & SIMPLE',
+            subtitle: 'Report inappropriate listings and trade with confidence',
+            alt: 'Safe and simple trading feature'
           }
         ]}
         autoPlayInterval={5000}

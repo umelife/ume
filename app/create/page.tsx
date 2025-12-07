@@ -13,7 +13,7 @@ export default function CreateListingPage() {
     <div className="min-h-screen bg-[#f5f5f0] py-16 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <h1 className="text-5xl md:text-6xl font-black text-center mb-12 tracking-tight uppercase">
+        <h1 className="text-5xl md:text-6xl font-black text-center mb-12 tracking-tight uppercase text-black">
           CREATE LISTING
         </h1>
 

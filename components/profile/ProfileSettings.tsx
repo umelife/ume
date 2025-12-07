@@ -4,12 +4,12 @@ import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 
 interface ProfileSettingsProps {
-  currentDisplayName: string
+  currentDisplayName: string | null
   userId: string
 }
 
 export default function ProfileSettings({ currentDisplayName, userId }: ProfileSettingsProps) {
-  const [displayName, setDisplayName] = useState(currentDisplayName)
+  const [displayName, setDisplayName] = useState(currentDisplayName || '')
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')

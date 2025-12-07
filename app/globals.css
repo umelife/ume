@@ -77,4 +77,24 @@ body {
   .animate-slide-in-right {
     animation: slide-in-right 0.3s ease-out;
   }
+
+  /*
+   * Maintanker Title Utility Class
+   *
+   * Global headline style for all major page titles using the Maintanker font.
+   * Letter spacing is set to 0.14em to prevent character overlap.
+   *
+   * To adjust letter spacing: modify the letter-spacing value below or use
+   * the tracking-maintanker Tailwind utility (see tailwind.config.ts).
+   *
+   * Usage: <h1 className="maintanker-title tracking-maintanker text-4xl md:text-6xl">
+   */
+  .maintanker-title {
+    font-family: 'Maintanker', 'Impact', sans-serif; /* Maintanker font loaded in fonts.css */
+    text-align: center;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
 }

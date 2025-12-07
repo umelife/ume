@@ -12,6 +12,9 @@ export default {
         sans: ['"BR Shape"', 'sans-serif'],
         display: ['Maintanker', 'sans-serif'],
       },
+      letterSpacing: {
+        'maintanker': '0.14em',
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",

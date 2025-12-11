@@ -1,0 +1,79 @@
+
+> reclaim-mvp@0.1.0 build
+> next build
+
+   ▲ Next.js 15.5.7
+   - Environments: .env.local
+
+   Creating an optimized production build ...
+<w> [webpack.cache.PackFileCacheStrategy] Serializing big strings (126kiB) impacts deserialization performance (consider using Buffer instead and decode when needed)
+ ⚠ Compiled with warnings in 1089ms
+
+./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+A Node.js API is used (process.versions at line: 32) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/realtime-js/dist/module/lib/websocket-factory.js
+./node_modules/@supabase/realtime-js/dist/module/index.js
+./node_modules/@supabase/supabase-js/dist/module/index.js
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+
+./node_modules/@supabase/supabase-js/dist/module/index.js
+A Node.js API is used (process.version at line: 24) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/@supabase/supabase-js/dist/module/index.js
+./node_modules/@supabase/ssr/dist/module/createBrowserClient.js
+./node_modules/@supabase/ssr/dist/module/index.js
+
+ ✓ Compiled successfully in 7.5s
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/23) ...
+   Generating static pages (5/23) 
+   Generating static pages (11/23) 
+   Generating static pages (17/23) 
+ ✓ Generating static pages (23/23)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                 Size  First Load JS
+┌ ƒ /                                    2.66 kB         113 kB
+├ ƒ /_not-found                            991 B         103 kB
+├ ƒ /admin                               1.15 kB         107 kB
+├ ƒ /api/admin/export-reports              147 B         102 kB
+├ ƒ /api/auth/signup                       147 B         102 kB
+├ ƒ /api/contact                           147 B         102 kB
+├ ƒ /api/listings/[id]/images              147 B         102 kB
+├ ƒ /api/orders/[id]/shipping              147 B         102 kB
+├ ƒ /api/stripe/create-checkout-session    147 B         102 kB
+├ ƒ /api/stripe/refund                     147 B         102 kB
+├ ƒ /api/stripe/webhook                    147 B         102 kB
+├ ƒ /cart                                3.43 kB         168 kB
+├ ƒ /contact                             2.06 kB         104 kB
+├ ƒ /create                               1.6 kB         158 kB
+├ ƒ /edit/[id]                           2.49 kB         158 kB
+├ ƒ /item/[id]                           6.14 kB         263 kB
+├ ƒ /login                               1.17 kB         107 kB
+├ ƒ /marketplace                         5.35 kB         170 kB
+├ ƒ /messages                            6.91 kB         264 kB
+├ ƒ /orders/success                      2.87 kB         162 kB
+├ ƒ /payments-coming-soon                  162 B         106 kB
+├ ƒ /profile/[id]                          738 B         111 kB
+├ ƒ /safety                                147 B         102 kB
+├ ƒ /search                              2.56 kB         167 kB
+├ ƒ /signup                              2.68 kB         208 kB
+└ ƒ /terms                                 147 B         102 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/255-47484af636b98715.js       45.8 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)          1.99 kB
+
+
+ƒ Middleware                             81.7 kB
+
+ƒ  (Dynamic)  server-rendered on demand
+

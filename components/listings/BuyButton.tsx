@@ -11,6 +11,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { getOrCreateConversation } from '@/lib/chat/conversations'
 import type { Listing } from '@/types/database'
 
 interface BuyButtonProps {
@@ -24,6 +25,7 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
   const router = useRouter()
   const [supabase] = useState(() => createClient())
   const [cartLoading, setCartLoading] = useState(false)
+  const [contactLoading, setContactLoading] = useState(false)
   const [added, setAdded] = useState(false)
   const [cartMessage, setCartMessage] = useState<{ text: string; type: 'success' | 'error' | 'local' } | null>(null)
 
@@ -32,9 +34,12 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
     return `Hi — I'm interested in "${listing.title}". Are you available to meet on campus for pickup?`
   }
 
-  // Handle Contact Seller (Pickup)
+  // Handle Contact Seller - Opens direct conversation thread
   const handleContactSeller = async () => {
     try {
+      setContactLoading(true)
+      setCartMessage(null)
+
       // Check if user is authenticated
       const { data: { user } } = await supabase.auth.getUser()
 
@@ -46,17 +51,33 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
       // Prevent contacting yourself
       if (user.id === listing.user_id) {
         setCartMessage({ text: 'This is your own listing', type: 'error' })
+        setContactLoading(false)
         return
       }
 
-      // Generate prefill and navigate
+      // Get or create conversation
+      const result = await getOrCreateConversation(
+        user.id,
+        listing.user_id,
+        listing.id
+      )
+
+      if (result.error || !result.conversationId) {
+        setCartMessage({ text: result.error || 'Failed to open chat', type: 'error' })
+        setContactLoading(false)
+        return
+      }
+
+      // Navigate directly to conversation with optional prefill
       const prefillMessage = generatePrefillMessage()
       const encodedPrefill = encodeURIComponent(prefillMessage)
-      router.push(`/messages?listing=${encodeURIComponent(listing.id)}&prefill=${encodedPrefill}`)
+      router.push(`/messages?conversationId=${result.conversationId}&prefill=${encodedPrefill}`)
 
     } catch (err: any) {
       console.error('Contact seller error:', err)
       setCartMessage({ text: 'Failed to open chat', type: 'error' })
+    } finally {
+      setContactLoading(false)
     }
   }
 
@@ -166,10 +187,21 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
       {/* Contact Seller Button */}
       <button
         onClick={handleContactSeller}
-        className={`w-full bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors ${className}`}
+        disabled={contactLoading}
+        className={`w-full bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
         aria-label={`Contact seller about ${listing.title}`}
       >
-        💬 Contact Seller
+        {contactLoading ? (
+          <span className="flex items-center justify-center gap-2">
+            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            Opening chat...
+          </span>
+        ) : (
+          <>💬 Contact Seller</>
+        )}
       </button>
 
       {/* Add to Cart Button */}

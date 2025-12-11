@@ -30,13 +30,14 @@ export const runtime = 'nodejs'
 // const PLATFORM_FEE_PERCENTAGE = 0.10
 
 export async function POST(request: NextRequest) {
-  // DISABLED - Payments not available
+  // TODO: Re-enable when payment processing is implemented
+  // See docs/cart-mvp.md for restoration instructions
   return NextResponse.json(
     {
-      error: 'Payments are currently disabled',
-      message: 'Payment processing is not yet available. We are finalizing business registration and payment setup. Please check back soon!'
+      error: 'Payments disabled for MVP',
+      message: 'Direct payment processing is not available. Please contact sellers to arrange payment via PayPal, Venmo, or cash.'
     },
-    { status: 503 } // Service Unavailable
+    { status: 501 } // Not Implemented
   )
 
   /* DISABLED - Original payment flow

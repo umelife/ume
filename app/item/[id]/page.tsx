@@ -1,6 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
-import FloatingChatWidget from '@/components/chat/FloatingChatWidgetLoader'
 import ReportButton from '@/components/listings/ReportButton'
 import BuyButton from '@/components/listings/BuyButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
@@ -120,18 +119,6 @@ export default async function ListingDetailPage({
           </div>
         </div>
       </div>
-
-      {/* Floating Chat Widget - Shows for all logged-in users (buyers AND sellers) */}
-      {currentUser && (
-        <FloatingChatWidget
-          listingId={listing.id}
-          sellerId={listing.user_id}
-          sellerName={listing.user?.display_name || 'Seller'}
-          listingTitle={listing.title}
-          currentUserId={currentUser.id}
-          isOwner={isOwner}
-        />
-      )}
     </div>
   )
 }

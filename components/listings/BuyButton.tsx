@@ -4,8 +4,7 @@
  * BuyButton Component - MVP with Contact Seller + Robust Add to Cart
  *
  * Features:
- * - Contact Seller: Opens messages with context-aware prefilled message
- * - Ask About Shipping: Opens messages with shipping inquiry
+ * - Contact Seller: Opens messages with prefilled editable message
  * - Add to Cart: Tries server POST, falls back to localStorage on any error
  */
 
@@ -28,13 +27,9 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
   const [added, setAdded] = useState(false)
   const [cartMessage, setCartMessage] = useState<{ text: string; type: 'success' | 'error' | 'local' } | null>(null)
 
-  // Generate context-aware prefill message
-  const generatePrefillMessage = (isShipping: boolean): string => {
-    if (isShipping) {
-      return `Hi — I'm interested in "${listing.title}". Would you be able to ship to my campus post office? I will cover shipping via PayPal/Venmo.`
-    } else {
-      return `Hi — I'm interested in "${listing.title}". I'm on campus and would like to pick up. Are you available? Suggested meetup: campus post office.`
-    }
+  // Generate default prefill message
+  const generatePrefillMessage = (): string => {
+    return `Hi — I'm interested in "${listing.title}". Are you available to meet on campus for pickup?`
   }
 
   // Handle Contact Seller (Pickup)
@@ -55,40 +50,12 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
       }
 
       // Generate prefill and navigate
-      const prefillMessage = generatePrefillMessage(false) // pickup
+      const prefillMessage = generatePrefillMessage()
       const encodedPrefill = encodeURIComponent(prefillMessage)
-      router.push(`/messages?listing=${listing.id}&prefill=${encodedPrefill}`)
+      router.push(`/messages?listing=${encodeURIComponent(listing.id)}&prefill=${encodedPrefill}`)
 
     } catch (err: any) {
       console.error('Contact seller error:', err)
-      setCartMessage({ text: 'Failed to open chat', type: 'error' })
-    }
-  }
-
-  // Handle Ask About Shipping
-  const handleAskShipping = async () => {
-    try {
-      // Check if user is authenticated
-      const { data: { user } } = await supabase.auth.getUser()
-
-      if (!user) {
-        window.location.href = `/login?returnUrl=${encodeURIComponent(`/item/${listing.id}`)}`
-        return
-      }
-
-      // Prevent contacting yourself
-      if (user.id === listing.user_id) {
-        setCartMessage({ text: 'This is your own listing', type: 'error' })
-        return
-      }
-
-      // Generate prefill and navigate
-      const prefillMessage = generatePrefillMessage(true) // shipping
-      const encodedPrefill = encodeURIComponent(prefillMessage)
-      router.push(`/messages?listing=${listing.id}&prefill=${encodedPrefill}`)
-
-    } catch (err: any) {
-      console.error('Ask shipping error:', err)
       setCartMessage({ text: 'Failed to open chat', type: 'error' })
     }
   }
@@ -196,22 +163,13 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
 
   return (
     <div className="space-y-3">
-      {/* Contact Seller Button (Pickup) */}
+      {/* Contact Seller Button */}
       <button
         onClick={handleContactSeller}
         className={`w-full bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors ${className}`}
         aria-label={`Contact seller about ${listing.title}`}
       >
         💬 Contact Seller
-      </button>
-
-      {/* Ask About Shipping Button */}
-      <button
-        onClick={handleAskShipping}
-        className="w-full border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-lg font-semibold hover:border-gray-400 hover:bg-gray-50 transition-colors"
-        aria-label={`Ask about shipping for ${listing.title}`}
-      >
-        📦 Ask About Shipping
       </button>
 
       {/* Add to Cart Button */}

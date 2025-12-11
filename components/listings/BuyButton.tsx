@@ -1,10 +1,13 @@
 'use client'
 
 /**
- * BuyButton Component
+ * BuyButton Component - Updated for MVP (Payment-Free)
  *
- * Provides "Add to Cart" and "Buy Now" buttons for listings.
- * Buy Now redirects to cart page for checkout.
+ * Provides "Add to Cart" and "Contact Seller" buttons for listings.
+ * Buy Now button replaced with Contact Seller to arrange payment directly.
+ *
+ * TODO: When re-enabling payments, restore original Buy Now functionality
+ * See docs/cart-mvp.md for restoration instructions
  */
 
 import { useState } from 'react'
@@ -21,7 +24,6 @@ interface BuyButtonProps {
 export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
   const router = useRouter()
   const [supabase] = useState(() => createClient())
-  const [buyLoading, setBuyLoading] = useState(false)
   const [cartLoading, setCartLoading] = useState(false)
   const [added, setAdded] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -63,9 +65,8 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
     }
   }
 
-  const handleBuyNow = async () => {
+  const handleContactSeller = async () => {
     try {
-      setBuyLoading(true)
       setError(null)
 
       // Check if user is authenticated
@@ -76,66 +77,51 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
         return
       }
 
-      // Prevent buying your own listing
+      // Prevent contacting yourself
       if (user.id === listing.user_id) {
-        setError('You cannot purchase your own listing')
-        setBuyLoading(false)
+        setError('This is your own listing')
         return
       }
 
-      // Add to cart and redirect to cart page
-      const result = await addToCart(listing.id, 1)
+      // Generate prefill message
+      const prefillMessage = encodeURIComponent(
+        `Hi — I'm interested in "${listing.title}". Could we arrange a time to meet on campus for pickup? I can pay via cash, PayPal, or Venmo.`
+      )
 
-      if (result.error) {
-        setError(result.error)
-        setBuyLoading(false)
-        return
-      }
-
-      // Redirect to cart for checkout
-      router.push('/cart')
+      // Navigate to messages with prefill
+      router.push(`/messages?listing=${listing.id}&seller=${listing.user_id}&prefill=${prefillMessage}`)
 
     } catch (err: any) {
-      console.error('Buy now error:', err)
-      setError(err.message || 'Failed to proceed to checkout')
-      setBuyLoading(false)
+      console.error('Contact seller error:', err)
+      setError(err.message || 'Failed to open chat')
     }
   }
 
   return (
     <div className="space-y-3">
-      {/* Buy Now Button */}
+      {/* Contact Seller Button - Replaces Buy Now */}
       <button
-        onClick={handleBuyNow}
-        disabled={buyLoading || cartLoading}
-        className={`w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors ${className}`}
+        onClick={handleContactSeller}
+        className={`w-full bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors ${className}`}
+        aria-label={`Contact seller about ${listing.title}`}
       >
-        {buyLoading ? (
-          <span className="flex items-center justify-center gap-2">
-            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-            </svg>
-            Processing...
-          </span>
-        ) : (
-          `Buy Now - $${(listing.price / 100).toFixed(2)}`
-        )}
+        💬 Contact Seller
       </button>
 
       {/* Add to Cart Button */}
       <button
         onClick={handleAddToCart}
-        disabled={buyLoading || cartLoading || added}
+        disabled={cartLoading || added}
         className={`w-full border-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
           added
             ? 'border-green-600 text-green-600 bg-green-50'
             : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
+        aria-label={`Add ${listing.title} to cart`}
       >
         {cartLoading ? (
           <span className="flex items-center justify-center gap-2">
-            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
@@ -143,14 +129,14 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
           </span>
         ) : added ? (
           <span className="flex items-center justify-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
             </svg>
             Added to Cart!
           </span>
         ) : (
           <span className="flex items-center justify-center gap-2">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="9" cy="21" r="1"/>
               <circle cx="20" cy="21" r="1"/>
               <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
@@ -161,8 +147,13 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
       </button>
 
       {error && (
-        <p className="text-red-600 text-sm text-center">{error}</p>
+        <p className="text-red-600 text-sm text-center" role="alert">{error}</p>
       )}
+
+      {/* Helper text */}
+      <p className="text-xs text-gray-500 text-center mt-2">
+        Contact the seller to arrange payment and pickup
+      </p>
     </div>
   )
 }

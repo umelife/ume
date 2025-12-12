@@ -80,6 +80,18 @@ export async function POST(request: Request) {
       // ROLLBACK: Delete the auth user if profile creation failed
       console.error('Profile creation failed, rolling back auth user:', profileError)
 
+      // Check if error is due to unique constraint violation (race condition)
+      const errorMessage = profileError?.message?.toLowerCase() || ''
+      const errorCode = (profileError as any)?.code || ''
+
+      if (errorMessage.includes('duplicate') || errorMessage.includes('unique') || errorCode === '23505') {
+        // PostgreSQL error code 23505 = unique_violation
+        return NextResponse.json(
+          { error: 'Username already exists — try another' },
+          { status: 409 }
+        )
+      }
+
       // Note: We can't directly delete from auth.users via the client
       // The database trigger should have handled this, but if it failed,
       // the user will need to contact support or try signing up again

@@ -24,15 +24,74 @@ function prettyLogError(prefix: string, err: any) {
   }
 }
 
+/**
+ * Check if username is available (case-insensitive)
+ */
+export async function checkUsernameAvailability(username: string): Promise<{ available: boolean; error?: string }> {
+  try {
+    if (!username) {
+      return { available: false, error: 'Username is required' }
+    }
+
+    // Validate username format
+    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/
+    if (!usernameRegex.test(username)) {
+      return {
+        available: false,
+        error: 'Username must be 3-20 characters, start with a letter, and contain only letters, numbers, and underscores'
+      }
+    }
+
+    const supabase = await createClient()
+
+    // Check for case-insensitive match
+    const { data, error } = await supabase
+      .from('users')
+      .select('username')
+      .ilike('username', username)
+      .maybeSingle()
+
+    if (error && error.code !== 'PGRST116') {
+      // PGRST116 is "not found", which is fine
+      prettyLogError('Error checking username availability:', error)
+      return { available: false, error: 'Failed to check username availability' }
+    }
+
+    return { available: !data }
+  } catch (err) {
+    prettyLogError('Unexpected error in checkUsernameAvailability:', err)
+    return { available: false, error: 'An unexpected error occurred' }
+  }
+}
+
 export async function signIn(formData: FormData) {
-  const email = formData.get('email') as string
+  const emailOrUsername = formData.get('email') as string
   const password = formData.get('password') as string
 
-  if (!email || !password) {
-    return { error: 'Email and password are required' }
+  if (!emailOrUsername || !password) {
+    return { error: 'Email/username and password are required' }
   }
 
   const supabase = await createClient()
+
+  // Determine if input is email or username
+  const isEmail = emailOrUsername.includes('@')
+  let email = emailOrUsername
+
+  // If it's a username, look up the email
+  if (!isEmail) {
+    const { data: user, error: lookupError } = await supabase
+      .from('users')
+      .select('email')
+      .ilike('username', emailOrUsername)
+      .maybeSingle()
+
+    if (lookupError || !user) {
+      return { error: 'Invalid username or password' }
+    }
+
+    email = user.email
+  }
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -41,7 +100,7 @@ export async function signIn(formData: FormData) {
 
   if (error) {
     prettyLogError('Sign in error:', error)
-    return { error: error.message ?? 'Sign in failed' }
+    return { error: 'Invalid email/username or password' }
   }
 
   if (!data.user) {

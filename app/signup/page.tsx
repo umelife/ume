@@ -22,6 +22,10 @@ export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [passwordsMatch, setPasswordsMatch] = useState(true)
+  const [username, setUsername] = useState('')
+  const [usernameError, setUsernameError] = useState<string | null>(null)
+  const [usernameChecking, setUsernameChecking] = useState(false)
+  const [usernameAvailable, setUsernameAvailable] = useState(false)
   const router = useRouter()
 
   // Validate password requirements
@@ -52,10 +56,63 @@ export default function SignupPage() {
     setPasswordsMatch(password === newConfirmPassword)
   }
 
+  // Debounced username validation
+  const handleUsernameChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newUsername = e.target.value
+    setUsername(newUsername)
+    setUsernameError(null)
+    setUsernameAvailable(false)
+
+    if (!newUsername) {
+      return
+    }
+
+    // Basic format validation
+    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/
+    if (!usernameRegex.test(newUsername)) {
+      setUsernameError('Username must be 3-20 characters, start with a letter, and contain only letters, numbers, and underscores')
+      return
+    }
+
+    // Check availability
+    setUsernameChecking(true)
+    try {
+      const response = await fetch('/api/auth/check-username', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: newUsername }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setUsernameError(data.error || 'Failed to check username')
+        return
+      }
+
+      if (!data.available) {
+        setUsernameError('Username already exists — try another')
+      } else {
+        setUsernameAvailable(true)
+      }
+    } catch (err) {
+      setUsernameError('Failed to check username availability')
+    } finally {
+      setUsernameChecking(false)
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
     setError(null)
+
+    // Validate username
+    if (!username || !usernameAvailable) {
+      setError('Please enter a valid and available username')
+      setLoading(false)
+      return
+    }
 
     // Validate passwords match
     if (password !== confirmPassword) {
@@ -80,7 +137,7 @@ export default function SignupPage() {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, displayName }),
+        body: JSON.stringify({ email, password, displayName, username }),
       })
 
       const data = await response.json()
@@ -94,6 +151,7 @@ export default function SignupPage() {
       trackEvent('signup_success', {
         email: email,
         display_name: displayName,
+        username: username,
       })
 
       setSuccess(true)
@@ -134,6 +192,52 @@ export default function SignupPage() {
             )}
 
             <div className="space-y-4">
+              <div>
+                <label htmlFor="username" className="block text-sm font-medium text-black mb-1">
+                  Username
+                </label>
+                <div className="relative">
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    value={username}
+                    onChange={handleUsernameChange}
+                    className={`appearance-none rounded-lg relative block w-full px-3 py-2 pr-10 border ${
+                      usernameError
+                        ? 'border-red-500 focus:ring-red-500 focus:border-red-500'
+                        : usernameAvailable
+                        ? 'border-green-500 focus:ring-green-500 focus:border-green-500'
+                        : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                    } placeholder-gray-400 text-black focus:outline-none`}
+                    placeholder="Choose a unique username"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                    {usernameChecking ? (
+                      <svg className="animate-spin h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    ) : usernameAvailable ? (
+                      <svg className="h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                    ) : usernameError ? (
+                      <svg className="h-5 w-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    ) : null}
+                  </div>
+                </div>
+                {usernameError && (
+                  <p className="mt-1 text-sm text-red-600">{usernameError}</p>
+                )}
+                {usernameAvailable && (
+                  <p className="mt-1 text-sm text-green-600">Username is available!</p>
+                )}
+              </div>
+
               <div>
                 <label htmlFor="displayName" className="block text-sm font-medium text-black mb-1">
                   Display Name
@@ -252,7 +356,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading || !allRequirementsMet || !passwordsMatch || !confirmPassword}
+              disabled={loading || !allRequirementsMet || !passwordsMatch || !confirmPassword || !usernameAvailable}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Sign up'}

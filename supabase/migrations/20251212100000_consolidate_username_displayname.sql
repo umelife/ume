@@ -7,7 +7,20 @@ CREATE OR REPLACE FUNCTION public.slugify(text) RETURNS text AS $$
   SELECT lower(trim(both '-' from regexp_replace($1, '[^a-zA-Z0-9]+', '-', 'g')));
 $$ LANGUAGE SQL IMMUTABLE;
 
--- Step 2: Populate username from display_name for users who don't have a username yet
+-- Step 2: Add username column if it doesn't exist
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = 'public'
+    AND table_name = 'users'
+    AND column_name = 'username'
+  ) THEN
+    ALTER TABLE public.users ADD COLUMN username text;
+  END IF;
+END $$;
+
+-- Step 3: Populate username from display_name for users who don't have a username yet
 -- Use slugified display_name, or email prefix, or 'user' as fallback
 WITH base AS (
   SELECT id,
@@ -27,18 +40,18 @@ END
 FROM ranked r
 WHERE p.id = r.id;
 
--- Step 3: Trim usernames to max 64 characters and remove leading/trailing hyphens
+-- Step 4: Trim usernames to max 64 characters and remove leading/trailing hyphens
 UPDATE public.users
 SET username = left(trim(both '-' FROM username), 64)
 WHERE username IS NOT NULL;
 
--- Step 4: Drop the old case-insensitive unique index if it exists
+-- Step 5: Drop the old case-insensitive unique index if it exists
 DROP INDEX IF EXISTS public.users_username_lower_idx;
 
--- Step 5: Drop the old format check constraint (we only enforce uniqueness now)
+-- Step 6: Drop the old format check constraint (we only enforce uniqueness now)
 ALTER TABLE public.users DROP CONSTRAINT IF EXISTS username_format_check;
 
--- Step 6: Add case-insensitive unique index on username
+-- Step 7: Add case-insensitive unique index on username
 -- This ensures "Ruthiik" and "ruthiik" are treated as the same username
 CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_unique_idx
   ON public.users (lower(username));
@@ -47,7 +60,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_unique_idx
 CREATE INDEX IF NOT EXISTS users_username_idx
   ON public.users (username);
 
--- Step 7: Make username NOT NULL after population
+-- Step 8: Make username NOT NULL after population
 -- First ensure all usernames are populated
 UPDATE public.users
 SET username = public.slugify(COALESCE(NULLIF(display_name, ''), split_part(email, '@', 1), 'user'))
@@ -57,7 +70,7 @@ WHERE username IS NULL OR username = '';
 ALTER TABLE public.users
 ALTER COLUMN username SET NOT NULL;
 
--- Step 8: Update the trigger to use username instead of display_name
+-- Step 9: Update the trigger to use username instead of display_name
 -- The trigger now only sets username (from metadata or email prefix)
 -- No format restrictions - username is stored as provided
 CREATE OR REPLACE FUNCTION public.handle_new_user()

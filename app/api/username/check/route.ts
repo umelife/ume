@@ -42,12 +42,12 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate username format (alphanumeric + underscore, starts with letter)
-    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/
+    // Validate username format (slugified: lowercase, alphanumeric, hyphens)
+    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
     if (!usernameRegex.test(trimmedUsername)) {
       return NextResponse.json(
         {
-          error: 'Username must start with a letter and contain only letters, numbers, and underscores',
+          error: 'Username must be 3-64 characters, lowercase letters, numbers, and hyphens only',
           available: false
         },
         { status: 400 }

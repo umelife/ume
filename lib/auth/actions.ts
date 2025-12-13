@@ -33,12 +33,12 @@ export async function checkUsernameAvailability(username: string): Promise<{ ava
       return { available: false, error: 'Username is required' }
     }
 
-    // Validate username format
-    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/
+    // Validate username format (slugified: lowercase, alphanumeric, hyphens)
+    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
     if (!usernameRegex.test(username)) {
       return {
         available: false,
-        error: 'Username must be 3-20 characters, start with a letter, and contain only letters, numbers, and underscores'
+        error: 'Username must be 3-64 characters, lowercase letters, numbers, and hyphens only'
       }
     }
 

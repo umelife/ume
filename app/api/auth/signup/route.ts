@@ -7,7 +7,7 @@ export const runtime = 'nodejs'
 
 export async function POST(request: Request) {
   try {
-    const { email, password, displayName, username } = await request.json()
+    const { email, password, username } = await request.json()
 
     // Validate username
     if (!username) {
@@ -17,11 +17,11 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate username format
-    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/
+    // Validate username format (slugified: lowercase, alphanumeric, hyphens)
+    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
     if (!usernameRegex.test(username)) {
       return NextResponse.json(
-        { error: 'Username must be 3-20 characters, start with a letter, and contain only letters, numbers, and underscores' },
+        { error: 'Username must be 3-64 characters, lowercase letters, numbers, and hyphens only' },
         { status: 400 }
       )
     }
@@ -46,13 +46,12 @@ export async function POST(request: Request) {
     const supabase = await createClient()
 
     // Sign up user
-    // The username and display_name metadata are used by the database trigger to create the profile
+    // The username metadata is used by the database trigger to create the profile
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
-          display_name: displayName,
           username: username,
         },
       },

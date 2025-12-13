@@ -41,11 +41,11 @@ export default function UsernameInput({
       return
     }
 
-    // Basic format validation
-    const usernameRegex = /^[a-zA-Z][a-zA-Z0-9_]{2,19}$/
+    // Basic format validation (slugified: lowercase, alphanumeric, hyphens)
+    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
     if (!usernameRegex.test(username)) {
       setCheckState('invalid')
-      setErrorMessage('Username must be 3-20 characters, start with a letter, and contain only letters, numbers, and underscores')
+      setErrorMessage('Username must be 3-64 characters, lowercase letters, numbers, and hyphens only')
       onAvailabilityChange(false)
       return
     }

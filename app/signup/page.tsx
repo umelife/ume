@@ -84,13 +84,12 @@ export default function SignupPage() {
 
     const formData = new FormData(e.currentTarget)
     const email = formData.get('email') as string
-    const displayName = formData.get('displayName') as string
 
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, displayName, username }),
+        body: JSON.stringify({ email, password, username }),
       })
 
       const data = await response.json()
@@ -103,7 +102,6 @@ export default function SignupPage() {
 
       trackEvent('signup_success', {
         email: email,
-        display_name: displayName,
         username: username,
       })
 
@@ -151,20 +149,6 @@ export default function SignupPage() {
                 onAvailabilityChange={setUsernameAvailable}
                 required
               />
-
-              <div>
-                <label htmlFor="displayName" className="block text-sm font-medium text-black mb-1">
-                  Display Name
-                </label>
-                <input
-                  id="displayName"
-                  name="displayName"
-                  type="text"
-                  required
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Enter your display name"
-                />
-              </div>
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-black mb-1">

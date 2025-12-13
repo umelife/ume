@@ -1,4 +1,4 @@
-import { createServiceClient } from '@/lib/supabase/server'
+import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
 
 export const runtime = 'nodejs'
@@ -7,7 +7,6 @@ export const runtime = 'nodejs'
  * POST /api/username/check
  *
  * Check if a username is available (case-insensitive)
- * Uses service role client to bypass RLS for availability checking
  *
  * Request body: { username: string }
  * Response: { available: boolean } | { error: string }
@@ -28,8 +27,8 @@ export async function POST(request: Request) {
     // Trim username (no format validation - only check uniqueness)
     const trimmedUsername = username.trim()
 
-    // Use service role client to check availability (bypasses RLS)
-    const supabase = await createServiceClient()
+    // Use regular client to check availability
+    const supabase = await createClient()
 
     // Check for case-insensitive match using PostgreSQL lower() function
     const { data, error } = await supabase

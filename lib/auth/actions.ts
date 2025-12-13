@@ -33,15 +33,7 @@ export async function checkUsernameAvailability(username: string): Promise<{ ava
       return { available: false, error: 'Username is required' }
     }
 
-    // Validate username format (slugified: lowercase, alphanumeric, hyphens)
-    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
-    if (!usernameRegex.test(username)) {
-      return {
-        available: false,
-        error: 'Username must be 3-64 characters, lowercase letters, numbers, and hyphens only'
-      }
-    }
-
+    // No format validation - only check uniqueness (case-insensitive)
     const supabase = await createClient()
 
     // Check for case-insensitive match

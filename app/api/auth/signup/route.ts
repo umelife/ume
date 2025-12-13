@@ -17,15 +17,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate username format (slugified: lowercase, alphanumeric, hyphens)
-    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
-    if (!usernameRegex.test(username)) {
-      return NextResponse.json(
-        { error: 'Username must be 3-64 characters, lowercase letters, numbers, and hyphens only' },
-        { status: 400 }
-      )
-    }
-
+    // No format validation - only check uniqueness
     // Check username availability
     const usernameCheck = await checkUsernameAvailability(username)
     if (!usernameCheck.available) {

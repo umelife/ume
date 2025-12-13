@@ -41,15 +41,7 @@ export default function UsernameInput({
       return
     }
 
-    // Basic format validation (slugified: lowercase, alphanumeric, hyphens)
-    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
-    if (!usernameRegex.test(username)) {
-      setCheckState('invalid')
-      setErrorMessage('Username must be 3-64 characters, lowercase letters, numbers, and hyphens only')
-      onAvailabilityChange(false)
-      return
-    }
-
+    // No format validation - only check uniqueness
     // Check availability via API
     setCheckState('checking')
     setIsChecking(true)

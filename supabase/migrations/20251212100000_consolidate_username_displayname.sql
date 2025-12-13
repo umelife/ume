@@ -35,27 +35,17 @@ WHERE username IS NOT NULL;
 -- Step 4: Drop the old case-insensitive unique index if it exists
 DROP INDEX IF EXISTS public.users_username_lower_idx;
 
--- Step 5: Drop the old format check constraint (too restrictive for slugified names)
+-- Step 5: Drop the old format check constraint (we only enforce uniqueness now)
 ALTER TABLE public.users DROP CONSTRAINT IF EXISTS username_format_check;
 
--- Step 6: Add new unique constraint on username (case-sensitive, since we slugify to lowercase)
--- We use DO block to handle potential duplicates gracefully
-DO $$
-BEGIN
-  IF NOT EXISTS (
-    SELECT 1 FROM pg_indexes
-    WHERE schemaname='public' AND tablename='users' AND indexname='users_username_key'
-  ) THEN
-    BEGIN
-      ALTER TABLE public.users ADD CONSTRAINT users_username_key UNIQUE (username);
-      RAISE NOTICE 'Successfully added unique constraint on username';
-    EXCEPTION WHEN unique_violation THEN
-      RAISE NOTICE 'Unique constraint failed — inspect duplicates with: SELECT username, count(*) FROM public.users GROUP BY username HAVING count(*)>1;';
-    END;
-  ELSE
-    RAISE NOTICE 'Unique constraint already exists on username';
-  END IF;
-END$$ LANGUAGE plpgsql;
+-- Step 6: Add case-insensitive unique index on username
+-- This ensures "Ruthiik" and "ruthiik" are treated as the same username
+CREATE UNIQUE INDEX IF NOT EXISTS users_username_lower_unique_idx
+  ON public.users (lower(username));
+
+-- Also add a regular index for faster lookups
+CREATE INDEX IF NOT EXISTS users_username_idx
+  ON public.users (username);
 
 -- Step 7: Make username NOT NULL after population
 -- First ensure all usernames are populated
@@ -68,22 +58,28 @@ ALTER TABLE public.users
 ALTER COLUMN username SET NOT NULL;
 
 -- Step 8: Update the trigger to use username instead of display_name
--- The trigger now only sets username (from metadata or slugified email)
+-- The trigger now only sets username (from metadata or email prefix)
+-- No format restrictions - username is stored as provided
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS trigger AS $$
 DECLARE
   new_username text;
+  attempt_count int := 0;
 BEGIN
-  -- Get username from metadata, or slugify email prefix as fallback
+  -- Get username from metadata, or use email prefix as fallback
   new_username := COALESCE(
     NULLIF(new.raw_user_meta_data->>'username', ''),
-    public.slugify(split_part(new.email, '@', 1))
+    split_part(new.email, '@', 1)
   );
 
-  -- Ensure username is unique by appending suffix if needed
+  -- Ensure username is unique (case-insensitive) by appending suffix if needed
   -- This is a safety mechanism in case of race conditions
-  WHILE EXISTS (SELECT 1 FROM public.users WHERE username = new_username) LOOP
-    new_username := new_username || '-' || floor(random() * 1000)::text;
+  WHILE EXISTS (SELECT 1 FROM public.users WHERE lower(username) = lower(new_username)) AND attempt_count < 100 LOOP
+    attempt_count := attempt_count + 1;
+    new_username := COALESCE(
+      NULLIF(new.raw_user_meta_data->>'username', ''),
+      split_part(new.email, '@', 1)
+    ) || '-' || attempt_count::text;
   END LOOP;
 
   INSERT INTO public.users (id, email, display_name, username, university_domain, created_at)

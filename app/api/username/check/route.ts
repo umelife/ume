@@ -25,34 +25,8 @@ export async function POST(request: Request) {
       )
     }
 
-    // Trim and validate username
+    // Trim username (no format validation - only check uniqueness)
     const trimmedUsername = username.trim()
-
-    if (trimmedUsername.length < 3) {
-      return NextResponse.json(
-        { error: 'Username must be at least 3 characters', available: false },
-        { status: 400 }
-      )
-    }
-
-    if (trimmedUsername.length > 20) {
-      return NextResponse.json(
-        { error: 'Username must be 20 characters or less', available: false },
-        { status: 400 }
-      )
-    }
-
-    // Validate username format (slugified: lowercase, alphanumeric, hyphens)
-    const usernameRegex = /^[a-z0-9][a-z0-9-]{1,62}[a-z0-9]$/
-    if (!usernameRegex.test(trimmedUsername)) {
-      return NextResponse.json(
-        {
-          error: 'Username must be 3-64 characters, lowercase letters, numbers, and hyphens only',
-          available: false
-        },
-        { status: 400 }
-      )
-    }
 
     // Use service role client to check availability (bypasses RLS)
     const supabase = await createServiceClient()

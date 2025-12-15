@@ -28,6 +28,9 @@ export interface Listing {
   color?: string;
   size?: string;
   material?: string;
+  latitude?: number;
+  longitude?: number;
+  distance_miles?: number;
   user?: User;
 }
 

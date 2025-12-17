@@ -86,7 +86,7 @@ export default function CategoryGrid() {
         <div className="flex justify-center mb-12 sm:mb-16">
           <Link
             href="/marketplace"
-            className="inline-block px-12 py-3 border-2 border-black text-black font-medium text-sm tracking-[0.15em] uppercase rounded-full hover:bg-black hover:text-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-black/30"
+            className="inline-block px-12 py-3 border-2 border-black text-black font-medium text-sm tracking-[-0.03em] uppercase rounded-full hover:bg-black hover:text-white transition-all duration-200 focus:outline-none focus:ring-4 focus:ring-black/30"
           >
             ALL
           </Link>

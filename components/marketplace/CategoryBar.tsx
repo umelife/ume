@@ -1,16 +1,15 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { useState, useEffect } from 'react'
 
 /**
  * CategoryBar Component
  *
  * Displays horizontal category chips that users can click to filter listings.
  * Features:
- * - Active category appears first (reordered)
+ * - Categories stay in their original position
  * - Updates URL with ?category=slug
- * - Horizontally scrollable on mobile
+ * - Centered layout with equal spacing
  * - Keyboard accessible with focus rings
  */
 
@@ -32,27 +31,6 @@ interface CategoryBarProps {
 export default function CategoryBar({ currentCategory }: CategoryBarProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const [orderedCategories, setOrderedCategories] = useState(CATEGORIES)
-
-  // Reorder categories when active category changes
-  useEffect(() => {
-    if (currentCategory) {
-      // Move active category to the front
-      const activeIndex = CATEGORIES.findIndex(c => c.slug === currentCategory)
-      if (activeIndex > 0) {
-        const reordered = [
-          CATEGORIES[activeIndex],
-          ...CATEGORIES.slice(0, activeIndex),
-          ...CATEGORIES.slice(activeIndex + 1)
-        ]
-        setOrderedCategories(reordered)
-      } else {
-        setOrderedCategories(CATEGORIES)
-      }
-    } else {
-      setOrderedCategories(CATEGORIES)
-    }
-  }, [currentCategory])
 
   const handleCategoryClick = (slug: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -76,8 +54,8 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
 
   return (
     <div className="mb-6">
-      {/* Horizontal scrolling container */}
-      <div className="flex items-center gap-3 overflow-x-auto pb-2 scrollbar-hide">
+      {/* Centered container with equal spacing */}
+      <div className="flex items-center justify-center gap-3 flex-wrap px-4">
         {/* View All chip */}
         <button
           onClick={handleViewAll}
@@ -96,8 +74,8 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
           All
         </button>
 
-        {/* Category chips */}
-        {orderedCategories.map((category) => {
+        {/* Category chips - always in original order */}
+        {CATEGORIES.map((category) => {
           const isActive = currentCategory === category.slug
 
           return (

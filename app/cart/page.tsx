@@ -187,7 +187,7 @@ export default function CartPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen pampas-bg flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-black"></div>
           <p className="text-black mt-4">Loading cart...</p>
@@ -199,7 +199,7 @@ export default function CartPage() {
   // show empty state (empty array or no listings)
   if (!cartItems || cartItems.length === 0) {
     return (
-      <div className="min-h-screen pampas-bg">
+      <div className="min-h-screen bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <h1 className="heading-primary text-black mb-8">SHOPPING CART</h1>
 
@@ -226,7 +226,7 @@ export default function CartPage() {
   const total = calculateTotal()
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="heading-primary text-black mb-8">SHOPPING CART</h1>
 

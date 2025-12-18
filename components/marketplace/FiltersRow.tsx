@@ -48,49 +48,39 @@ export default function FiltersRow({
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-sm p-4 space-y-4 md:space-y-0 md:flex md:items-end md:gap-4">
-      {/* Condition Dropdown */}
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Condition
-        </label>
-        <select
-          value={currentCondition || 'all'}
-          onChange={(e) => handleConditionChange(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent cursor-pointer"
-          aria-label="Filter by condition"
-        >
-          <option value="all">All Conditions</option>
-          {CONDITIONS.map((condition) => (
-            <option key={condition} value={condition}>
-              {condition}
-            </option>
-          ))}
-        </select>
-      </div>
+    <div className="mb-6">
+      <div className="flex items-center gap-3 flex-wrap">
+        {/* Condition Dropdown */}
+        <div>
+          <select
+            value={currentCondition || 'all'}
+            onChange={(e) => handleConditionChange(e.target.value)}
+            className="px-4 py-2 border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 cursor-pointer"
+            aria-label="Filter by condition"
+          >
+            <option value="all">Condition</option>
+            {CONDITIONS.map((condition) => (
+              <option key={condition} value={condition}>
+                {condition}
+              </option>
+            ))}
+          </select>
+        </div>
 
-      {/* Location Radius Slider */}
-      <div className="flex-1">
-        <LocationRadiusSlider
-          initialRadius={currentRadius}
-          userLat={userLat}
-          userLng={userLng}
-        />
-      </div>
-
-      {/* Price Range Button (placeholder) */}
-      <div className="flex-1">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Price Range
-        </label>
-        <button
-          onClick={handlePriceRange}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-sm font-medium"
-          aria-label="Set price range"
-        >
-          Any Price
-        </button>
-        <p className="text-xs text-gray-400 mt-1">Coming soon</p>
+        {/* Price Range Dropdown */}
+        <div>
+          <select
+            className="px-4 py-2 border border-gray-300 bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 cursor-pointer"
+            aria-label="Filter by price"
+          >
+            <option>Price</option>
+            <option>Under $25</option>
+            <option>$25 - $50</option>
+            <option>$50 - $100</option>
+            <option>$100 - $200</option>
+            <option>Over $200</option>
+          </select>
+        </div>
       </div>
     </div>
   )

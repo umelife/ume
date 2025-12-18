@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 
 export default function CreateListingPage() {
   return (
-    <div className="min-h-screen bg-[#f5f5f0] py-16 px-4">
+    <div className="min-h-screen bg-white py-16 px-4">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <h1 className="heading-primary text-black mb-12">

@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
+    <div className="min-h-screen bg-white">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* What's RECLAIM? - Centered Section */}

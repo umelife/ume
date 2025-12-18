@@ -195,7 +195,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     : 'Shop all'
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#f5f5f0' }}>
+    <div className="min-h-screen bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
         {/* Page Title - Positioned at top */}

@@ -51,6 +51,8 @@ export default async function ProfilePage({
           <ProfileSettings
             currentDisplayName={profileUser.username || profileUser.display_name}
             userId={id}
+            currentCollegeName={profileUser.college_name}
+            currentCollegeAddress={profileUser.college_address}
           />
         )}
 

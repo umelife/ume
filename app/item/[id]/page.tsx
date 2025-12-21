@@ -73,16 +73,17 @@ export default async function ListingDetailPage({
 
               {listing.user && (
                 <div className="border-t pt-4 mt-4">
-                  <p className="text-sm font-medium text-black mb-2">Seller</p>
                   <Link
                     href={'/profile/' + listing.user.id}
                     className="text-blue-600 hover:underline font-semibold text-lg block mb-1"
                   >
-                    {listing.user.display_name}
+                    @{listing.user.username || listing.user.display_name}
                   </Link>
-                  <p className="text-sm text-black">
-                    @{listing.user.university_domain}
-                  </p>
+                  {listing.user.college_name && (
+                    <p className="text-sm text-black">
+                      {listing.user.college_name}
+                    </p>
+                  )}
                 </div>
               )}
 

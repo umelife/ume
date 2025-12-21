@@ -8,11 +8,20 @@ import UsernameInput from '@/components/auth/UsernameInput'
 interface ProfileSettingsProps {
   currentDisplayName: string | null
   userId: string
+  currentCollegeName?: string | null
+  currentCollegeAddress?: string | null
 }
 
-export default function ProfileSettings({ currentDisplayName, userId }: ProfileSettingsProps) {
+export default function ProfileSettings({
+  currentDisplayName,
+  userId,
+  currentCollegeName = '',
+  currentCollegeAddress = ''
+}: ProfileSettingsProps) {
   const [username, setUsername] = useState(currentDisplayName || '')
   const [isUsernameAvailable, setIsUsernameAvailable] = useState(false)
+  const [collegeName, setCollegeName] = useState(currentCollegeName || '')
+  const [collegeAddress, setCollegeAddress] = useState(currentCollegeAddress || '')
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -60,6 +69,51 @@ export default function ProfileSettings({ currentDisplayName, userId }: ProfileS
       setTimeout(() => window.location.reload(), 1500)
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message || 'Failed to update username' })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleUpdateCollege = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+    setMessage(null)
+
+    // Check if values haven't changed
+    if (collegeName === currentCollegeName && collegeAddress === currentCollegeAddress) {
+      setMessage({ type: 'error', text: 'No changes detected' })
+      setLoading(false)
+      return
+    }
+
+    // Validate required fields
+    if (!collegeName.trim()) {
+      setMessage({ type: 'error', text: 'College name is required' })
+      setLoading(false)
+      return
+    }
+
+    if (!collegeAddress.trim()) {
+      setMessage({ type: 'error', text: 'College address is required' })
+      setLoading(false)
+      return
+    }
+
+    try {
+      const { error } = await supabase
+        .from('users')
+        .update({
+          college_name: collegeName.trim(),
+          college_address: collegeAddress.trim()
+        })
+        .eq('id', userId)
+
+      if (error) throw error
+
+      setMessage({ type: 'success', text: 'College information updated successfully!' })
+      setTimeout(() => window.location.reload(), 1500)
+    } catch (error: any) {
+      setMessage({ type: 'error', text: error.message || 'Failed to update college information' })
     } finally {
       setLoading(false)
     }
@@ -169,6 +223,46 @@ export default function ProfileSettings({ currentDisplayName, userId }: ProfileS
             className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
           >
             {loading ? 'Updating...' : 'Update Username'}
+          </button>
+        </div>
+      </form>
+
+      {/* Update College Information */}
+      <form onSubmit={handleUpdateCollege} className="mb-8 pb-8 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">College Information</h3>
+        <div className="max-w-md space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              College Name
+            </label>
+            <input
+              type="text"
+              value={collegeName}
+              onChange={(e) => setCollegeName(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., University of the Cumberlands"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              College Address
+            </label>
+            <input
+              type="text"
+              value={collegeAddress}
+              onChange={(e) => setCollegeAddress(e.target.value)}
+              required
+              className="w-full border border-gray-300 rounded-lg px-4 py-2 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., 6178 College Station Dr, Williamsburg, KY 40769"
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium"
+          >
+            {loading ? 'Updating...' : 'Update College Info'}
           </button>
         </div>
       </form>

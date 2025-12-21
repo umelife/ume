@@ -2,7 +2,10 @@ export interface User {
   id: string;
   email: string;
   display_name: string;
+  username?: string;
   university_domain: string;
+  college_name?: string;
+  college_address?: string;
   created_at: string;
   // seller_rating?: number; // Feature disabled
   total_sales?: number;

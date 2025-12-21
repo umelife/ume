@@ -7,12 +7,27 @@ export const runtime = 'nodejs'
 
 export async function POST(request: Request) {
   try {
-    const { email, password, username } = await request.json()
+    const { email, password, username, collegeName, collegeAddress } = await request.json()
 
     // Validate username
     if (!username) {
       return NextResponse.json(
         { error: 'Username is required' },
+        { status: 400 }
+      )
+    }
+
+    // Validate college fields
+    if (!collegeName || !collegeName.trim()) {
+      return NextResponse.json(
+        { error: 'College name is required' },
+        { status: 400 }
+      )
+    }
+
+    if (!collegeAddress || !collegeAddress.trim()) {
+      return NextResponse.json(
+        { error: 'College address is required' },
         { status: 400 }
       )
     }
@@ -38,13 +53,15 @@ export async function POST(request: Request) {
     const supabase = await createClient()
 
     // Sign up user
-    // The username metadata is used by the database trigger to create the profile
+    // The username and college metadata is used by the database trigger to create the profile
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         data: {
           username: username,
+          college_name: collegeName.trim(),
+          college_address: collegeAddress.trim(),
         },
       },
     })

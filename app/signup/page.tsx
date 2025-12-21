@@ -25,6 +25,8 @@ export default function SignupPage() {
   const [passwordsMatch, setPasswordsMatch] = useState(true)
   const [username, setUsername] = useState('')
   const [usernameAvailable, setUsernameAvailable] = useState(false)
+  const [collegeName, setCollegeName] = useState('')
+  const [collegeAddress, setCollegeAddress] = useState('')
   const router = useRouter()
 
   // Validate password requirements
@@ -85,11 +87,30 @@ export default function SignupPage() {
     const formData = new FormData(e.currentTarget)
     const email = formData.get('email') as string
 
+    // Validate college fields
+    if (!collegeName.trim()) {
+      setError('College name is required')
+      setLoading(false)
+      return
+    }
+
+    if (!collegeAddress.trim()) {
+      setError('College address is required')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, username }),
+        body: JSON.stringify({
+          email,
+          password,
+          username,
+          collegeName: collegeName.trim(),
+          collegeAddress: collegeAddress.trim()
+        }),
       })
 
       const data = await response.json()
@@ -152,7 +173,7 @@ export default function SignupPage() {
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-black mb-1">
-                  Email Address
+                  Organization's Email Address
                 </label>
                 <input
                   id="email"
@@ -161,6 +182,38 @@ export default function SignupPage() {
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
                   placeholder="you@university.edu"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="collegeName" className="block text-sm font-medium text-black mb-1">
+                  College Name
+                </label>
+                <input
+                  id="collegeName"
+                  name="collegeName"
+                  type="text"
+                  required
+                  value={collegeName}
+                  onChange={(e) => setCollegeName(e.target.value)}
+                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                  placeholder="e.g., University of the Cumberlands"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="collegeAddress" className="block text-sm font-medium text-black mb-1">
+                  College Address
+                </label>
+                <input
+                  id="collegeAddress"
+                  name="collegeAddress"
+                  type="text"
+                  required
+                  value={collegeAddress}
+                  onChange={(e) => setCollegeAddress(e.target.value)}
+                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                  placeholder="e.g., 6178 College Station Dr, Williamsburg, KY 40769"
                 />
               </div>
 
@@ -254,7 +307,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading || !allRequirementsMet || !passwordsMatch || !confirmPassword || !usernameAvailable}
+              disabled={loading || !allRequirementsMet || !passwordsMatch || !confirmPassword || !usernameAvailable || !collegeName.trim() || !collegeAddress.trim()}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Sign up'}

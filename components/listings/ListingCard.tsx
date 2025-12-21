@@ -33,6 +33,18 @@ export default function ListingCard({ listing }: { listing: Listing }) {
           <p className="text-black text-sm line-clamp-2 mb-2">
             {listing.description}
           </p>
+          {listing.user && (
+            <div className="mb-2">
+              <p className="text-sm text-gray-700">
+                @{listing.user.username || listing.user.display_name}
+              </p>
+              {listing.user.college_name && (
+                <p className="text-xs text-gray-600">
+                  {listing.user.college_name}
+                </p>
+              )}
+            </div>
+          )}
           <div className="flex justify-between items-center text-sm text-black">
             <span className="bg-gray-100 px-2 py-1 rounded">
               {listing.category}

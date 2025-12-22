@@ -30,6 +30,7 @@ interface MarketplacePageProps {
     condition?: string
     minPrice?: string
     maxPrice?: string
+    sort?: string
   }>
 }
 
@@ -78,6 +79,7 @@ async function fetchListings(searchParams: {
   condition?: string
   minPrice?: string
   maxPrice?: string
+  sort?: string
 }): Promise<Listing[]> {
   const supabase = await createClient()
 
@@ -89,6 +91,7 @@ async function fetchListings(searchParams: {
   const condition = searchParams.condition
   const minPrice = searchParams.minPrice ? parseFloat(searchParams.minPrice) : null
   const maxPrice = searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : null
+  const sort = searchParams.sort || 'relevance'
 
   try {
     // CASE 1: Radius filtering (requires location)
@@ -131,13 +134,32 @@ async function fetchListings(searchParams: {
 
         if (listingsWithUsers) {
           // Merge distance data with user data
-          const merged = listingsWithUsers.map(listing => {
+          let merged = listingsWithUsers.map(listing => {
             const radiusListing = filteredData.find((l: any) => l.id === listing.id)
             return {
               ...listing,
               distance_miles: radiusListing?.distance_miles
             }
           })
+
+          // Apply sorting to merged results
+          switch (sort) {
+            case 'newest':
+              merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+              break
+            case 'price-asc':
+              merged.sort((a, b) => a.price - b.price)
+              break
+            case 'price-desc':
+              merged.sort((a, b) => b.price - a.price)
+              break
+            case 'relevance':
+            default:
+              // Relevance: sort by created_at desc (newest first) as default
+              merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+              break
+          }
+
           return merged as Listing[]
         }
       }
@@ -149,7 +171,6 @@ async function fetchListings(searchParams: {
     let query = supabase
       .from('listings')
       .select('*, user:users(*)')
-      .order('created_at', { ascending: false })
 
     // Apply category filter
     if (categorySlug) {
@@ -168,6 +189,24 @@ async function fetchListings(searchParams: {
     }
     if (maxPrice !== null) {
       query = query.lte('price', maxPrice)
+    }
+
+    // Apply sorting
+    switch (sort) {
+      case 'newest':
+        query = query.order('created_at', { ascending: false })
+        break
+      case 'price-asc':
+        query = query.order('price', { ascending: true })
+        break
+      case 'price-desc':
+        query = query.order('price', { ascending: false })
+        break
+      case 'relevance':
+      default:
+        // Relevance: sort by created_at desc (newest first) as default
+        query = query.order('created_at', { ascending: false })
+        break
     }
 
     const { data, error } = await query
@@ -211,9 +250,9 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         <Suspense fallback={<div className="h-20 bg-white rounded-lg animate-pulse" />}>
           <FiltersRow
             currentCondition={params.condition}
-            currentRadius={params.radius ? parseFloat(params.radius) : undefined}
-            userLat={params.userLat ? parseFloat(params.userLat) : undefined}
-            userLng={params.userLng ? parseFloat(params.userLng) : undefined}
+            currentSort={params.sort}
+            currentMinPrice={params.minPrice ? (parseFloat(params.minPrice) / 100).toString() : undefined}
+            currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
           />
         </Suspense>
 

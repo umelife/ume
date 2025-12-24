@@ -198,11 +198,11 @@ export default function CartPage() {
                       </p>
 
                       {/* Action Buttons */}
-                      <div className="mt-4 grid grid-cols-2 gap-3 w-full">
+                      <div className="mt-4 grid grid-cols-2 gap-3 max-w-md">
                         <button
                           onClick={() => handleContactSeller(listing)}
                           disabled={contactingIds[listing.id]}
-                          className={`w-full h-11 px-4 rounded-full text-sm font-medium transition-colors ${
+                          className={`w-full h-11 px-4 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                             contactingIds[listing.id]
                               ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                               : 'bg-black text-white hover:bg-gray-800'
@@ -213,7 +213,7 @@ export default function CartPage() {
                         <button
                           onClick={() => removeFromCart(listing.id)}
                           disabled={isRemoving}
-                          className={`w-full h-11 px-4 rounded-full text-sm font-medium transition-colors ${
+                          className={`w-full h-11 px-4 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                             isRemoving
                               ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                               : 'bg-white border border-red-600 text-red-600 hover:bg-red-50'
@@ -225,7 +225,7 @@ export default function CartPage() {
                     </div>
 
                     {/* Price (no subtotal since quantity is always 1) */}
-                    <div className="text-right">
+                    <div className="text-right flex-shrink-0">
                       <p className="text-lg font-bold text-black">
                         {formatPrice(listing.price)}
                       </p>

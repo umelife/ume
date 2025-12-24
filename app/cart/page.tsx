@@ -198,11 +198,11 @@ export default function CartPage() {
                       </p>
 
                       {/* Action Buttons */}
-                      <div className="mt-4 flex gap-3">
+                      <div className="mt-4 grid grid-cols-2 gap-3">
                         <button
                           onClick={() => handleContactSeller(listing)}
                           disabled={contactingIds[listing.id]}
-                          className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                             contactingIds[listing.id]
                               ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                               : 'bg-black text-white hover:bg-gray-800'

@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatPrice } from '@/lib/utils/helpers'
+import { getOrCreateConversation } from '@/lib/chat/conversations'
 import useCart from '@/hooks/useCart'
 import type { Listing } from '@/types/database'
 
@@ -13,8 +14,19 @@ export default function CartPage() {
   const [supabase] = useState(() => createClient())
   const [listings, setListings] = useState<Listing[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [contactingIds, setContactingIds] = useState<Record<string, boolean>>({})
   const { cart, removeFromCart, loadingIds } = useCart()
   const router = useRouter()
+
+  // Get current user
+  useEffect(() => {
+    async function getCurrentUser() {
+      const { data: { user } } = await supabase.auth.getUser()
+      setCurrentUserId(user?.id || null)
+    }
+    getCurrentUser()
+  }, [supabase])
 
   // Fetch listing details for items in cart
   useEffect(() => {
@@ -62,6 +74,37 @@ export default function CartPage() {
   // Calculate total (no quantities, just sum all prices)
   const calculateTotal = () => {
     return listings.reduce((total, listing) => total + listing.price, 0)
+  }
+
+  // Handle contact seller
+  const handleContactSeller = async (listing: Listing) => {
+    if (!currentUserId) {
+      window.location.href = `/login?returnUrl=/cart`
+      return
+    }
+
+    setContactingIds(prev => ({ ...prev, [listing.id]: true }))
+
+    try {
+      const result = await getOrCreateConversation(
+        currentUserId,
+        listing.user_id,
+        listing.id
+      )
+
+      if (result.error || !result.conversationId) {
+        console.error('Failed to open chat:', result.error)
+        setContactingIds(prev => ({ ...prev, [listing.id]: false }))
+        return
+      }
+
+      const prefillMessage = `Hi — I'm interested in "${listing.title}". Are you available to meet on campus for pickup?`
+      const encodedPrefill = encodeURIComponent(prefillMessage)
+      router.push(`/messages?conversationId=${result.conversationId}&prefill=${encodedPrefill}`)
+    } catch (err) {
+      console.error('Contact seller error:', err)
+      setContactingIds(prev => ({ ...prev, [listing.id]: false }))
+    }
   }
 
   // Checkout disabled for MVP
@@ -154,8 +197,19 @@ export default function CartPage() {
                         {formatPrice(listing.price)}
                       </p>
 
-                      {/* Remove Button */}
-                      <div className="mt-4">
+                      {/* Action Buttons */}
+                      <div className="mt-4 flex gap-3">
+                        <button
+                          onClick={() => handleContactSeller(listing)}
+                          disabled={contactingIds[listing.id]}
+                          className={`flex-1 px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                            contactingIds[listing.id]
+                              ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
+                              : 'bg-black text-white hover:bg-gray-800'
+                          }`}
+                        >
+                          {contactingIds[listing.id] ? 'Opening chat...' : '💬 Contact Seller'}
+                        </button>
                         <button
                           onClick={() => removeFromCart(listing.id)}
                           disabled={isRemoving}
@@ -165,7 +219,7 @@ export default function CartPage() {
                               : 'bg-white border border-red-600 text-red-600 hover:bg-red-50'
                           }`}
                         >
-                          {isRemoving ? 'Removing...' : 'Remove from cart'}
+                          {isRemoving ? 'Removing...' : 'Remove'}
                         </button>
                       </div>
                     </div>
@@ -211,7 +265,7 @@ export default function CartPage() {
                 title="Payments are disabled in the MVP"
                 disabled
               >
-                Payments coming soon
+                Payments coming soon, contact sellers instead
               </button>
 
               <Link

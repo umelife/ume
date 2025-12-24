@@ -32,52 +32,53 @@ export default function ListingCard({ listing }: { listing: Listing }) {
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
       <Link href={`/item/${listing.id}`}>
         <div>
-        <div className="relative h-48 bg-gray-200">
-          {listing.image_urls && listing.image_urls.length > 0 ? (
-            <Image
-              src={imageUrl}
-              alt={listing.title}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <div className="h-full flex items-center justify-center">
-              <span className="text-gray-400">No image</span>
-            </div>
-          )}
-          {listing.condition && (
-            <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700 shadow-sm">
-              {listing.condition}
-            </div>
-          )}
-        </div>
-        <div className="p-4">
-          <h3 className="font-semibold text-lg text-gray-900 mb-1 truncate">
-            {listing.title}
-          </h3>
-          <p className="text-black font-bold text-xl mb-2">
-            {formatPrice(listing.price)}
-          </p>
-          <p className="text-black text-sm line-clamp-2 mb-2">
-            {listing.description}
-          </p>
-          {listing.user && (
-            <div className="mb-2">
-              <p className="text-sm text-gray-700">
-                @{listing.user.username || listing.user.display_name}
-              </p>
-              {listing.user.college_name && (
-                <p className="text-xs text-gray-600">
-                  {listing.user.college_name}
+          <div className="relative h-48 bg-gray-200">
+            {listing.image_urls && listing.image_urls.length > 0 ? (
+              <Image
+                src={imageUrl}
+                alt={listing.title}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="h-full flex items-center justify-center">
+                <span className="text-gray-400">No image</span>
+              </div>
+            )}
+            {listing.condition && (
+              <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700 shadow-sm">
+                {listing.condition}
+              </div>
+            )}
+          </div>
+          <div className="p-4">
+            <h3 className="font-semibold text-lg text-gray-900 mb-1 truncate">
+              {listing.title}
+            </h3>
+            <p className="text-black font-bold text-xl mb-2">
+              {formatPrice(listing.price)}
+            </p>
+            <p className="text-black text-sm line-clamp-2 mb-2">
+              {listing.description}
+            </p>
+            {listing.user && (
+              <div className="mb-2">
+                <p className="text-sm text-gray-700">
+                  @{listing.user.username || listing.user.display_name}
                 </p>
-              )}
+                {listing.user.college_name && (
+                  <p className="text-xs text-gray-600">
+                    {listing.user.college_name}
+                  </p>
+                )}
+              </div>
+            )}
+            <div className="flex justify-between items-center text-sm text-black mb-3">
+              <span className="bg-gray-100 px-2 py-1 rounded">
+                {listing.category}
+              </span>
+              <span>{getTimeAgo(listing.created_at)}</span>
             </div>
-          )}
-          <div className="flex justify-between items-center text-sm text-black mb-3">
-            <span className="bg-gray-100 px-2 py-1 rounded">
-              {listing.category}
-            </span>
-            <span>{getTimeAgo(listing.created_at)}</span>
           </div>
         </div>
       </Link>

@@ -198,22 +198,22 @@ export default function CartPage() {
                       </p>
 
                       {/* Action Buttons */}
-                      <div className="mt-4 grid grid-cols-2 gap-3">
+                      <div className="mt-4 flex gap-3">
                         <button
                           onClick={() => handleContactSeller(listing)}
                           disabled={contactingIds[listing.id]}
-                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                          className={`flex-1 min-w-0 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                             contactingIds[listing.id]
                               ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                               : 'bg-black text-white hover:bg-gray-800'
                           }`}
                         >
-                          {contactingIds[listing.id] ? 'Opening chat...' : '💬 Contact Seller'}
+                          {contactingIds[listing.id] ? 'Opening...' : '💬 Contact'}
                         </button>
                         <button
                           onClick={() => removeFromCart(listing.id)}
                           disabled={isRemoving}
-                          className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                          className={`flex-1 min-w-0 px-4 py-2 rounded-full text-sm font-medium transition-colors whitespace-nowrap ${
                             isRemoving
                               ? 'bg-gray-300 text-gray-600 cursor-not-allowed'
                               : 'bg-white border border-red-600 text-red-600 hover:bg-red-50'

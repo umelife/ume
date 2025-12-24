@@ -32,7 +32,7 @@ body {
 
   /* Primary Heading - Granika Style (All Caps, Centered, Large) */
   .heading-primary {
-    font-family: 'Archivo Black', sans-serif;
+    font-family: var(--font-archivo-black), 'Archivo Black', sans-serif;
     font-size: 3rem; /* 48px */
     font-weight: 900;
     text-transform: uppercase;

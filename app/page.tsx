@@ -41,7 +41,7 @@ export default async function Home() {
             id: '2',
             image: '/placeholders/feature-secure.jpg',
             headline: 'VERIFIED STUDENTS ONLY',
-            subtitle: 'Safe and simple',
+            subtitle: '.edu email verification ensures you\'re trading within your campus community',
             alt: 'Verified students only feature'
           },
           {

@@ -5,7 +5,7 @@ import {
   MagicWand,
   Bicycle,
   Gift,
-  Devices,
+  Laptop,
   MagnifyingGlass,
   Book,
 } from 'phosphor-react';
@@ -19,7 +19,7 @@ export const CATEGORY_ICONS: Record<string, Icon> = {
   'Fun & Craft': MagicWand,
   'Transportation': Bicycle,
   'Giveaways': Gift,
-  'Tech & Gadgets': Devices,
+  'Tech & Gadgets': Laptop,
   'Books': Book,
   'Other': MagnifyingGlass,
 } as const;

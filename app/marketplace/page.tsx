@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import CategoryBar from '@/components/marketplace/CategoryBar'
 import FiltersRow from '@/components/marketplace/FiltersRow'
 import ProductGrid from '@/components/marketplace/ProductGrid'
+import { getCategorySubtitle } from '@/lib/constants/categories'
 import type { Listing } from '@/types/database'
 
 /**
@@ -228,10 +229,11 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   const listings = await fetchListings(params)
   const categoryDisplay = getCategoryDisplay(params.category)
 
-  // Generate page title
+  // Generate page title and subtitle
   const pageTitle = params.category
     ? `Shop ${categoryDisplay}`
     : 'Shop all'
+  const pageSubtitle = getCategorySubtitle(categoryDisplay)
 
   return (
     <div className="min-h-screen bg-white">
@@ -240,7 +242,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         {/* Page Title - Positioned at top */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-black mb-2">{pageTitle}</h1>
-          <p className="text-sm text-black">Shop everything you need in one safe place</p>
+          <p className="text-sm text-gray-600">{pageSubtitle}</p>
         </div>
 
         {/* Category Bar */}

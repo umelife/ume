@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { getCategorySubtitle } from '@/lib/constants/categories'
 
 /**
  * CategoryBar Component
@@ -12,7 +11,6 @@ import { getCategorySubtitle } from '@/lib/constants/categories'
  * - Updates URL with ?category=slug
  * - Centered layout with equal spacing
  * - Keyboard accessible with focus rings
- * - Dynamic subtitle that changes based on selected category
  */
 
 const CATEGORIES = [
@@ -53,11 +51,6 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
     params.delete('category')
     router.push(`/marketplace?${params.toString()}`)
   }
-
-  // Get display name for current category or 'All'
-  const currentDisplayName = currentCategory
-    ? CATEGORIES.find(c => c.slug === currentCategory)?.display || 'All'
-    : 'All'
 
   return (
     <div className="mb-6">
@@ -105,13 +98,6 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
             </button>
           )
         })}
-      </div>
-
-      {/* Dynamic subtitle that updates based on selected category */}
-      <div className="mt-3 text-center">
-        <p className="text-gray-600 text-sm">
-          {getCategorySubtitle(currentDisplayName)}
-        </p>
       </div>
 
       {/* Hide scrollbar for cleaner look */}

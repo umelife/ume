@@ -1,27 +1,19 @@
 // components/marketplace/CategoryIcon.tsx
 'use client';
+import React from 'react';
+import { CATEGORY_ICONS } from '@/lib/constants/categoryIcons';
 
-import { getCategoryIcon } from '@/lib/constants/categoryIcons';
-
-interface CategoryIconProps {
+interface Props {
   category: string;
   size?: number;
-  className?: string;
+  className?: string; // controls color via currentColor (text-* classes)
 }
 
-export default function CategoryIcon({
-  category,
-  size = 24,
-  className = '',
-}: CategoryIconProps) {
-  const Icon = getCategoryIcon(category);
-
+export default function CategoryIcon({ category, size = 24, className = '' }: Props) {
+  const IconFactory = CATEGORY_ICONS[category] ?? CATEGORY_ICONS.Other;
   return (
-    <Icon
-      size={size}
-      weight="regular"
-      color="currentColor"
-      className={className}
-    />
+    <span className={`inline-flex items-center justify-center ${className}`}>
+      {IconFactory({ size, weight: 'regular' })}
+    </span>
   );
 }

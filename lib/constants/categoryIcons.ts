@@ -9,22 +9,17 @@ import {
   MagnifyingGlass,
   Book,
 } from 'phosphor-react';
-import type { Icon } from 'phosphor-react';
+import type { IconProps } from 'phosphor-react';
 
-// Map category names to their corresponding Phosphor icons
-export const CATEGORY_ICONS: Record<string, Icon> = {
-  'All': MagnifyingGlass,
-  'Dorm & Decor': HouseLine,
-  'Clothing & Accessories': CoatHanger,
-  'Fun & Craft': MagicWand,
-  'Transportation': Bicycle,
-  'Giveaways': Gift,
-  'Tech & Gadgets': Laptop,
-  'Books': Book,
-  'Other': MagnifyingGlass,
-} as const;
-
-// Get icon for a category with safe fallback
-export function getCategoryIcon(category: string): Icon {
-  return CATEGORY_ICONS[category] || MagnifyingGlass;
-}
+// Single source of truth: mapping category -> render function
+export const CATEGORY_ICONS: Record<string, (props?: IconProps) => JSX.Element> = {
+  'All': (p = {}) => <MagnifyingGlass {...p} />,
+  'Dorm & Decor': (p = {}) => <HouseLine {...p} />,
+  'Clothing & Accessories': (p = {}) => <CoatHanger {...p} />,
+  'Fun & Craft': (p = {}) => <MagicWand {...p} />,
+  'Transportation': (p = {}) => <Bicycle {...p} />,
+  'Giveaways': (p = {}) => <Gift {...p} />,
+  'Tech & Gadgets': (p = {}) => <Laptop {...p} />,
+  'Books': (p = {}) => <Book {...p} />,
+  'Other': (p = {}) => <MagnifyingGlass {...p} />,
+};

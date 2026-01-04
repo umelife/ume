@@ -1,7 +1,6 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import CategoryIcon from '@/components/marketplace/CategoryIcon'
 
 /**
  * CategoryBar Component
@@ -12,7 +11,6 @@ import CategoryIcon from '@/components/marketplace/CategoryIcon'
  * - Updates URL with ?category=slug
  * - Centered layout with equal spacing
  * - Keyboard accessible with focus rings
- * - Shows Phosphor icons for each category
  */
 
 const CATEGORIES = [
@@ -62,7 +60,7 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
         <button
           onClick={handleViewAll}
           className={`
-            flex items-center gap-2 flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium
+            flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium
             transition-all duration-200
             focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
             ${!currentCategory
@@ -73,8 +71,7 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
           aria-pressed={!currentCategory}
           aria-label="View all categories"
         >
-          <CategoryIcon category="All" size={20} />
-          <span>All</span>
+          All
         </button>
 
         {/* Category chips - always in original order */}
@@ -86,7 +83,7 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
               key={category.slug}
               onClick={() => handleCategoryClick(category.slug)}
               className={`
-                flex items-center gap-2 flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium
+                flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium
                 transition-all duration-200
                 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
                 ${isActive
@@ -97,8 +94,7 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
               aria-pressed={isActive}
               aria-label={`Filter by ${category.display}`}
             >
-              <CategoryIcon category={category.display} size={20} />
-              <span>{category.display}</span>
+              {category.display}
             </button>
           )
         })}

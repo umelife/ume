@@ -1,75 +1,69 @@
 /**
  * CategoryGrid Component
  *
- * Category grid with icons and labels.
+ * Category grid with Phosphor icons and labels.
  * Matches screenshot 3: "CATEGORIES" heading with "ALL" button and icon grid below.
  * Features:
  * - 7 categories in a horizontal row (responsive wrapping)
- * - Icon + label for each category
+ * - Phosphor icon + label for each category
  * - Links to marketplace with category filter
  * - Accessible keyboard navigation
  */
 
+'use client'
+
 import Link from 'next/link'
-import {
-  DormIcon,
-  CraftIcon,
-  TransportationIcon,
-  TechIcon,
-  ClothingIcon,
-  GiftIcon,
-  GridIcon
-} from './CategoryIcons'
+import CategoryIcon from '@/components/marketplace/CategoryIcon'
 
 interface Category {
   id: string
   name: string
-  icon: React.ComponentType<{ className?: string }>
+  categoryKey: string // Key for CategoryIcon component
   href: string
 }
 
 const categories: Category[] = [
   {
     id: 'dorm',
-    name: 'Dorm and Decor',
-    icon: DormIcon,
-    href: '/marketplace?category=Dorm and Decor'
+    name: 'Dorm & Decor',
+    categoryKey: 'Dorm & Decor',
+    href: '/marketplace?category=dorm-and-decor'
   },
   {
     id: 'craft',
-    name: 'Fun and Craft',
-    icon: CraftIcon,
-    href: '/marketplace?category=Fun and Craft'
+    name: 'Fun & Craft',
+    categoryKey: 'Fun & Craft',
+    href: '/marketplace?category=fun-and-craft'
   },
   {
     id: 'transport',
     name: 'Transportation',
-    icon: TransportationIcon,
-    href: '/marketplace?category=Transportation'
+    categoryKey: 'Transportation',
+    href: '/marketplace?category=transportation'
   },
   {
     id: 'tech',
-    name: 'Tech and Gadgets',
-    icon: TechIcon,
-    href: '/marketplace?category=Tech and Gadgets'
+    name: 'Tech & Gadgets',
+    categoryKey: 'Tech & Gadgets',
+    href: '/marketplace?category=tech-and-gadgets'
   },
   {
     id: 'clothing',
     name: 'Clothing & Accessories',
-    icon: ClothingIcon,
-    href: '/marketplace?category=Clothing and Accessories'
+    categoryKey: 'Clothing & Accessories',
+    href: '/marketplace?category=clothing-and-accessories'
   },
   {
     id: 'giveaways',
     name: 'Giveaways',
-    icon: GiftIcon,
-    href: '/marketplace?category=Giveaways'
+    categoryKey: 'Giveaways',
+    href: '/marketplace?category=giveaways'
   },
   {
     id: 'other',
     name: 'Other',
-    icon: GridIcon,
-    href: '/marketplace?category=Other'
+    categoryKey: 'Other',
+    href: '/marketplace?category=other'
   }
 ]
 
@@ -95,17 +89,15 @@ export default function CategoryGrid() {
         {/* Category Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-8 sm:gap-12">
           {categories.map((category) => {
-            const Icon = category.icon
-
             return (
               <Link
                 key={category.id}
                 href={category.href}
                 className="flex flex-col items-center group focus:outline-none focus:ring-4 focus:ring-black/30 rounded-lg p-4 -m-4"
               >
-                {/* Icon */}
+                {/* Phosphor Icon */}
                 <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4 text-black group-hover:scale-110 transition-transform duration-200">
-                  <Icon className="w-full h-full" />
+                  <CategoryIcon category={category.categoryKey} size={80} className="text-black" />
                 </div>
 
                 {/* Label */}

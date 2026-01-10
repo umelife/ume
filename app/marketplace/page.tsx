@@ -232,7 +232,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   // Generate page title and subtitle
   const pageTitle = params.category
     ? `Shop ${categoryDisplay}`
-    : 'Shop all'
+    : 'SHOP ALL'
   const pageSubtitle = getCategorySubtitle(categoryDisplay)
 
   return (

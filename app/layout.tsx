@@ -23,7 +23,7 @@ const archivoBlack = Archivo_Black({
 });
 
 export const metadata: Metadata = {
-  title: "UME - Campus Marketplace",
+  title: "UME - University Market Exchange",
   description: "Buy and sell items safely within your university community",
 };
 

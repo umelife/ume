@@ -2,6 +2,8 @@ import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import CategoryBar from '@/components/marketplace/CategoryBar'
 import FiltersRow from '@/components/marketplace/FiltersRow'
+import MobileFilterButton from '@/components/marketplace/MobileFilterButton'
+import MobileFiltersWrapper from '@/components/marketplace/MobileFiltersWrapper'
 import ProductGrid from '@/components/marketplace/ProductGrid'
 import { getCategorySubtitle } from '@/lib/constants/categories'
 import type { Listing } from '@/types/database'
@@ -248,7 +250,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
         {/* Category Bar */}
         <CategoryBar currentCategory={params.category} />
 
-        {/* Filters Row */}
+        {/* Mobile Filter Button - Right aligned below categories */}
+        <MobileFilterButton />
+
+        {/* Desktop Filters Row */}
         <Suspense fallback={<div className="h-20 bg-white rounded-lg animate-pulse" />}>
           <FiltersRow
             currentCondition={params.condition}
@@ -257,6 +262,14 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
           />
         </Suspense>
+
+        {/* Mobile Filters - Controlled from MobileHeader */}
+        <MobileFiltersWrapper
+          currentCondition={params.condition}
+          currentSort={params.sort}
+          currentMinPrice={params.minPrice ? (parseFloat(params.minPrice) / 100).toString() : undefined}
+          currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
+        />
 
         {/* Listings Count */}
         <div className="mt-8 mb-4 text-sm text-black">

@@ -4,7 +4,9 @@ import "./fonts.css";
 import "./globals.css";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
 import HeaderWrapper from "@/components/HeaderWrapper";
+import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
+import MobileFooter from "@/components/MobileFooter";
 
 // Load Google Fonts using next/font (prevents CORB issues)
 // Using Work Sans as a free alternative to BR Shape (geometric sans-serif)
@@ -25,6 +27,10 @@ const archivoBlack = Archivo_Black({
 export const metadata: Metadata = {
   title: "UME - University Market Exchange",
   description: "Buy and sell items safely within your university community",
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+  },
 };
 
 export default function RootLayout({
@@ -37,8 +43,10 @@ export default function RootLayout({
       <body className={workSans.className} style={{ isolation: 'isolate', fontWeight: 300 }} suppressHydrationWarning>
         <MixpanelProvider />
         <HeaderWrapper />
+        <MobileHeaderWrapper />
         {children}
         <SimpleFooter />
+        <MobileFooter />
       </body>
     </html>
   );

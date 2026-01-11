@@ -92,7 +92,7 @@ export default function FiltersRow({
   }
 
   return (
-    <div className="mb-6">
+    <div className="hidden md:block mb-6">
       {/* Single Row: Sort, Condition, and Price Range */}
       <div className="flex items-center gap-3 flex-wrap">
         {/* Sort Dropdown */}

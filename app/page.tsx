@@ -1,31 +1,51 @@
 /**
  * Homepage
  *
- * Main landing page for RECLAIM marketplace.
+ * Main landing page for UME marketplace.
  * Features:
- * - Hero section with background image and CTA
+ * - Mobile-only homepage (MobileHome component - hidden on desktop)
+ * - Desktop: Hero section with background image and CTA
  * - Feature slider showcasing key features
  * - Category grid for easy navigation
  * - Newsletter signup
  * - Footer
+ *
+ * TESTING MOBILE LAYOUT ON DESKTOP:
+ * Add ?showMobile=1 to URL to force mobile layout on desktop browsers
+ * Example: http://localhost:3000/?showMobile=1
  */
 
 import Hero from '@/components/homepage/Hero'
 import FeatureSlider from '@/components/homepage/FeatureSlider'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
 import NewsletterSignup from '@/components/homepage/NewsletterSignup'
+import MobileHome from '@/components/MobileHome'
 
-export default async function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: { showMobile?: string }
+}) {
+  // DEBUG ONLY: Allow viewing mobile layout on desktop via ?showMobile=1
+  // Remove this in production or keep for QA testing
+  const debugForceMobile = searchParams.showMobile === '1'
   return (
-    <main className="min-h-screen bg-white">
-      {/* Hero Section - Full screen with city skyline */}
-      <Hero
-        backgroundImage="/placeholders/hero-city.jpg"
-        subtitle="For students, by students"
-        headline="YOUR UNIVERSITY MARKETPLACE"
-        ctaText="Browse Marketplace"
-        ctaHref="/marketplace"
-      />
+    <>
+      {/* MOBILE-ONLY HOMEPAGE - Only visible on mobile devices (or with ?showMobile=1) */}
+      <div className={debugForceMobile ? '' : 'md:hidden'}>
+        <MobileHome />
+      </div>
+
+      {/* DESKTOP HOMEPAGE - Hidden on mobile */}
+      <main className={`min-h-screen bg-white ${debugForceMobile ? 'hidden' : 'hidden md:block'}`}>
+        {/* Hero Section - Full screen with city skyline */}
+        <Hero
+          backgroundImage="/placeholders/hero-city.jpg"
+          subtitle="For students, by students"
+          headline="YOUR UNIVERSITY MARKETPLACE"
+          ctaText="Browse Marketplace"
+          ctaHref="/marketplace"
+        />
 
       {/* Feature Slider - Showcase key features */}
       <FeatureSlider
@@ -58,8 +78,9 @@ export default async function Home() {
       {/* Category Grid - Browse by category */}
       <CategoryGrid />
 
-      {/* Newsletter Signup */}
-      <NewsletterSignup />
-    </main>
+        {/* Newsletter Signup */}
+        <NewsletterSignup />
+      </main>
+    </>
   )
 }

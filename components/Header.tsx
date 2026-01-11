@@ -47,8 +47,8 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
 
   return (
     <>
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="px-12 py-6">
+    <header className="hidden md:block bg-white border-b border-gray-200 sticky top-0 z-50">
+      <div className="px-4 md:px-12 py-3 md:py-6">
         <div className="flex items-center justify-between">
           {/* Left - Logo + Dynamic Label */}
           <div className="flex items-center gap-3">
@@ -68,7 +68,7 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
           )}
 
           {/* Right - Icons */}
-          <div className="flex items-center gap-8">
+          <div className="flex items-center gap-4 md:gap-8">
             {/* Search */}
             <button
               onClick={() => setSearchOpen(true)}

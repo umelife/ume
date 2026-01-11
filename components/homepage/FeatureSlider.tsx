@@ -155,13 +155,13 @@ export default function FeatureSlider({
         </p>
       </div>
 
-      {/* Navigation Arrows */}
+      {/* Navigation Arrows - Invisible but clickable */}
       {slides.length > 1 && (
         <>
           {/* Left Arrow */}
           <button
             onClick={goToPrevious}
-            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-900/80 hover:bg-gray-900 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-gray-900/50"
+            className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-transparent hover:bg-white/10 text-transparent hover:text-white flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             aria-label="Previous slide"
           >
             <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
@@ -172,7 +172,7 @@ export default function FeatureSlider({
           {/* Right Arrow */}
           <button
             onClick={goToNext}
-            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-gray-900/80 hover:bg-gray-900 text-white flex items-center justify-center transition-all duration-200 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-gray-900/50"
+            className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 sm:w-16 sm:h-16 rounded-full bg-transparent hover:bg-white/10 text-transparent hover:text-white flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/30"
             aria-label="Next slide"
           >
             <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

@@ -54,8 +54,56 @@ export default function CategoryBar({ currentCategory }: CategoryBarProps) {
 
   return (
     <div className="mb-6">
-      {/* Centered container with equal spacing */}
-      <div className="flex items-center justify-center gap-3 flex-wrap px-4">
+      {/* Mobile: Horizontal scroll */}
+      <div className="md:hidden overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
+        <div className="flex gap-2 min-w-max">
+          {/* View All chip */}
+          <button
+            onClick={handleViewAll}
+            className={`
+              flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium
+              transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+              ${!currentCategory
+                ? 'bg-black text-white shadow-md'
+                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }
+            `}
+            aria-pressed={!currentCategory}
+            aria-label="View all categories"
+          >
+            All
+          </button>
+
+          {/* Category chips - always in original order */}
+          {CATEGORIES.map((category) => {
+            const isActive = currentCategory === category.slug
+
+            return (
+              <button
+                key={category.slug}
+                onClick={() => handleCategoryClick(category.slug)}
+                className={`
+                  flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium
+                  transition-all duration-200
+                  focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
+                  ${isActive
+                    ? 'bg-black text-white shadow-md'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  }
+                `}
+                aria-pressed={isActive}
+                aria-label={`Filter by ${category.display}`}
+              >
+                {category.display}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Desktop: Centered flex-wrap layout */}
+      <div className="hidden md:flex items-center justify-center gap-3 flex-wrap px-4">
         {/* View All chip */}
         <button
           onClick={handleViewAll}

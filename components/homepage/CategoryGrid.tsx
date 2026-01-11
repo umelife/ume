@@ -86,29 +86,69 @@ export default function CategoryGrid() {
           </Link>
         </div>
 
-        {/* Category Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-8 sm:gap-12">
-          {categories.map((category) => {
-            return (
-              <Link
-                key={category.id}
-                href={category.href}
-                className="flex flex-col items-center group focus:outline-none focus:ring-4 focus:ring-black/30 rounded-lg p-4 -m-4"
-              >
-                {/* Phosphor Icon */}
-                <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4 text-black group-hover:scale-110 transition-transform duration-200">
-                  <CategoryIcon category={category.categoryKey} size={64} className="text-black" />
-                </div>
+        {/* Category Grid - Horizontal scroll on mobile, grid on desktop */}
+        <div className="md:grid md:grid-cols-3 lg:grid-cols-7 md:gap-8 lg:gap-12">
+          {/* Mobile: Horizontal scroll */}
+          <div className="md:hidden overflow-x-auto -mx-4 px-4 pb-2 scrollbar-hide">
+            <div className="flex gap-6 min-w-max">
+              {categories.map((category) => {
+                return (
+                  <Link
+                    key={category.id}
+                    href={category.href}
+                    className="flex flex-col items-center group focus:outline-none focus:ring-4 focus:ring-black/30 rounded-lg p-2"
+                    style={{ minWidth: '80px' }}
+                  >
+                    {/* Phosphor Icon */}
+                    <div className="w-16 h-16 flex items-center justify-center mb-2 text-black group-hover:scale-110 transition-transform duration-200">
+                      <CategoryIcon category={category.categoryKey} size={48} className="text-black" />
+                    </div>
 
-                {/* Label */}
-                <span className="text-xs sm:text-sm font-medium text-black text-center group-hover:underline">
-                  {category.name}
-                </span>
-              </Link>
-            )
-          })}
+                    {/* Label */}
+                    <span className="text-xs font-medium text-black text-center group-hover:underline whitespace-nowrap">
+                      {category.name}
+                    </span>
+                  </Link>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Desktop: Grid (hidden on mobile) */}
+          <div className="hidden md:contents">
+            {categories.map((category) => {
+              return (
+                <Link
+                  key={category.id}
+                  href={category.href}
+                  className="flex flex-col items-center group focus:outline-none focus:ring-4 focus:ring-black/30 rounded-lg p-4 -m-4"
+                >
+                  {/* Phosphor Icon */}
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-4 text-black group-hover:scale-110 transition-transform duration-200">
+                    <CategoryIcon category={category.categoryKey} size={64} className="text-black" />
+                  </div>
+
+                  {/* Label */}
+                  <span className="text-xs sm:text-sm font-medium text-black text-center group-hover:underline">
+                    {category.name}
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
         </div>
       </div>
+
+      {/* Hide scrollbar for cleaner look */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </section>
   )
 }

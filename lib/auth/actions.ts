@@ -252,12 +252,14 @@ export async function updatePassword(newPassword: string) {
 
     const supabase = await createClient()
 
-    // Check if user is authenticated
-    const { data: { user } } = await supabase.auth.getUser()
+    // Check if user is authenticated (they should be after clicking the reset link)
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
 
-    if (!user) {
-      console.error('[updatePassword] Password update failed: No authenticated user')
-      return { error: 'You must be logged in to update your password. Please click the reset link again.' }
+    if (userError || !user) {
+      console.error('[updatePassword] Password update failed: No authenticated user', userError)
+      return {
+        error: 'Your reset session has expired. Please request a new password reset link from the forgot password page.'
+      }
     }
 
     console.log('[updatePassword] Updating password for user:', user.id)
@@ -268,7 +270,13 @@ export async function updatePassword(newPassword: string) {
 
     if (error) {
       prettyLogError('Password update error:', error)
-      return { error: error.message || 'Failed to update password' }
+
+      // Provide more specific error messages
+      if (error.message.includes('session')) {
+        return { error: 'Your reset session has expired. Please request a new password reset link.' }
+      }
+
+      return { error: error.message || 'Failed to update password. Please try again.' }
     }
 
     console.log('[updatePassword] Password updated successfully')

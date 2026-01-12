@@ -4,7 +4,8 @@ import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
   // Public routes that don't need session updates or auth checks
-  const publicPaths = ['/reset-password', '/forgot-password', '/login', '/signup']
+  // Note: /reset-password needs session updates to verify the reset token
+  const publicPaths = ['/forgot-password', '/login', '/signup']
   const isPublicPath = publicPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
@@ -13,8 +14,8 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Update session for all other routes (including /auth/callback)
-  // This is where Supabase will handle PKCE code exchange
+  // Update session for all other routes (including /auth/callback and /reset-password)
+  // This is where Supabase will handle PKCE code exchange and session creation
   const response = await updateSession(request)
 
   // Check authentication for protected routes

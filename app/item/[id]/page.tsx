@@ -5,6 +5,7 @@ import ContactSellerButton from '@/components/listings/ContactSellerButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
 import ListingImages from '@/components/listings/ListingImages'
 import CartToggleButton from '@/components/listings/CartToggleButton'
+import DeleteListingButton from '@/components/listings/DeleteListingButton'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -103,15 +104,16 @@ export default async function ListingDetailPage({
                 </div>
               )}
 
-              {/* Edit Button for owners */}
+              {/* Edit and Delete Buttons for owners */}
               {isOwner && (
-                <div className="border-t pt-4 mt-4">
+                <div className="border-t pt-4 mt-4 flex gap-3">
                   <Link
                     href={`/edit/${listing.id}`}
                     className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700"
                   >
                     Edit Listing
                   </Link>
+                  <DeleteListingButton listingId={listing.id} />
                 </div>
               )}
 

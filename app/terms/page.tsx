@@ -27,7 +27,6 @@ export default function TermsOfServicePage() {
             </p>
             <ul className="list-disc list-inside text-black space-y-1">
               <li>Be a current student with a valid university .edu email address</li>
-              <li>Be at least 18 years old</li>
               <li>Provide accurate and truthful information</li>
               <li>Comply with all applicable laws and regulations</li>
             </ul>
@@ -42,7 +41,7 @@ export default function TermsOfServicePage() {
               <li>Provide accurate descriptions of items for sale</li>
               <li>Honor all transactions initiated through the platform</li>
               <li>Not engage in fraudulent or deceptive practices</li>
-              <li>Not post prohibited items or content</li>
+              <li>Not post prohibited items or inappropriate content</li>
               <li>Respect other users and maintain a safe community</li>
             </ul>
           </section>
@@ -62,23 +61,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-black mb-4">5. Payment and Fees</h2>
-            <p className="text-black">
-              UME charges a 10% platform fee on all transactions. Payment processing
-              is handled securely through Stripe. Refunds are subject to our refund policy.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-black mb-4">6. Privacy</h2>
-            <p className="text-black">
-              Your privacy is important to us. Please review our Privacy Policy to understand
-              how we collect, use, and protect your personal information.
-            </p>
-          </section>
-
-          <section>
-            <h2 className="text-2xl font-semibold text-black mb-4">7. Limitation of Liability</h2>
+            <h2 className="text-2xl font-semibold text-black mb-4">5. Limitation of Liability</h2>
             <p className="text-black">
               UME is a platform that facilitates transactions between users. We are not
               responsible for the quality, safety, or legality of items listed, the accuracy
@@ -88,7 +71,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-black mb-4">8. Account Termination</h2>
+            <h2 className="text-2xl font-semibold text-black mb-4">6. Account Termination</h2>
             <p className="text-black">
               We reserve the right to suspend or terminate accounts that violate these terms
               or engage in fraudulent or harmful behavior.
@@ -96,7 +79,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-black mb-4">9. Changes to Terms</h2>
+            <h2 className="text-2xl font-semibold text-black mb-4">7. Changes to Terms</h2>
             <p className="text-black">
               We reserve the right to modify these terms at any time. Changes will be effective
               immediately upon posting to the platform.
@@ -104,7 +87,7 @@ export default function TermsOfServicePage() {
           </section>
 
           <section>
-            <h2 className="text-2xl font-semibold text-black mb-4">10. Contact</h2>
+            <h2 className="text-2xl font-semibold text-black mb-4">8. Contact</h2>
             <p className="text-black">
               For questions about these terms, please contact us at support@ume-life.com
             </p>

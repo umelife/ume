@@ -9,7 +9,12 @@ export async function GET(request: NextRequest) {
   const code = requestUrl.searchParams.get('code')
   let next = requestUrl.searchParams.get('next') ?? '/reset-password'
 
-  console.log('[Auth Callback] Parameters:', { token_hash: !!token_hash, type, code: !!code, next })
+  console.log('[Auth Callback] Parameters:', {
+    token_hash: token_hash ? `${token_hash.substring(0, 20)}...` : null,
+    type,
+    code: !!code,
+    next
+  })
 
   // Validate next parameter to prevent open redirects - must start with / and not //
   if (!next.startsWith('/') || next.startsWith('//')) {
@@ -18,45 +23,37 @@ export async function GET(request: NextRequest) {
 
   const supabase = await createClient()
 
-  // Handle PKCE flow - Supabase sends token_hash with "pkce_" prefix for password recovery
-  if (token_hash && type === 'recovery') {
-    console.log('[Auth Callback] Processing password recovery with token_hash')
+  // Handle email link with token_hash (both OTP and PKCE flows)
+  if (token_hash && type) {
+    console.log('[Auth Callback] Processing email link with token_hash, type:', type)
 
-    // Check if this is a PKCE token (starts with "pkce_")
-    if (token_hash.startsWith('pkce_')) {
-      console.log('[Auth Callback] Detected PKCE token, using exchangeCodeForSession')
-      const { error } = await supabase.auth.exchangeCodeForSession(token_hash)
+    const { error } = await supabase.auth.verifyOtp({
+      type: type as any,
+      token_hash,
+    })
 
-      if (error) {
-        console.error('[Auth Callback] PKCE token exchange error:', error)
-      } else {
-        console.log('[Auth Callback] PKCE token exchanged successfully, redirecting to:', next)
-        return NextResponse.redirect(new URL(next, request.url))
-      }
+    if (error) {
+      console.error('[Auth Callback] Token verification error:', error.message, error)
+      // Don't redirect to home on error, try to show error message
+      const errorUrl = new URL('/forgot-password', request.url)
+      errorUrl.searchParams.set('error', 'Invalid or expired reset link')
+      return NextResponse.redirect(errorUrl)
     } else {
-      // Legacy OTP flow
-      console.log('[Auth Callback] Using OTP verification for recovery')
-      const { error } = await supabase.auth.verifyOtp({
-        type: 'recovery',
-        token_hash,
-      })
-
-      if (error) {
-        console.error('[Auth Callback] OTP verification error:', error)
-      } else {
-        console.log('[Auth Callback] OTP verified successfully, redirecting to:', next)
-        return NextResponse.redirect(new URL(next, request.url))
-      }
+      console.log('[Auth Callback] Token verified successfully, redirecting to:', next)
+      return NextResponse.redirect(new URL(next, request.url))
     }
   }
 
-  // Handle standard PKCE flow with code parameter
+  // Handle PKCE flow with code parameter (for email confirmations)
   if (code) {
     console.log('[Auth Callback] Exchanging code for session...')
     const { error } = await supabase.auth.exchangeCodeForSession(code)
 
     if (error) {
       console.error('[Auth Callback] Code exchange error:', error)
+      const errorUrl = new URL('/login', request.url)
+      errorUrl.searchParams.set('error', 'Authentication failed')
+      return NextResponse.redirect(errorUrl)
     } else {
       console.log('[Auth Callback] Code exchanged successfully, redirecting to:', next)
       return NextResponse.redirect(new URL(next, request.url))
@@ -64,6 +61,6 @@ export async function GET(request: NextRequest) {
   }
 
   // If there's an error or no valid parameters, redirect to home
-  console.log('[Auth Callback] No valid auth flow, redirecting to home')
+  console.log('[Auth Callback] No valid auth parameters, redirecting to home')
   return NextResponse.redirect(new URL('/', request.url))
 }

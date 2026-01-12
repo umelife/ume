@@ -7,7 +7,12 @@ export async function GET(request: NextRequest) {
   const token_hash = requestUrl.searchParams.get('token_hash')
   const type = requestUrl.searchParams.get('type')
   const code = requestUrl.searchParams.get('code')
-  const next = requestUrl.searchParams.get('next') ?? '/reset-password'
+  let next = requestUrl.searchParams.get('next') ?? '/reset-password'
+
+  // Validate next parameter to prevent open redirects - must start with / and not //
+  if (!next.startsWith('/') || next.startsWith('//')) {
+    next = '/reset-password'
+  }
 
   if (token_hash && type) {
     const supabase = await createClient()

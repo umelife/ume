@@ -3,6 +3,16 @@ import { updateSession } from '@/lib/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
+  // Skip middleware entirely for public auth routes to prevent redirects
+  const publicAuthPaths = ['/auth/callback', '/reset-password', '/forgot-password', '/login', '/signup']
+  const isPublicAuthPath = publicAuthPaths.some(path =>
+    request.nextUrl.pathname.startsWith(path)
+  )
+
+  if (isPublicAuthPath) {
+    return NextResponse.next()
+  }
+
   // Update session first
   const response = await updateSession(request)
 

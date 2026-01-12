@@ -139,7 +139,7 @@ export default function HeaderInlineSearch({ isOpen, onClose }: HeaderInlineSear
   return (
     <div ref={containerRef} className="relative w-full" onKeyDown={handleKeyDown}>
       {/* Search Input */}
-      <div className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-lg">
+      <div className="flex items-center px-3 py-2 bg-white border border-gray-300 rounded-full">
         <svg className="w-4 h-4 text-gray-400 mr-2 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
           <circle cx="11" cy="11" r="8"/>
           <path d="m21 21-4.35-4.35"/>

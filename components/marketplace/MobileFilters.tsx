@@ -141,7 +141,7 @@ export default function MobileFilters({
             <select
               value={sort}
               onChange={(e) => setSort(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
             >
               {SORT_OPTIONS.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -159,7 +159,7 @@ export default function MobileFilters({
             <select
               value={condition}
               onChange={(e) => setCondition(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
             >
               <option value="all">All Conditions</option>
               {CONDITIONS.map((cond) => (
@@ -183,7 +183,7 @@ export default function MobileFilters({
                   placeholder="Min"
                   value={minPrice}
                   onChange={(e) => setMinPrice(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                   min="0"
                   step="1"
                 />
@@ -195,7 +195,7 @@ export default function MobileFilters({
                   placeholder="Max"
                   value={maxPrice}
                   onChange={(e) => setMaxPrice(e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
+                  className="w-full pl-8 pr-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                   min="0"
                   step="1"
                 />
@@ -208,13 +208,13 @@ export default function MobileFilters({
         <div className="px-4 py-4 border-t border-gray-200 flex gap-3">
           <button
             onClick={handleClearFilters}
-            className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-50 transition-colors"
+            className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition-colors"
           >
             Clear All
           </button>
           <button
             onClick={handleApplyFilters}
-            className="flex-1 px-4 py-3 bg-black text-white text-sm font-medium rounded-lg hover:bg-gray-800 transition-colors"
+            className="flex-1 px-4 py-3 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
           >
             Apply Filters
           </button>

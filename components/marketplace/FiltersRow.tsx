@@ -100,7 +100,7 @@ export default function FiltersRow({
           <select
             value={currentSort || 'relevance'}
             onChange={(e) => handleSortChange(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 cursor-pointer"
+            className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 cursor-pointer"
             aria-label="Sort listings"
           >
             {SORT_OPTIONS.map((option) => (
@@ -116,7 +116,7 @@ export default function FiltersRow({
           <select
             value={currentCondition || 'all'}
             onChange={(e) => handleConditionChange(e.target.value)}
-            className="px-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 cursor-pointer"
+            className="px-4 py-2 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400 cursor-pointer"
             aria-label="Filter by condition"
           >
             <option value="all">Condition</option>
@@ -138,7 +138,7 @@ export default function FiltersRow({
               placeholder="Min"
               value={minPrice}
               onChange={(e) => setMinPrice(e.target.value)}
-              className="w-24 pl-6 pr-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="w-24 pl-6 pr-3 py-2 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
               min="0"
               step="1"
             />
@@ -151,14 +151,14 @@ export default function FiltersRow({
               placeholder="Max"
               value={maxPrice}
               onChange={(e) => setMaxPrice(e.target.value)}
-              className="w-24 pl-6 pr-3 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
+              className="w-24 pl-6 pr-3 py-2 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-1 focus:ring-gray-400 focus:border-gray-400"
               min="0"
               step="1"
             />
           </div>
           <button
             onClick={handlePriceFilter}
-            className="px-4 py-2 bg-black text-white text-sm rounded-lg hover:bg-gray-800 transition-colors"
+            className="px-4 py-2 bg-black text-white text-sm rounded-full hover:bg-gray-800 transition-colors"
             aria-label="Apply price filter"
           >
             Apply

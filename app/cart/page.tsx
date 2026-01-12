@@ -140,7 +140,7 @@ export default function CartPage() {
             <p className="text-black mb-8">Start shopping to add items to your cart</p>
             <Link
               href="/marketplace"
-              className="inline-block bg-black text-white px-8 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
+              className="inline-block bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors"
             >
               Browse Marketplace
             </Link>
@@ -261,7 +261,7 @@ export default function CartPage() {
               {/* Disabled checkout for MVP */}
               <button
                 onClick={handleCheckout}
-                className="w-full bg-gray-300 text-black px-6 py-3 rounded-lg font-semibold mb-4 cursor-not-allowed"
+                className="w-full bg-gray-300 text-black px-6 py-3 rounded-full font-semibold mb-4 cursor-not-allowed"
                 title="Payments are disabled in the MVP"
                 disabled
               >

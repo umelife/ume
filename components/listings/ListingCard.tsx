@@ -74,7 +74,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
               </div>
             )}
             <div className="flex justify-between items-center text-sm text-black mb-3">
-              <span className="bg-gray-100 px-2 py-1 rounded">
+              <span className="bg-gray-100 px-2 py-1 rounded-full">
                 {listing.category}
               </span>
               <span>{getTimeAgo(listing.created_at)}</span>

@@ -18,7 +18,7 @@ export default function MobileFilterButton() {
     <div className="md:hidden flex justify-end mb-4 px-4">
       <button
         onClick={handleOpenFilters}
-        className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
         aria-label="Open filters"
       >
         <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">

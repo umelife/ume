@@ -13,7 +13,7 @@ function LoginForm() {
 
   useEffect(() => {
     if (searchParams.get('reset') === 'success') {
-      setSuccessMessage('Your password has been reset successfully. You can now sign in with your new password.')
+      setSuccessMessage('Your password has been reset successfully. You can now log in with your new password.')
     }
   }, [searchParams])
 
@@ -34,7 +34,7 @@ function LoginForm() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="text-center text-3xl font-bold text-black">
-            Sign in to UME
+            Log in to UME
           </h2>
           <p className="mt-2 text-center text-sm text-black">
             Or{' '}
@@ -64,7 +64,7 @@ function LoginForm() {
                 name="email"
                 type="text"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
                 placeholder="Enter username or email"
               />
             </div>
@@ -77,7 +77,7 @@ function LoginForm() {
                 name="password"
                 type="password"
                 required
-                className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
                 placeholder="Password"
               />
             </div>
@@ -86,9 +86,9 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
+            className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-full text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50"
           >
-            {loading ? 'Signing in...' : 'Sign in'}
+            {loading ? 'Logging in...' : 'Log in'}
           </button>
         </form>
       </div>

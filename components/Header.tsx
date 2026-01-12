@@ -153,7 +153,7 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
                 </svg>
               )}
               <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
-                {userId ? 'Profile' : 'Sign in'}
+                {userId ? 'Profile' : 'Log in'}
               </span>
             </Link>
 

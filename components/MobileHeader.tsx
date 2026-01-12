@@ -183,7 +183,7 @@ export default function MobileHeader({
                         <path d="M20 21a8 8 0 1 0-16 0"/>
                       </svg>
                     )}
-                    {userId ? 'Profile' : 'Sign in'}
+                    {userId ? 'Profile' : 'Log in'}
                   </Link>
                 </li>
               </ul>

@@ -188,7 +188,7 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
       <button
         onClick={handleContactSeller}
         disabled={contactLoading}
-        className={`w-full bg-black text-white px-6 py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
+        className={`w-full bg-black text-white px-6 py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
         aria-label={`Contact seller about ${listing.title}`}
       >
         {contactLoading ? (
@@ -208,7 +208,7 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
       <button
         onClick={handleAddToCart}
         disabled={cartLoading || added}
-        className={`w-full border-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
+        className={`w-full border-2 px-6 py-3 rounded-full font-semibold transition-colors ${
           added
             ? 'border-green-600 text-green-600 bg-green-50'
             : 'border-blue-600 text-blue-600 hover:bg-blue-50'

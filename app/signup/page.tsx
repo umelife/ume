@@ -155,7 +155,7 @@ export default function SignupPage() {
               href="/login"
               className="inline-block text-sm font-medium text-black hover:underline"
             >
-              Go to sign in
+              Go to log in
             </Link>
           </div>
         </div>
@@ -173,7 +173,7 @@ export default function SignupPage() {
           <p className="mt-2 text-center text-sm text-black">
             Already have an account?{' '}
             <Link href="/login" className="font-medium text-black hover:underline">
-              Sign in
+              Log in
             </Link>
           </p>
         </div>
@@ -202,7 +202,7 @@ export default function SignupPage() {
                   name="email"
                   type="email"
                   required
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                  className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
                   placeholder="you@university.edu"
                 />
               </div>
@@ -218,7 +218,7 @@ export default function SignupPage() {
                   required
                   value={collegeName}
                   onChange={(e) => setCollegeName(e.target.value)}
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                  className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
                   placeholder="e.g., University of the Cumberlands"
                 />
               </div>
@@ -234,7 +234,7 @@ export default function SignupPage() {
                   required
                   value={collegeAddress}
                   onChange={(e) => setCollegeAddress(e.target.value)}
-                  className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
+                  className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
                   placeholder="e.g., 6178 College Station Dr, Williamsburg, KY 40769"
                 />
               </div>
@@ -297,7 +297,7 @@ export default function SignupPage() {
                     required
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
-                    className={`appearance-none rounded-lg relative block w-full px-3 py-2 pr-10 border ${
+                    className={`appearance-none rounded-full relative block w-full px-3 py-2 pr-10 border ${
                       confirmPassword && !passwordsMatch
                         ? 'border-black focus:ring-black focus:border-black'
                         : 'border-gray-300 focus:ring-black focus:border-black'
@@ -330,7 +330,7 @@ export default function SignupPage() {
             <button
               type="submit"
               disabled={loading || !allRequirementsMet || !passwordsMatch || !confirmPassword || !usernameAvailable || !collegeName.trim() || !collegeAddress.trim()}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-full text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? 'Creating account...' : 'Sign up'}
             </button>

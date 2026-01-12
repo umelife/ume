@@ -199,7 +199,7 @@ export default function UsernameInput({
           required={required}
           value={value}
           onChange={handleChange}
-          className={`appearance-none rounded-lg relative block w-full px-3 py-2 pr-10 border ${getBorderColor()} placeholder-gray-400 text-black focus:outline-none transition-colors`}
+          className={`appearance-none rounded-full relative block w-full px-3 py-2 pr-10 border ${getBorderColor()} placeholder-gray-400 text-black focus:outline-none transition-colors`}
           placeholder="Choose a unique username"
           aria-describedby="username-status"
         />

@@ -76,7 +76,7 @@ export default async function ProfilePage({
                 <div className="absolute top-2 right-2 flex gap-1">
                   <Link
                     href={`/edit/${listing.id}`}
-                    className="bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-700"
+                    className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm hover:bg-blue-700"
                   >
                     Edit
                   </Link>

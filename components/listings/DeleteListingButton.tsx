@@ -38,12 +38,12 @@ export default function DeleteListingButton({ listingId }: { listingId: string }
             <p className="text-sm text-gray-500 mb-6">
               Your listing has been successfully deleted.
             </p>
-            <button
-              onClick={() => router.push('/marketplace')}
-              className="w-full bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
+            <a
+              href="/marketplace"
+              className="inline-block w-full bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors text-center"
             >
-              Return to Marketplace
-            </button>
+              Browse Marketplace
+            </a>
           </div>
         </div>
       </div>

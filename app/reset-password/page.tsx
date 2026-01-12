@@ -1,9 +1,10 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { updatePassword } from '@/lib/auth/actions'
+import { createClient } from '@/lib/supabase/client'
 
 interface PasswordRequirements {
   minLength: boolean
@@ -22,6 +23,23 @@ export default function ResetPasswordPage() {
   const [passwordsMatch, setPasswordsMatch] = useState(true)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Check session on mount
+  useEffect(() => {
+    async function checkSession() {
+      const supabase = createClient()
+      const { data: { user }, error } = await supabase.auth.getUser()
+
+      console.log('[Reset Password Page] Session check on mount:', {
+        hasUser: !!user,
+        userId: user?.id,
+        error: error?.message,
+        url: window.location.href
+      })
+    }
+
+    checkSession()
+  }, [])
 
   // Validate password requirements
   const validatePassword = (pwd: string): PasswordRequirements => {

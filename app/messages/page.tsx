@@ -377,10 +377,12 @@ function MessagesPageContent() {
                   <div className="relative">
                     <button
                       onClick={() => setShowInfoDropdown(!showInfoDropdown)}
-                      className="w-6 h-6 rounded-full border border-black flex items-center justify-center text-black hover:bg-gray-100 transition-colors"
+                      className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-black hover:bg-gray-300 transition-colors"
                       aria-label="Chat options"
                     >
-                      <span className="text-xs font-semibold">ⓘ</span>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
                     </button>
                     {showInfoDropdown && (
                       <>
@@ -388,7 +390,14 @@ function MessagesPageContent() {
                           className="fixed inset-0 z-10"
                           onClick={() => setShowInfoDropdown(false)}
                         />
-                        <div className="absolute right-0 top-8 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                        <div className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                          <Link
+                            href={`/item/${selectedConversation.listingId}`}
+                            className="w-full px-4 py-2 text-left text-sm text-black hover:bg-gray-100 transition-colors block"
+                            onClick={() => setShowInfoDropdown(false)}
+                          >
+                            View Listing
+                          </Link>
                           <button
                             onClick={handleReportChat}
                             className="w-full px-4 py-2 text-left text-sm text-black hover:bg-gray-100 transition-colors"
@@ -484,35 +493,38 @@ function MessagesPageContent() {
                               )}
                               <div className="flex flex-col gap-1">
                                 {isEditing ? (
-                                  <div className="flex items-center gap-2">
+                                  <div className="flex flex-col gap-2 max-w-[280px]">
                                     <input
                                       type="text"
                                       value={editingText}
                                       onChange={(e) => setEditingText(e.target.value)}
-                                      className="px-4 py-2 bg-gray-100 rounded-3xl text-sm focus:outline-none text-black"
+                                      className="w-full px-4 py-2 bg-gray-100 rounded-3xl text-sm focus:outline-none text-black"
                                       autoFocus
                                     />
-                                    <button
-                                      onClick={() => handleSaveEdit(message.id)}
-                                      className="px-3 py-1 bg-black text-white text-xs rounded-full"
-                                    >
-                                      Save
-                                    </button>
-                                    <button
-                                      onClick={handleCancelEdit}
-                                      className="px-3 py-1 bg-gray-200 text-black text-xs rounded-full"
-                                    >
-                                      Cancel
-                                    </button>
+                                    <div className="flex items-center gap-2 justify-end">
+                                      <button
+                                        onClick={handleCancelEdit}
+                                        className="px-3 py-1 bg-gray-200 text-black text-xs rounded-full"
+                                      >
+                                        Cancel
+                                      </button>
+                                      <button
+                                        onClick={() => handleSaveEdit(message.id)}
+                                        className="px-3 py-1 bg-black text-white text-xs rounded-full"
+                                      >
+                                        Save
+                                      </button>
+                                    </div>
                                   </div>
                                 ) : (
                                   <>
                                     <div
-                                      className={`max-w-[70%] px-4 py-2 rounded-3xl text-sm ${
+                                      className={`px-4 py-2 rounded-3xl text-sm break-words ${
                                         isOwn
-                                          ? 'bg-black text-white'
-                                          : 'bg-gray-200 text-black'
+                                          ? 'bg-black text-white max-w-[280px]'
+                                          : 'bg-gray-200 text-black max-w-[280px]'
                                       }`}
+                                      style={{ wordBreak: 'break-word' }}
                                     >
                                       {message.body}
                                     </div>
@@ -605,20 +617,15 @@ function MessagesPageContent() {
                   </div>
                   <div className="text-xs text-gray-500">{selectedConversation.listing?.title}</div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/item/${selectedConversation.listingId}`}
-                    className="text-sm text-black hover:underline font-medium"
-                  >
-                    View Listing
-                  </Link>
-                  <div className="relative">
+                <div className="relative">
                     <button
                       onClick={() => setShowInfoDropdown(!showInfoDropdown)}
-                      className="w-6 h-6 rounded-full border border-black flex items-center justify-center text-black hover:bg-gray-100 transition-colors"
+                      className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-black hover:bg-gray-300 transition-colors"
                       aria-label="Chat options"
                     >
-                      <span className="text-xs font-semibold">ⓘ</span>
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                      </svg>
                     </button>
                     {showInfoDropdown && (
                       <>
@@ -626,7 +633,14 @@ function MessagesPageContent() {
                           className="fixed inset-0 z-10"
                           onClick={() => setShowInfoDropdown(false)}
                         />
-                        <div className="absolute right-0 top-8 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                        <div className="absolute right-0 top-10 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                          <Link
+                            href={`/item/${selectedConversation.listingId}`}
+                            className="w-full px-4 py-2 text-left text-sm text-black hover:bg-gray-100 transition-colors block"
+                            onClick={() => setShowInfoDropdown(false)}
+                          >
+                            View Listing
+                          </Link>
                           <button
                             onClick={handleReportChat}
                             className="w-full px-4 py-2 text-left text-sm text-black hover:bg-gray-100 transition-colors"
@@ -643,7 +657,6 @@ function MessagesPageContent() {
                       </>
                     )}
                   </div>
-                </div>
               </div>
 
               {/* Messages */}
@@ -731,35 +744,38 @@ function MessagesPageContent() {
                             )}
                             <div className="flex flex-col gap-1">
                               {isEditing ? (
-                                <div className="flex items-center gap-2">
+                                <div className="flex flex-col gap-2 max-w-[450px]">
                                   <input
                                     type="text"
                                     value={editingText}
                                     onChange={(e) => setEditingText(e.target.value)}
-                                    className="px-4 py-2 bg-gray-100 rounded-3xl text-sm focus:outline-none text-black"
+                                    className="w-full px-4 py-2 bg-gray-100 rounded-3xl text-sm focus:outline-none text-black"
                                     autoFocus
                                   />
-                                  <button
-                                    onClick={() => handleSaveEdit(message.id)}
-                                    className="px-3 py-1 bg-black text-white text-xs rounded-full hover:bg-gray-800"
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    onClick={handleCancelEdit}
-                                    className="px-3 py-1 bg-gray-200 text-black text-xs rounded-full hover:bg-gray-300"
-                                  >
-                                    Cancel
-                                  </button>
+                                  <div className="flex items-center gap-2 justify-end">
+                                    <button
+                                      onClick={handleCancelEdit}
+                                      className="px-3 py-1 bg-gray-200 text-black text-xs rounded-full hover:bg-gray-300"
+                                    >
+                                      Cancel
+                                    </button>
+                                    <button
+                                      onClick={() => handleSaveEdit(message.id)}
+                                      className="px-3 py-1 bg-black text-white text-xs rounded-full hover:bg-gray-800"
+                                    >
+                                      Save
+                                    </button>
+                                  </div>
                                 </div>
                               ) : (
                                 <>
                                   <div
-                                    className={`max-w-[60%] px-4 py-2 rounded-3xl ${
+                                    className={`px-4 py-2 rounded-3xl break-words ${
                                       isOwn
-                                        ? 'bg-black text-white'
-                                        : 'bg-gray-200 text-black'
+                                        ? 'bg-black text-white max-w-[450px]'
+                                        : 'bg-gray-200 text-black max-w-[450px]'
                                     }`}
+                                    style={{ wordBreak: 'break-word' }}
                                   >
                                     {message.body}
                                   </div>

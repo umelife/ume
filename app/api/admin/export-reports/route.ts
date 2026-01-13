@@ -8,26 +8,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createServiceClient } from '@/lib/supabase/server'
+import { isAdmin } from '@/lib/admin/verify'
 
 export const runtime = 'nodejs'
-
-// Helper to check if user is admin
-async function isAdmin(userId: string): Promise<boolean> {
-  const adminEmails = (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim())
-
-  if (adminEmails.length === 0) {
-    return false
-  }
-
-  const supabase = await createServiceClient()
-  const { data: user } = await supabase
-    .from('users')
-    .select('email')
-    .eq('id', userId)
-    .single()
-
-  return user ? adminEmails.includes(user.email) : false
-}
 
 export async function GET(request: NextRequest) {
   try {

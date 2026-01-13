@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { useConversations, type Conversation } from '@/lib/hooks/useConversations'
 import { useMessages } from '@/lib/hooks/useMessages'
 import { trackEvent } from '@/lib/mixpanel/client'
+import { reportConversation, deleteConversation } from '@/lib/chat/conversation-actions'
 
 function MessagesPageContent() {
   const [supabase] = useState(() => createClient())
@@ -15,6 +16,11 @@ function MessagesPageContent() {
   const [searchQuery, setSearchQuery] = useState('')
   const [showMobileConversationView, setShowMobileConversationView] = useState(false)
   const [prefillText, setPrefillText] = useState<string>('')
+  const [showInfoDropdown, setShowInfoDropdown] = useState(false)
+  const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null)
+  const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
+  const [editingText, setEditingText] = useState('')
+  const [showMessageMenu, setShowMessageMenu] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -127,7 +133,77 @@ function MessagesPageContent() {
     if (success) {
       trackEvent('delete_message', { message_id: messageId })
     }
+    setShowMessageMenu(null)
     return success
+  }
+
+  async function handleReportChat() {
+    if (!selectedConversation) return
+
+    const reason = prompt('Please provide a reason for reporting this chat:')
+    if (!reason || !reason.trim()) return
+
+    const result = await reportConversation(
+      selectedConversation.listingId,
+      selectedConversation.otherUserId,
+      reason
+    )
+
+    if (result.error) {
+      alert('Failed to report chat: ' + result.error)
+    } else {
+      alert('Chat reported successfully. Our team will review it.')
+      trackEvent('report_chat', { listing_id: selectedConversation.listingId })
+    }
+
+    setShowInfoDropdown(false)
+  }
+
+  async function handleDeleteChat() {
+    if (!selectedConversation) return
+
+    const confirmed = confirm(
+      'Are you sure you want to delete this chat? This will permanently delete all messages in this conversation.'
+    )
+    if (!confirmed) return
+
+    const result = await deleteConversation(
+      selectedConversation.listingId,
+      selectedConversation.otherUserId
+    )
+
+    if (result.error) {
+      alert('Failed to delete chat: ' + result.error)
+    } else {
+      trackEvent('delete_chat', { listing_id: selectedConversation.listingId })
+      setShowInfoDropdown(false)
+      setSelectedConversation(null)
+      setShowMobileConversationView(false)
+    }
+  }
+
+  function handleStartEdit(message: any) {
+    setEditingMessageId(message.id)
+    setEditingText(message.body)
+    setShowMessageMenu(null)
+  }
+
+  function handleCancelEdit() {
+    setEditingMessageId(null)
+    setEditingText('')
+  }
+
+  async function handleSaveEdit(messageId: string) {
+    const success = await handleEditMessage(messageId, editingText)
+    if (success) {
+      setEditingMessageId(null)
+      setEditingText('')
+    }
+  }
+
+  function canEditOrDelete(message: any): boolean {
+    // Can't edit/delete if message has been seen by the other person
+    return message.seen_at === null
   }
 
   const filteredConversations = conversations.filter(conv =>
@@ -298,6 +374,37 @@ function MessagesPageContent() {
                     </div>
                     <div className="text-xs text-gray-500">{selectedConversation.listing?.title}</div>
                   </div>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowInfoDropdown(!showInfoDropdown)}
+                      className="w-6 h-6 rounded-full border border-black flex items-center justify-center text-black hover:bg-gray-100 transition-colors"
+                      aria-label="Chat options"
+                    >
+                      <span className="text-xs font-semibold">ⓘ</span>
+                    </button>
+                    {showInfoDropdown && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setShowInfoDropdown(false)}
+                        />
+                        <div className="absolute right-0 top-8 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                          <button
+                            onClick={handleReportChat}
+                            className="w-full px-4 py-2 text-left text-sm text-black hover:bg-gray-100 transition-colors"
+                          >
+                            Report Chat
+                          </button>
+                          <button
+                            onClick={handleDeleteChat}
+                            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors"
+                          >
+                            Delete Chat
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
                 </div>
 
                 <div
@@ -313,25 +420,110 @@ function MessagesPageContent() {
                       {messages.map((message, index) => {
                         const isOwn = message.sender_id === currentUserId
                         const showAvatar = index === 0 || messages[index - 1].sender_id !== message.sender_id
+                        const isEditing = editingMessageId === message.id
+                        const canEdit = isOwn && canEditOrDelete(message)
 
                         return (
                           <div
                             key={message.id}
                             className={`flex items-end gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
+                            onTouchStart={() => isOwn && setHoveredMessageId(message.id)}
                           >
                             {!isOwn && (
                               <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold flex-shrink-0" style={{ visibility: showAvatar ? 'visible' : 'hidden' }}>
                                 {getInitials(selectedConversation.otherUser?.display_name)}
                               </div>
                             )}
-                            <div
-                              className={`max-w-[70%] px-4 py-2 rounded-3xl text-sm ${
-                                isOwn
-                                  ? 'bg-black text-white'
-                                  : 'bg-gray-200 text-black'
-                              }`}
-                            >
-                              {message.body}
+                            <div className="flex items-center gap-2">
+                              {isOwn && hoveredMessageId === message.id && !isEditing && (
+                                <div className="relative">
+                                  <button
+                                    onClick={() => setShowMessageMenu(showMessageMenu === message.id ? null : message.id)}
+                                    className="p-1 text-gray-500 active:text-black transition-colors"
+                                    aria-label="Message options"
+                                  >
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                      <circle cx="10" cy="4" r="1.5" />
+                                      <circle cx="10" cy="10" r="1.5" />
+                                      <circle cx="10" cy="16" r="1.5" />
+                                    </svg>
+                                  </button>
+                                  {showMessageMenu === message.id && (
+                                    <>
+                                      <div
+                                        className="fixed inset-0 z-10"
+                                        onClick={() => setShowMessageMenu(null)}
+                                      />
+                                      <div className="absolute right-0 top-6 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                                        <button
+                                          onClick={() => handleStartEdit(message)}
+                                          disabled={!canEdit}
+                                          className={`w-full px-4 py-2 text-left text-sm ${
+                                            canEdit
+                                              ? 'text-black active:bg-gray-100'
+                                              : 'text-gray-400 cursor-not-allowed'
+                                          } transition-colors`}
+                                        >
+                                          Edit
+                                        </button>
+                                        <button
+                                          onClick={() => handleDeleteMessage(message.id)}
+                                          disabled={!canEdit}
+                                          className={`w-full px-4 py-2 text-left text-sm ${
+                                            canEdit
+                                              ? 'text-red-600 active:bg-gray-100'
+                                              : 'text-gray-400 cursor-not-allowed'
+                                          } transition-colors`}
+                                        >
+                                          Delete
+                                        </button>
+                                      </div>
+                                    </>
+                                  )}
+                                </div>
+                              )}
+                              <div className="flex flex-col gap-1">
+                                {isEditing ? (
+                                  <div className="flex items-center gap-2">
+                                    <input
+                                      type="text"
+                                      value={editingText}
+                                      onChange={(e) => setEditingText(e.target.value)}
+                                      className="px-4 py-2 bg-gray-100 rounded-3xl text-sm focus:outline-none text-black"
+                                      autoFocus
+                                    />
+                                    <button
+                                      onClick={() => handleSaveEdit(message.id)}
+                                      className="px-3 py-1 bg-black text-white text-xs rounded-full"
+                                    >
+                                      Save
+                                    </button>
+                                    <button
+                                      onClick={handleCancelEdit}
+                                      className="px-3 py-1 bg-gray-200 text-black text-xs rounded-full"
+                                    >
+                                      Cancel
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <div
+                                      className={`max-w-[70%] px-4 py-2 rounded-3xl text-sm ${
+                                        isOwn
+                                          ? 'bg-black text-white'
+                                          : 'bg-gray-200 text-black'
+                                      }`}
+                                    >
+                                      {message.body}
+                                    </div>
+                                    {message.edited && (
+                                      <span className="text-xs text-gray-400 px-2">
+                                        Edited {new Date(message.updated_at).toLocaleString()}
+                                      </span>
+                                    )}
+                                  </>
+                                )}
+                              </div>
                             </div>
                           </div>
                         )
@@ -413,12 +605,45 @@ function MessagesPageContent() {
                   </div>
                   <div className="text-xs text-gray-500">{selectedConversation.listing?.title}</div>
                 </div>
-                <Link
-                  href={`/item/${selectedConversation.listingId}`}
-                  className="text-sm text-black hover:underline font-medium"
-                >
-                  View Listing
-                </Link>
+                <div className="flex items-center gap-2">
+                  <Link
+                    href={`/item/${selectedConversation.listingId}`}
+                    className="text-sm text-black hover:underline font-medium"
+                  >
+                    View Listing
+                  </Link>
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowInfoDropdown(!showInfoDropdown)}
+                      className="w-6 h-6 rounded-full border border-black flex items-center justify-center text-black hover:bg-gray-100 transition-colors"
+                      aria-label="Chat options"
+                    >
+                      <span className="text-xs font-semibold">ⓘ</span>
+                    </button>
+                    {showInfoDropdown && (
+                      <>
+                        <div
+                          className="fixed inset-0 z-10"
+                          onClick={() => setShowInfoDropdown(false)}
+                        />
+                        <div className="absolute right-0 top-8 w-48 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                          <button
+                            onClick={handleReportChat}
+                            className="w-full px-4 py-2 text-left text-sm text-black hover:bg-gray-100 transition-colors"
+                          >
+                            Report Chat
+                          </button>
+                          <button
+                            onClick={handleDeleteChat}
+                            className="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-gray-100 transition-colors"
+                          >
+                            Delete Chat
+                          </button>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
               </div>
 
               {/* Messages */}
@@ -439,25 +664,113 @@ function MessagesPageContent() {
                     {messages.map((message, index) => {
                       const isOwn = message.sender_id === currentUserId
                       const showAvatar = index === 0 || messages[index - 1].sender_id !== message.sender_id
+                      const isEditing = editingMessageId === message.id
+                      const canEdit = isOwn && canEditOrDelete(message)
 
                       return (
                         <div
                           key={message.id}
-                          className={`flex items-end gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}
+                          className={`flex items-end gap-2 ${isOwn ? 'flex-row-reverse' : 'flex-row'} group`}
+                          onMouseEnter={() => isOwn && setHoveredMessageId(message.id)}
+                          onMouseLeave={() => setHoveredMessageId(null)}
                         >
                           {!isOwn && (
                             <div className="w-7 h-7 rounded-full bg-black text-white flex items-center justify-center text-xs font-semibold flex-shrink-0" style={{ visibility: showAvatar ? 'visible' : 'hidden' }}>
                               {getInitials(selectedConversation.otherUser?.display_name)}
                             </div>
                           )}
-                          <div
-                            className={`max-w-[60%] px-4 py-2 rounded-3xl ${
-                              isOwn
-                                ? 'bg-black text-white'
-                                : 'bg-gray-200 text-black'
-                            }`}
-                          >
-                            {message.body}
+                          <div className="flex items-center gap-2">
+                            {isOwn && hoveredMessageId === message.id && !isEditing && (
+                              <div className="relative">
+                                <button
+                                  onClick={() => setShowMessageMenu(showMessageMenu === message.id ? null : message.id)}
+                                  className="p-1 text-gray-500 hover:text-black transition-colors"
+                                  aria-label="Message options"
+                                >
+                                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <circle cx="10" cy="4" r="1.5" />
+                                    <circle cx="10" cy="10" r="1.5" />
+                                    <circle cx="10" cy="16" r="1.5" />
+                                  </svg>
+                                </button>
+                                {showMessageMenu === message.id && (
+                                  <>
+                                    <div
+                                      className="fixed inset-0 z-10"
+                                      onClick={() => setShowMessageMenu(null)}
+                                    />
+                                    <div className="absolute right-0 top-6 w-32 bg-white border border-gray-200 rounded-lg shadow-lg z-20 py-1">
+                                      <button
+                                        onClick={() => handleStartEdit(message)}
+                                        disabled={!canEdit}
+                                        className={`w-full px-4 py-2 text-left text-sm ${
+                                          canEdit
+                                            ? 'text-black hover:bg-gray-100'
+                                            : 'text-gray-400 cursor-not-allowed'
+                                        } transition-colors`}
+                                        title={!canEdit ? 'Cannot edit after message is viewed' : ''}
+                                      >
+                                        Edit
+                                      </button>
+                                      <button
+                                        onClick={() => handleDeleteMessage(message.id)}
+                                        disabled={!canEdit}
+                                        className={`w-full px-4 py-2 text-left text-sm ${
+                                          canEdit
+                                            ? 'text-red-600 hover:bg-gray-100'
+                                            : 'text-gray-400 cursor-not-allowed'
+                                        } transition-colors`}
+                                        title={!canEdit ? 'Cannot delete after message is viewed' : ''}
+                                      >
+                                        Delete
+                                      </button>
+                                    </div>
+                                  </>
+                                )}
+                              </div>
+                            )}
+                            <div className="flex flex-col gap-1">
+                              {isEditing ? (
+                                <div className="flex items-center gap-2">
+                                  <input
+                                    type="text"
+                                    value={editingText}
+                                    onChange={(e) => setEditingText(e.target.value)}
+                                    className="px-4 py-2 bg-gray-100 rounded-3xl text-sm focus:outline-none text-black"
+                                    autoFocus
+                                  />
+                                  <button
+                                    onClick={() => handleSaveEdit(message.id)}
+                                    className="px-3 py-1 bg-black text-white text-xs rounded-full hover:bg-gray-800"
+                                  >
+                                    Save
+                                  </button>
+                                  <button
+                                    onClick={handleCancelEdit}
+                                    className="px-3 py-1 bg-gray-200 text-black text-xs rounded-full hover:bg-gray-300"
+                                  >
+                                    Cancel
+                                  </button>
+                                </div>
+                              ) : (
+                                <>
+                                  <div
+                                    className={`max-w-[60%] px-4 py-2 rounded-3xl ${
+                                      isOwn
+                                        ? 'bg-black text-white'
+                                        : 'bg-gray-200 text-black'
+                                    }`}
+                                  >
+                                    {message.body}
+                                  </div>
+                                  {message.edited && (
+                                    <span className="text-xs text-gray-400 px-2">
+                                      Edited {new Date(message.updated_at).toLocaleString()}
+                                    </span>
+                                  )}
+                                </>
+                              )}
+                            </div>
                           </div>
                         </div>
                       )

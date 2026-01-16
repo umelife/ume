@@ -53,7 +53,7 @@ Built with Next.js 15, TypeScript, Tailwind CSS, and Supabase.
 - **Storage:** Supabase Storage
 - **Real-time:** Supabase Realtime
 - **Payments:** Stripe (temporarily disabled - pending business registration)
-- **Email:** Resend
+- **Email:** Brevo (transactional emails)
 - **Deployment:** Vercel
 - **Analytics:** Mixpanel
 
@@ -66,7 +66,7 @@ Built with Next.js 15, TypeScript, Tailwind CSS, and Supabase.
 - Node.js 18+ and npm
 - Supabase account (free tier works)
 - ~~Stripe account~~ (not required - payments temporarily disabled)
-- (Optional) Resend account for emails
+- (Optional) Brevo account for emails
 
 ### Installation
 
@@ -135,9 +135,10 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
-# Email (Get from: https://resend.com/api-keys)
-RESEND_API_KEY=re_...
-EMAIL_FROM=noreply@yourdomain.com
+# Email - Brevo (Get from: https://app.brevo.com/settings/keys/api)
+BREVO_API_KEY=xkeysib-...
+BREVO_SENDER_EMAIL=no-reply@ume-life.com  # Must be verified in Brevo
+SUPPORT_EMAIL=umelife.official@gmail.com   # Receives notifications
 
 # Analytics (Get from: https://mixpanel.com)
 NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_token
@@ -150,6 +151,86 @@ NEXT_PUBLIC_MIXPANEL_TOKEN=your_mixpanel_token
 - Never expose `SUPABASE_SERVICE_ROLE_KEY` to the browser
 - Use environment variables in Vercel for production
 - Rotate keys immediately if accidentally exposed
+
+---
+
+## 📧 Email Configuration (Brevo)
+
+UME uses [Brevo](https://www.brevo.com) (formerly Sendinblue) for transactional emails such as report notifications.
+
+### Setup Steps
+
+1. **Create Brevo Account**
+   - Sign up at https://www.brevo.com (free tier: 300 emails/day)
+
+2. **Verify Sender Email**
+   - Go to **Brevo Dashboard → Senders & IP → Senders**
+   - Add and verify `no-reply@ume-life.com` (or your domain)
+   - ⚠️ **IMPORTANT:** Emails will fail if sender is not verified!
+
+3. **Get API Key**
+   - Go to **SMTP & API → API Keys**
+   - Create a new API key
+   - Copy the key (starts with `xkeysib-`)
+
+4. **Configure Environment Variables**
+   ```bash
+   BREVO_API_KEY=xkeysib-your-api-key-here
+   BREVO_SENDER_EMAIL=no-reply@ume-life.com
+   SUPPORT_EMAIL=umelife.official@gmail.com
+   ```
+
+### Email Flow
+
+| Field | Value | Purpose |
+|-------|-------|---------|
+| FROM | `BREVO_SENDER_EMAIL` | Verified Brevo sender |
+| TO | `SUPPORT_EMAIL` | Gmail inbox for notifications |
+| REPLY-TO | `SUPPORT_EMAIL` | Replies go to Gmail |
+
+### Test Email (Manual)
+
+```bash
+# Sends a real email via Brevo (requires BREVO_API_KEY)
+npx tsx scripts/test-email.ts
+```
+
+### E2E Tests (Automated)
+
+The project includes Playwright E2E tests for the email flow. These tests run in **test mode** and do not send real emails.
+
+**Required environment variables for tests:**
+```bash
+EMAIL_TEST_MODE=true              # Enables mock email sending
+BREVO_SENDER_EMAIL=no-reply@ume-life.com  # FROM address
+SUPPORT_EMAIL=test@example.com    # TO/REPLY-TO address
+# Note: BREVO_API_KEY is NOT required for tests
+```
+
+**Run tests locally:**
+```bash
+# Install Playwright browsers (first time only)
+npx playwright install chromium
+
+# Run all E2E tests
+npm run test:e2e
+
+# Run only email-related tests
+npm run test:e2e:report
+
+# Run with UI (interactive mode)
+npm run test:e2e:ui
+```
+
+**How test mode works:**
+1. When `EMAIL_TEST_MODE=true`, emails are logged to a temp file instead of sent
+2. Playwright tests read the log via `/api/test/email-log` endpoint
+3. Test endpoints are blocked in production (`NODE_ENV=production`)
+4. No real Brevo API calls are made during tests
+
+**CI/CD:**
+- GitHub Actions runs E2E tests on PRs that modify email-related files
+- See `.github/workflows/e2e.yml` for configuration
 
 ---
 

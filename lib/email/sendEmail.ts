@@ -1,19 +1,38 @@
 /**
- * Email Service - Send transactional emails via Resend
+ * Email Service - Send transactional emails via Brevo
  *
  * Setup:
- * 1. Sign up at https://resend.com
- * 2. Get API key
- * 3. Add to .env.local: RESEND_API_KEY=re_...
- * 4. Verify domain (optional for production)
+ * 1. Sign up at https://www.brevo.com
+ * 2. Verify your sender in Brevo Dashboard -> Senders & IP -> Senders
+ * 3. Get API key from SMTP & API -> API Keys
+ * 4. Add to .env.local:
+ *    BREVO_API_KEY=xkeysib-...
+ *    BREVO_SENDER_EMAIL=no-reply@ume-life.com (must be verified in Brevo)
+ *    SUPPORT_EMAIL=umelife.official@gmail.com (recipient + reply-to)
+ *
+ * Email Flow:
+ * - FROM: BREVO_SENDER_EMAIL (verified Brevo sender)
+ * - TO: SUPPORT_EMAIL (Gmail inbox)
+ * - REPLY-TO: SUPPORT_EMAIL (so replies go to Gmail)
+ *
+ * Testing:
+ * - Set EMAIL_TEST_MODE=true to mock email sending
+ * - Emails will be logged to /tmp/email-test-log.json (or temp dir on Windows)
  */
 
-import { Resend } from 'resend'
+import * as Brevo from '@getbrevo/brevo'
+import * as fs from 'fs'
+import * as path from 'path'
+import * as os from 'os'
 
-// Initialize Resend only if API key is present
-const resend = process.env.RESEND_API_KEY
-  ? new Resend(process.env.RESEND_API_KEY)
-  : null
+// Initialize Brevo API client
+const apiInstance = new Brevo.TransactionalEmailsApi()
+if (process.env.BREVO_API_KEY) {
+  apiInstance.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY)
+}
+
+// Test mode log file path
+const EMAIL_TEST_LOG_PATH = path.join(os.tmpdir(), 'email-test-log.json')
 
 export interface EmailOptions {
   to: string | string[]
@@ -23,50 +42,141 @@ export interface EmailOptions {
   replyTo?: string
 }
 
+export interface EmailLogEntry {
+  timestamp: string
+  payload: {
+    sender: { name: string; email: string }
+    to: { email: string }[]
+    subject: string
+    replyTo: { email: string }
+  }
+  success: boolean
+  testMode: boolean
+}
+
 /**
- * Send an email using Resend
+ * Get the path to the email test log file
+ */
+export function getEmailTestLogPath(): string {
+  return EMAIL_TEST_LOG_PATH
+}
+
+/**
+ * Read all logged emails from test mode
+ */
+export function readEmailTestLog(): EmailLogEntry[] {
+  try {
+    if (fs.existsSync(EMAIL_TEST_LOG_PATH)) {
+      const content = fs.readFileSync(EMAIL_TEST_LOG_PATH, 'utf-8')
+      return JSON.parse(content)
+    }
+  } catch {
+    // Ignore errors, return empty array
+  }
+  return []
+}
+
+/**
+ * Clear the email test log
+ */
+export function clearEmailTestLog(): void {
+  try {
+    if (fs.existsSync(EMAIL_TEST_LOG_PATH)) {
+      fs.unlinkSync(EMAIL_TEST_LOG_PATH)
+    }
+  } catch {
+    // Ignore errors
+  }
+}
+
+/**
+ * Log email to test file (used in test mode)
+ */
+function logEmailToTestFile(entry: EmailLogEntry): void {
+  try {
+    const logs = readEmailTestLog()
+    logs.push(entry)
+    fs.writeFileSync(EMAIL_TEST_LOG_PATH, JSON.stringify(logs, null, 2))
+  } catch (error) {
+    console.error('[EMAIL] Failed to write test log:', error)
+  }
+}
+
+/**
+ * Send an email using Brevo API
+ * @param options - Email options (to, subject, html, optional from/replyTo)
+ * @returns { success: boolean, data?: object, error?: string }
  */
 export async function sendEmail(options: EmailOptions) {
+  // Build payload for logging
+  const senderEmail = process.env.BREVO_SENDER_EMAIL || 'no-reply@ume-life.com'
+  const senderName = 'UME Support'
+  const replyToEmail = options.replyTo || process.env.SUPPORT_EMAIL || 'umelife.official@gmail.com'
+  const recipients = Array.isArray(options.to) ? options.to : [options.to]
+
+  const payload = {
+    sender: { name: senderName, email: senderEmail },
+    to: recipients.map(email => ({ email })),
+    subject: options.subject,
+    replyTo: { email: replyToEmail },
+  }
+
+  // Test mode: log email instead of sending
+  if (process.env.EMAIL_TEST_MODE === 'true') {
+    console.log('[EMAIL] TEST MODE - Email not sent, logging instead')
+    console.log('[EMAIL] Payload:', JSON.stringify(payload, null, 2))
+
+    const logEntry: EmailLogEntry = {
+      timestamp: new Date().toISOString(),
+      payload,
+      success: true,
+      testMode: true,
+    }
+    logEmailToTestFile(logEntry)
+
+    return {
+      success: true,
+      data: { messageId: `test-${Date.now()}` },
+      testMode: true,
+    }
+  }
+
   try {
-    // Check if Resend is configured
-    if (!resend) {
-      console.error('[EMAIL] RESEND_API_KEY not configured - email not sent')
-      console.error('[EMAIL] Subject:', options.subject)
-      console.error('[EMAIL] To:', options.to)
+    // Check if Brevo is configured
+    if (!process.env.BREVO_API_KEY) {
+      console.error('[EMAIL] BREVO_API_KEY not configured - email not sent')
+      console.error('[EMAIL] Payload:', JSON.stringify(payload, null, 2))
       return {
         success: false,
-        error: 'RESEND_API_KEY not configured. Add it to environment variables to enable emails.'
+        error: 'BREVO_API_KEY not configured. Add it to environment variables to enable emails.'
       }
     }
 
-    // Default from address
-    const defaultFromEmail = process.env.SUPPORT_EMAIL || 'umelife.official@gmail.com'
-    const from = options.from || `UME Support <${defaultFromEmail}>`
-
-    console.log('[EMAIL] Attempting to send email...')
-    console.log('[EMAIL] From:', from)
-    console.log('[EMAIL] To:', options.to)
+    console.log('[EMAIL] Sending email via Brevo...')
+    console.log('[EMAIL] From:', `${senderName} <${senderEmail}>`)
+    console.log('[EMAIL] To:', recipients.join(', '))
+    console.log('[EMAIL] Reply-To:', replyToEmail)
     console.log('[EMAIL] Subject:', options.subject)
 
-    // Send email
-    const { data, error } = await resend.emails.send({
-      from,
-      to: options.to,
-      subject: options.subject,
-      html: options.html,
-      replyTo: options.replyTo,
-    })
+    const sendSmtpEmail = new Brevo.SendSmtpEmail()
+    sendSmtpEmail.sender = payload.sender
+    sendSmtpEmail.to = payload.to
+    sendSmtpEmail.subject = options.subject
+    sendSmtpEmail.htmlContent = options.html
+    sendSmtpEmail.replyTo = payload.replyTo
 
-    if (error) {
-      console.error('[EMAIL] Send error:', JSON.stringify(error))
-      return { success: false, error }
-    }
+    const response = await apiInstance.sendTransacEmail(sendSmtpEmail)
 
-    console.log('[EMAIL] Sent successfully! ID:', data?.id)
-    return { success: true, data }
+    console.log('[EMAIL] Sent successfully!')
+    console.log('[EMAIL] Response:', JSON.stringify(response.body, null, 2))
+    return { success: true, data: response.body }
   } catch (error: any) {
-    console.error('[EMAIL] Exception:', error.message)
-    console.error('[EMAIL] Stack:', error.stack)
+    console.error('[EMAIL] Failed to send email')
+    console.error('[EMAIL] Error:', error.message)
+    console.error('[EMAIL] Payload:', JSON.stringify(payload, null, 2))
+    if (error.response?.body) {
+      console.error('[EMAIL] API Response:', JSON.stringify(error.response.body, null, 2))
+    }
     return { success: false, error: error.message }
   }
 }

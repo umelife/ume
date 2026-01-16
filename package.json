@@ -9,9 +9,14 @@
     "lint": "next lint",
     "test:auth": "node scripts/test-auth-protection.js",
     "test:smoke": "node scripts/smoke-test.js",
-    "test:listings": "npx ts-node scripts/check-listings.ts"
+    "test:listings": "npx ts-node scripts/check-listings.ts",
+    "test:email": "npx tsx scripts/test-email.ts",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:report": "playwright test e2e/report-email-api.spec.ts"
   },
   "dependencies": {
+    "@getbrevo/brevo": "^3.0.1",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-icons": "^1.3.2",
@@ -25,10 +30,10 @@
     "phosphor-react": "^1.4.1",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
-    "resend": "^6.4.2",
     "stripe": "^19.3.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@types/mixpanel-browser": "^2.60.0",
     "@types/node": "^22",
     "@types/react": "^19",

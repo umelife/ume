@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { trackEvent } from '@/lib/mixpanel/client'
 import UsernameInput from '@/components/auth/UsernameInput'
+import AddressInput from '@/components/auth/AddressInput'
 
 interface PasswordRequirements {
   minLength: boolean
@@ -217,21 +218,11 @@ export default function SignupPage() {
                 />
               </div>
 
-              <div>
-                <label htmlFor="collegeAddress" className="block text-sm font-medium text-black mb-1">
-                  College Address
-                </label>
-                <input
-                  id="collegeAddress"
-                  name="collegeAddress"
-                  type="text"
-                  required
-                  value={collegeAddress}
-                  onChange={(e) => setCollegeAddress(e.target.value)}
-                  className="appearance-none rounded-full relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-400 text-black focus:outline-none focus:ring-black focus:border-black"
-                  placeholder="e.g., 6178 College Station Dr, Williamsburg, KY 40769"
-                />
-              </div>
+              <AddressInput
+                value={collegeAddress}
+                onChange={setCollegeAddress}
+                required
+              />
 
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-black mb-1">

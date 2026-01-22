@@ -30,11 +30,11 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center px-4">
+    <div className="min-h-screen bg-ume-bg flex items-center justify-center px-4">
       <div className="max-w-md w-full space-y-8">
         <div>
-          <h2 className="text-center text-3xl font-bold text-black">
-            Log in to UME
+          <h2 className="text-center text-3xl font-bold text-ume-indigo">
+            Log in to <span className="text-ume-indigo">U</span><span className="text-ume-pink">M</span><span className="text-ume-pink">E</span>
           </h2>
           <p className="mt-2 text-center text-sm text-black">
             Or{' '}
@@ -99,7 +99,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-ume-bg flex items-center justify-center">
         <div className="text-black">Loading...</div>
       </div>
     }>

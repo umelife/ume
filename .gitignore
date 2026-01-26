@@ -40,3 +40,28 @@ next-env.d.ts
 
 # claude code local settings
 .claude/settings.local.json
+
+# Prevent clutter in root directory
+/*.jpg
+/*.jpeg
+/*.png
+/*.gif
+/*.webp
+/*.ttf
+/*.woff
+/*.woff2
+/*.sql
+/*.log
+/*.txt
+!package.json
+!tsconfig.json
+!next.config.js
+!tailwind.config.ts
+!postcss.config.mjs
+!playwright.config.ts
+
+# Screenshots and temp files
+Screenshot*.png
+*.html
+!app/**/*.html
+!public/**/*.html

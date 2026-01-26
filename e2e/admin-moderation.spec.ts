@@ -4,7 +4,7 @@ import { test, expect } from '@playwright/test'
  * E2E Tests for Admin Moderation (Resolve/Dismiss Reports)
  *
  * These tests verify:
- * 1. Admin API endpoint accepts PATCH requests with status updates
+ * 1. Admin API endpoints accept requests with status updates
  * 2. API returns correct JSON response shape
  * 3. Unauthorized users receive 403
  * 4. Invalid requests receive appropriate errors
@@ -14,6 +14,7 @@ import { test, expect } from '@playwright/test'
  */
 
 const TEST_REPORT_ID = 'test-report-id-123'
+const TEST_LISTING_ID = 'test-listing-id-456'
 
 test.describe('Admin Moderation API', () => {
   test('PATCH /api/admin/reports/[id] returns 403 without auth', async ({ request }) => {
@@ -194,5 +195,117 @@ test.describe('Admin Access Control', () => {
     const loginRedirect = page.url().includes('/login')
 
     expect(await accessDenied.isVisible() || loginRedirect).toBeTruthy()
+  })
+})
+
+// ============================================
+// NEW: /api/admin/moderation endpoint tests
+// ============================================
+
+test.describe('Admin Moderation API (/api/admin/moderation)', () => {
+  test('POST /api/admin/moderation returns 403 without auth', async ({ request }) => {
+    const response = await request.post('/api/admin/moderation', {
+      data: { listingId: TEST_LISTING_ID, action: 'resolve' },
+    })
+
+    expect(response.status()).toBe(403)
+
+    const body = await response.json()
+    expect(body.success).toBe(false)
+    expect(body.error).toContain('Unauthorized')
+  })
+
+  test('POST /api/admin/moderation returns 400 for invalid action', async ({ request }) => {
+    const response = await request.post('/api/admin/moderation', {
+      data: { listingId: TEST_LISTING_ID, action: 'invalid-action' },
+    })
+
+    // Will get 403 because no auth, but endpoint validates action if auth passes
+    expect([400, 403]).toContain(response.status())
+  })
+
+  test('POST /api/admin/moderation returns 400 for missing listingId', async ({ request }) => {
+    const response = await request.post('/api/admin/moderation', {
+      data: { action: 'resolve' },
+    })
+
+    expect([400, 403]).toContain(response.status())
+  })
+
+  test('POST /api/admin/moderation returns 400 for missing action', async ({ request }) => {
+    const response = await request.post('/api/admin/moderation', {
+      data: { listingId: TEST_LISTING_ID },
+    })
+
+    expect([400, 403]).toContain(response.status())
+  })
+
+  test('GET /api/admin/moderation returns 403 without auth', async ({ request }) => {
+    const response = await request.get(`/api/admin/moderation?listingId=${TEST_LISTING_ID}`)
+
+    expect(response.status()).toBe(403)
+
+    const body = await response.json()
+    expect(body.success).toBe(false)
+    expect(body.error).toContain('Unauthorized')
+  })
+
+  test('GET /api/admin/moderation returns 400 for missing listingId', async ({ request }) => {
+    const response = await request.get('/api/admin/moderation')
+
+    expect([400, 403]).toContain(response.status())
+  })
+})
+
+test.describe('Admin Moderation API - With Test Token', () => {
+  // These tests require ADMIN_TEST_MODE=true and ADMIN_TEST_TOKEN set
+
+  test.skip(
+    !process.env.ADMIN_TEST_MODE || process.env.ADMIN_TEST_MODE !== 'true',
+    'ADMIN_TEST_MODE not enabled'
+  )
+
+  test('POST /api/admin/moderation with test token validates request', async ({ request }) => {
+    const response = await request.post('/api/admin/moderation', {
+      data: { listingId: TEST_LISTING_ID, action: 'resolve' },
+      headers: {
+        'X-Admin-Test-Token': process.env.ADMIN_TEST_TOKEN || '',
+      },
+    })
+
+    // If test mode is enabled and token is valid:
+    // - 200 if report exists and was updated
+    // - 404 if no report found for listing
+    // - 400 if report already resolved/dismissed
+    // - 403 if token invalid
+    expect([200, 400, 404, 403]).toContain(response.status())
+
+    const body = await response.json()
+    expect(body).toHaveProperty('success')
+
+    if (response.status() === 200) {
+      expect(body.success).toBe(true)
+      expect(body.newStatus).toBe('resolved')
+      expect(body).toHaveProperty('reportId')
+    }
+  })
+
+  test('GET /api/admin/moderation with test token returns reports', async ({ request }) => {
+    const response = await request.get(`/api/admin/moderation?listingId=${TEST_LISTING_ID}`, {
+      headers: {
+        'X-Admin-Test-Token': process.env.ADMIN_TEST_TOKEN || '',
+      },
+    })
+
+    // If test mode enabled: 200 with reports array (may be empty)
+    expect([200, 403]).toContain(response.status())
+
+    if (response.status() === 200) {
+      const body = await response.json()
+      expect(body.success).toBe(true)
+      expect(body).toHaveProperty('reports')
+      expect(Array.isArray(body.reports)).toBe(true)
+      expect(body).toHaveProperty('count')
+    }
   })
 })

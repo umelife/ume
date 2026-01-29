@@ -16,6 +16,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
+import { handleMessageNotifications } from '@/lib/notifications/messageNotifications'
 
 // Create service role client (server-side only)
 function getServiceClient() {
@@ -149,7 +150,8 @@ export async function sendMessageEnhanced(
       })
       .select(`
         *,
-        sender:users!messages_sender_id_fkey(*)
+        sender:users!messages_sender_id_fkey(*),
+        listing:listings!messages_listing_id_fkey(title)
       `)
       .single()
 
@@ -157,6 +159,20 @@ export async function sendMessageEnhanced(
       console.error('Error sending message:', error)
       return { error: error.message }
     }
+
+    // Trigger notifications (in-app + conditional email)
+    // Fire and forget - don't block the response
+    handleMessageNotifications({
+      messageId: data.id,
+      senderId: user.id,
+      senderName: data.sender?.display_name || data.sender?.username || 'Someone',
+      receiverId,
+      listingId,
+      listingTitle: data.listing?.title || 'a listing',
+      messagePreview: body.trim(),
+    }).catch(err => {
+      console.error('Error handling message notifications:', err)
+    })
 
     return {
       message: {

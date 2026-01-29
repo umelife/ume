@@ -55,6 +55,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
+    // Update user activity (fire and forget - don't block the request)
+    // The database function has built-in debouncing (1 minute)
+    void supabase.rpc('update_user_activity', { p_user_id: user.id })
+
     return supabaseResponse
   }
 

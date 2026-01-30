@@ -20,16 +20,10 @@
  * - Emails will be logged to /tmp/email-test-log.json (or temp dir on Windows)
  */
 
-import * as Brevo from '@getbrevo/brevo'
+// Note: We use direct fetch API instead of Brevo SDK for faster execution in serverless
 import * as fs from 'fs'
 import * as path from 'path'
 import * as os from 'os'
-
-// Initialize Brevo API client
-const apiInstance = new Brevo.TransactionalEmailsApi()
-if (process.env.BREVO_API_KEY) {
-  apiInstance.setApiKey(Brevo.TransactionalEmailsApiApiKeys.apiKey, process.env.BREVO_API_KEY)
-}
 
 // Test mode log file path
 const EMAIL_TEST_LOG_PATH = path.join(os.tmpdir(), 'email-test-log.json')
@@ -152,55 +146,39 @@ export async function sendEmail(options: EmailOptions) {
   }
 
   console.log('[EMAIL] Sending email via Brevo...')
-  console.log('[EMAIL] From:', `${senderName} <${senderEmail}>`)
   console.log('[EMAIL] To:', recipients.join(', '))
-  console.log('[EMAIL] Reply-To:', replyToEmail)
   console.log('[EMAIL] Subject:', options.subject)
 
-  const sendSmtpEmail = new Brevo.SendSmtpEmail()
-  sendSmtpEmail.sender = payload.sender
-  sendSmtpEmail.to = payload.to
-  sendSmtpEmail.subject = options.subject
-  sendSmtpEmail.htmlContent = options.html
-  sendSmtpEmail.replyTo = payload.replyTo
+  // Use direct fetch API for faster execution in serverless (SDK can be slow)
+  try {
+    const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      method: 'POST',
+      headers: {
+        'accept': 'application/json',
+        'api-key': process.env.BREVO_API_KEY!,
+        'content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        sender: payload.sender,
+        to: payload.to,
+        subject: options.subject,
+        htmlContent: options.html,
+        replyTo: payload.replyTo,
+      }),
+    })
 
-  // Retry logic for transient network errors (socket hang up, etc.)
-  const maxRetries = 3
-  let lastError: any = null
-
-  for (let attempt = 1; attempt <= maxRetries; attempt++) {
-    try {
-      console.log(`[EMAIL] Attempt ${attempt}/${maxRetries}...`)
-      const response = await apiInstance.sendTransacEmail(sendSmtpEmail)
-
-      console.log('[EMAIL] Sent successfully!')
-      console.log('[EMAIL] Response:', JSON.stringify(response.body, null, 2))
-      return { success: true, data: response.body }
-    } catch (error: any) {
-      lastError = error
-      const isRetryable = error.message?.includes('socket hang up') ||
-                          error.message?.includes('ECONNRESET') ||
-                          error.message?.includes('ETIMEDOUT') ||
-                          error.code === 'ECONNRESET'
-
-      if (isRetryable && attempt < maxRetries) {
-        console.warn(`[EMAIL] Attempt ${attempt} failed with retryable error: ${error.message}`)
-        console.warn(`[EMAIL] Retrying in ${attempt * 500}ms...`)
-        await new Promise(resolve => setTimeout(resolve, attempt * 500))
-      } else {
-        break
-      }
+    if (response.ok) {
+      const data = await response.json()
+      console.log('[EMAIL] Sent successfully! MessageId:', data.messageId)
+      return { success: true, data }
+    } else {
+      const errorData = await response.json().catch(() => ({}))
+      console.error('[EMAIL] Failed:', response.status, errorData)
+      return { success: false, error: errorData.message || `HTTP ${response.status}` }
     }
-  }
-
-  // All retries failed
-  console.error('[EMAIL] Failed to send email after all retries')
-  console.error('[EMAIL] Error:', lastError?.message)
-  console.error('[EMAIL] Payload:', JSON.stringify(payload, null, 2))
-  if (lastError?.response?.body) {
-    console.error('[EMAIL] API Response:', JSON.stringify(lastError.response.body, null, 2))
-  }
-  return { success: false, error: lastError?.message || 'Unknown error' }
+  } catch (error: any) {
+    console.error('[EMAIL] Network error:', error.message)
+    return { success: false, error: error.message }
   }
 }
 

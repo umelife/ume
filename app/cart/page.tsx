@@ -128,16 +128,14 @@ export default function CartPage() {
     return (
       <div className="min-h-screen bg-ume-bg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <h1 className="heading-primary text-black mb-8">SHOPPING CART</h1>
+          <h1 className="heading-primary text-black mb-8">LIKED LIST</h1>
 
           <div className="bg-white rounded-lg shadow-md p-12 text-center">
             <svg className="w-24 h-24 mx-auto mb-6 text-gray-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
-            <h2 className="text-2xl font-bold text-black mb-4">Your cart is empty</h2>
-            <p className="text-black mb-8">Start shopping to add items to your cart</p>
+            <h2 className="text-2xl font-bold text-black mb-4">Your liked list is empty</h2>
+            <p className="text-black mb-8">Start browsing to add items to your liked list</p>
             <Link
               href="/marketplace"
               className="inline-block bg-black text-white px-8 py-3 rounded-full font-semibold hover:bg-gray-800 transition-colors"
@@ -155,7 +153,7 @@ export default function CartPage() {
   return (
     <div className="min-h-screen bg-ume-bg">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="heading-primary text-black mb-8">SHOPPING CART</h1>
+        <h1 className="heading-primary text-black mb-8">LIKED LIST</h1>
 
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Cart Items */}
@@ -230,7 +228,7 @@ export default function CartPage() {
                         ? 'text-gray-400 cursor-not-allowed'
                         : 'text-black hover:text-gray-600'
                     }`}
-                    aria-label="Remove from cart"
+                    aria-label="Remove from liked"
                   >
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />

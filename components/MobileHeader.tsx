@@ -54,16 +54,14 @@ export default function MobileHeader({
                 </svg>
               </button>
 
-              {/* Cart with Badge */}
+              {/* Liked with Badge */}
               <button
                 onClick={() => router.push('/cart')}
-                aria-label="Cart"
+                aria-label="Liked"
                 className="p-1 relative"
               >
                 <svg className="w-4 h-4 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                  <circle cx="9" cy="21" r="1"/>
-                  <circle cx="20" cy="21" r="1"/>
-                  <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
                 {cartItemCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-ume-pink text-white text-[9px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-1">

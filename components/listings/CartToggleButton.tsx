@@ -30,7 +30,7 @@ export default function CartToggleButton({ listingId, listingOwnerId, currentUse
         inCart ? 'bg-white border-2 border-ume-indigo text-ume-indigo hover:bg-gray-50' : 'bg-ume-indigo text-white hover:bg-indigo-800'
       } ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
     >
-      {loading ? 'Working...' : (inCart ? 'Remove from liked' : 'Add to liked')}
+      {loading ? 'Working...' : (inCart ? 'Remove from liked' : 'Save to liked')}
     </button>
   )
 }

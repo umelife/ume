@@ -96,7 +96,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
               inCart ? 'bg-white border border-black text-black hover:bg-gray-50' : 'bg-black text-white hover:bg-gray-800'
             } ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
-            {loading ? 'Working...' : (inCart ? 'Remove from liked' : 'Add to liked')}
+            {loading ? 'Working...' : (inCart ? 'Remove from liked' : 'Save to liked')}
           </button>
         </div>
       )}

@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { sendEmail } from '@/lib/email/sendEmail'
 
 /**
  * Contact Form API Route
  *
- * Handles form submissions from the Contact Us page.
- * Currently logs to console - can be extended to send emails, save to database, etc.
+ * Handles form submissions from the Contact Us page and sends notification emails.
  */
 
 export const runtime = 'nodejs'
@@ -43,11 +43,30 @@ export async function POST(request: NextRequest) {
       message,
     })
 
-    // TODO: Implement email sending or database storage
-    // Example integrations:
-    // - Send email via SendGrid, Resend, or similar
-    // - Save to Supabase database
-    // - Send to CRM or notification service
+    // Send email notification to support
+    const emailHtml = `
+      <h2>New Contact Form Submission</h2>
+      <p><strong>From:</strong> ${firstName} ${lastName} (${email})</p>
+      ${body.phone ? `<p><strong>Phone:</strong> ${body.phone}</p>` : ''}
+      ${body.referralSource ? `<p><strong>How they heard about us:</strong> ${body.referralSource}</p>` : ''}
+      <p><strong>Newsletter signup:</strong> ${body.signUpNewsletter ? 'Yes' : 'No'}</p>
+      <hr>
+      <h3>Message:</h3>
+      <p>${message.replace(/\n/g, '<br>')}</p>
+      <hr>
+      <p><small>Submitted at: ${new Date().toISOString()}</small></p>
+    `
+
+    try {
+      await sendEmail({
+        to: process.env.SUPPORT_EMAIL || 'umelife.official@gmail.com',
+        subject: `Contact Form: ${firstName} ${lastName}`,
+        html: emailHtml,
+      })
+    } catch (emailError) {
+      console.error('Failed to send contact form email:', emailError)
+      // Don't fail the request if email fails - still return success to user
+    }
 
     // Return success response
     return NextResponse.json(

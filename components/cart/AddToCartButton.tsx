@@ -62,7 +62,7 @@ export default function AddToCartButton({
           )}
         </svg>
       )}
-      {loading ? 'Adding...' : added ? 'Added!' : 'Add to Liked'}
+      {loading ? 'Saving...' : added ? 'Saved!' : 'Save to Liked'}
     </button>
   )
 }

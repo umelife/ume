@@ -213,7 +213,7 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
             ? 'border-green-600 text-green-600 bg-green-50'
             : 'border-blue-600 text-blue-600 hover:bg-blue-50'
         } disabled:opacity-50 disabled:cursor-not-allowed`}
-        aria-label={`Add ${listing.title} to cart`}
+        aria-label={`Save ${listing.title} to liked`}
       >
         {cartLoading ? (
           <span className="flex items-center justify-center gap-2">
@@ -221,23 +221,21 @@ export default function BuyButton({ listing, className = '' }: BuyButtonProps) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
             </svg>
-            Adding...
+            Saving...
           </span>
         ) : added ? (
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7"/>
             </svg>
-            {cartMessage?.type === 'local' ? 'Added (Saved Locally)' : 'Added to Cart!'}
+            Saved to Liked!
           </span>
         ) : (
           <span className="flex items-center justify-center gap-2">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" aria-hidden="true">
-              <circle cx="9" cy="21" r="1"/>
-              <circle cx="20" cy="21" r="1"/>
-              <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
             </svg>
-            Add to Cart
+            Save to Liked
           </span>
         )}
       </button>

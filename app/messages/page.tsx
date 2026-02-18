@@ -821,13 +821,12 @@ function MessageInput({
   disabled: boolean
   initialText?: string
 }) {
-  const [text, setText] = useState(initialText)
+  const [text, setText] = useState('')
+  const [suggestion, setSuggestion] = useState(initialText)
   const inputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    if (initialText && initialText !== text) {
-      setText(initialText)
-    }
+    if (initialText) setSuggestion(initialText)
   }, [initialText])
 
   useEffect(() => {
@@ -839,6 +838,7 @@ function MessageInput({
     if (!text.trim()) return
     onSend(e, text)
     setText('')
+    setSuggestion('')
   }
 
   const fileInputRef = useRef<HTMLInputElement | null>(null)
@@ -862,59 +862,67 @@ function MessageInput({
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="px-4 py-3 border-t border-gray-200 bg-white"
-    >
-      <div className="flex items-center gap-2">
-        <input
-          ref={inputRef}
-          type="text"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Message..."
-          className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none text-black"
-          disabled={disabled}
-          aria-label="Message input"
-        />
+    <div className="border-t border-gray-200 bg-white">
+      {/* Suggested message — visible but must be typed to send */}
+      {suggestion && (
+        <div className="px-4 pt-3 pb-1">
+          <p className="text-xs text-gray-400 mb-1.5">Suggested message:</p>
+          <div className="inline-block bg-gray-100 rounded-2xl px-4 py-2 text-sm text-gray-500 italic max-w-full">
+            &ldquo;{suggestion}&rdquo;
+          </div>
+        </div>
+      )}
+      <form onSubmit={handleSubmit} className="px-4 py-3">
+        <div className="flex items-center gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Message..."
+            className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none text-black"
+            disabled={disabled}
+            aria-label="Message input"
+          />
 
-        {/* Image upload button */}
-        <button
-          type="button"
-          onClick={handleImageClick}
-          className="p-2 text-gray-600 hover:text-black rounded-full hover:bg-gray-100 flex-shrink-0"
-          aria-label="Add image"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        </button>
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className="hidden"
-          aria-label="Upload image"
-        />
+          {/* Image upload button */}
+          <button
+            type="button"
+            onClick={handleImageClick}
+            className="p-2 text-gray-600 hover:text-black rounded-full hover:bg-gray-100 flex-shrink-0"
+            aria-label="Add image"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="hidden"
+            aria-label="Upload image"
+          />
 
-        {/* Send button - always visible */}
-        <button
-          type="submit"
-          disabled={!text.trim() || disabled}
-          className={`p-2 rounded-full flex-shrink-0 transition-colors ${
-            text.trim() && !disabled
-              ? 'text-ume-indigo hover:bg-indigo-50'
-              : 'text-gray-400 cursor-not-allowed'
-          }`}
-          aria-label="Send message"
-        >
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-          </svg>
-        </button>
-      </div>
-    </form>
+          {/* Send button */}
+          <button
+            type="submit"
+            disabled={!text.trim() || disabled}
+            className={`p-2 rounded-full flex-shrink-0 transition-colors ${
+              text.trim() && !disabled
+                ? 'text-ume-indigo hover:bg-indigo-50'
+                : 'text-gray-400 cursor-not-allowed'
+            }`}
+            aria-label="Send message"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+            </svg>
+          </button>
+        </div>
+      </form>
+    </div>
   )
 }
 

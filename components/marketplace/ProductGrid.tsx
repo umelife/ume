@@ -33,14 +33,14 @@ export default function ProductGrid({ listings }: ProductGridProps) {
 }
 
 function ProductCard({ listing }: { listing: Listing }) {
-  // Use first image or placeholder
-  const imageUrl = listing.image_urls?.[0] || '/placeholder-image.jpg'
+  const images = listing.image_urls?.length ? listing.image_urls : ['/placeholder-image.jpg']
   const { isInCart, addToCart, removeFromCart, loadingIds } = useCart()
   const inCart = isInCart(listing.id)
   const loading = loadingIds[listing.id] === true
 
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
+  const [imgIndex, setImgIndex] = useState(0)
 
   useEffect(() => {
     async function getCurrentUser() {
@@ -66,13 +66,47 @@ function ProductCard({ listing }: { listing: Listing }) {
         <div>
           {/* Square Image Container */}
           <div className="relative w-full pb-[100%] bg-gray-200 overflow-hidden">
-            {/* Using padding-top: 100% technique to maintain square aspect ratio */}
             <img
-              src={imageUrl}
+              src={images[imgIndex]}
               alt={listing.title}
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
               loading="lazy"
             />
+
+            {/* Prev Arrow */}
+            {images.length > 1 && (
+              <button
+                onClick={(e) => { e.preventDefault(); setImgIndex(i => (i - 1 + images.length) % images.length) }}
+                className="absolute left-1.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-white"
+                aria-label="Previous image"
+              >
+                <svg className="w-3.5 h-3.5 text-gray-800" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7"/>
+                </svg>
+              </button>
+            )}
+
+            {/* Next Arrow */}
+            {images.length > 1 && (
+              <button
+                onClick={(e) => { e.preventDefault(); setImgIndex(i => (i + 1) % images.length) }}
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 w-6 h-6 flex items-center justify-center bg-white/80 rounded-full opacity-0 group-hover:opacity-100 transition-opacity z-10 hover:bg-white"
+                aria-label="Next image"
+              >
+                <svg className="w-3.5 h-3.5 text-gray-800" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7"/>
+                </svg>
+              </button>
+            )}
+
+            {/* Dot indicators */}
+            {images.length > 1 && (
+              <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                {images.map((_, i) => (
+                  <span key={i} className={`block w-1.5 h-1.5 rounded-full ${i === imgIndex ? 'bg-white' : 'bg-white/50'}`} />
+                ))}
+              </div>
+            )}
 
             {/* Condition Badge (if available) */}
             {listing.condition && (

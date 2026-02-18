@@ -6,6 +6,7 @@ import type { Listing } from '@/types/database'
 import { formatPrice } from '@/lib/utils/helpers'
 import useCart from '@/hooks/useCart'
 import { createClient } from '@/lib/supabase/client'
+import { sendMessageEnhanced } from '@/lib/chat/enhanced-actions'
 
 /**
  * ProductGrid Component
@@ -41,6 +42,9 @@ function ProductCard({ listing }: { listing: Listing }) {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
   const [imgIndex, setImgIndex] = useState(0)
+  const [quickMsgLoading, setQuickMsgLoading] = useState(false)
+  const [quickMsgSent, setQuickMsgSent] = useState(false)
+  const [heartToast, setHeartToast] = useState<'added' | 'removed' | null>(null)
 
   useEffect(() => {
     async function getCurrentUser() {
@@ -60,18 +64,75 @@ function ProductCard({ listing }: { listing: Listing }) {
       : listing.description
     : ''
 
+  const handleQuickMessage = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    if (quickMsgLoading || quickMsgSent) return
+    setQuickMsgLoading(true)
+    const result = await sendMessageEnhanced(
+      listing.id,
+      listing.user_id,
+      "Hey, I'm interested in this item, is it available?"
+    )
+    setQuickMsgLoading(false)
+    if (!result.error) {
+      setQuickMsgSent(true)
+      setTimeout(() => setQuickMsgSent(false), 3000)
+    }
+  }
+
   return (
-    <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+    <div className="relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+      {/* Toast notifications */}
+      {(quickMsgSent || heartToast) && (
+        <div className="absolute top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap pointer-events-none">
+          {quickMsgSent ? 'Quick message sent' : heartToast === 'added' ? 'Added to liked' : 'Removed from liked'}
+        </div>
+      )}
+
       <Link href={`/item/${listing.id}`} className="group flex-1">
         <div>
           {/* Square Image Container */}
           <div className="relative w-full pb-[100%] bg-gray-200 overflow-hidden">
-            <img
-              src={images[imgIndex]}
-              alt={listing.title}
-              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-              loading="lazy"
-            />
+            {/* All images rendered for instant switching — only current is visible */}
+            {images.map((src, i) => (
+              <img
+                key={i}
+                src={src}
+                alt={listing.title}
+                className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200 ${i === imgIndex ? 'opacity-100' : 'opacity-0'}`}
+                loading="lazy"
+              />
+            ))}
+
+            {/* Heart icon — save to liked (top-right) */}
+            {!isOwnListing && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault()
+                  if (inCart) {
+                    removeFromCart(listing.id)
+                    setHeartToast('removed')
+                  } else {
+                    addToCart(listing.id)
+                    setHeartToast('added')
+                  }
+                  setTimeout(() => setHeartToast(null), 3000)
+                }}
+                disabled={loading}
+                className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:bg-white transition-colors"
+                aria-label={inCart ? 'Remove from liked' : 'Save to liked'}
+              >
+                <svg
+                  className={`w-4 h-4 transition-colors ${inCart ? 'text-red-500' : 'text-gray-500'}`}
+                  fill={inCart ? 'currentColor' : 'none'}
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  viewBox="0 0 24 24"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+              </button>
+            )}
 
             {/* Prev Arrow */}
             {images.length > 1 && (
@@ -117,7 +178,7 @@ function ProductCard({ listing }: { listing: Listing }) {
 
             {/* Distance Badge (if available from radius filter) */}
             {listing.distance_miles !== undefined && (
-              <div className="absolute top-2 right-2 bg-blue-600/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium text-white">
+              <div className="absolute bottom-1.5 right-2 bg-blue-600/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-medium text-white z-10">
                 {listing.distance_miles < 1
                   ? '< 1 mi'
                   : `${listing.distance_miles.toFixed(1)} mi`
@@ -166,41 +227,23 @@ function ProductCard({ listing }: { listing: Listing }) {
           </div>
         </div>
       </Link>
+
+      {/* Quick Message Button */}
       {!isOwnListing && (
         <div className="p-4 pt-0">
           <button
-            onClick={(e) => {
-              e.preventDefault()
-              if (inCart) removeFromCart(listing.id)
-              else addToCart(listing.id)
-            }}
-            disabled={loading}
-            aria-pressed={inCart}
+            onClick={handleQuickMessage}
+            disabled={quickMsgLoading}
             className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-              inCart ? 'bg-white border-2 border-ume-indigo text-ume-indigo hover:bg-gray-50' : 'bg-ume-indigo text-white hover:bg-indigo-800'
-            } ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
+              quickMsgSent
+                ? 'bg-green-600 text-white cursor-default'
+                : 'bg-ume-indigo text-white hover:bg-indigo-800'
+            } ${quickMsgLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
-            {loading ? 'Working...' : (inCart ? 'Remove from liked' : 'Save to liked')}
+            {quickMsgLoading ? 'Sending...' : quickMsgSent ? 'Message sent!' : 'Quick Message'}
           </button>
         </div>
       )}
     </div>
   )
 }
-
-/**
- * Alternative: Using aspect-ratio utility (if Tailwind v3.0+ with aspect-ratio plugin)
- *
- * If you prefer Tailwind's aspect-ratio utilities, replace the image container with:
- *
- * <div className="relative aspect-square bg-gray-200 overflow-hidden">
- *   <img
- *     src={imageUrl}
- *     alt={listing.title}
- *     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
- *     loading="lazy"
- *   />
- * </div>
- *
- * Note: aspect-square requires @tailwindcss/aspect-ratio plugin or Tailwind 3.0+
- */

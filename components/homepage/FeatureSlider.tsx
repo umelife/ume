@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSwipe } from '@/hooks/useSwipe'
 
 interface Slide {
   id: string
@@ -70,6 +71,15 @@ export default function FeatureSlider({
     setCurrentIndex((prev) => (prev + 1) % slides.length)
     setTimeout(() => setIsAnimating(false), 600)
   }, [slides.length, isAnimating])
+
+  const goToPrev = useCallback(() => {
+    if (isAnimating) return
+    setIsAnimating(true)
+    setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length)
+    setTimeout(() => setIsAnimating(false), 600)
+  }, [slides.length, isAnimating])
+
+  const { onTouchStart, onTouchEnd } = useSwipe(goToNext, goToPrev)
 
   // Auto-play
   useEffect(() => {
@@ -142,6 +152,8 @@ export default function FeatureSlider({
       className="relative w-full py-2 sm:py-3 md:py-4 bg-ume-cream overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
       role="region"
       aria-label="Feature carousel"
     >

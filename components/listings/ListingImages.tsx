@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Image from 'next/image'
+import { useSwipe } from '@/hooks/useSwipe'
 
 interface ListingImagesProps {
   listingId: string
@@ -46,6 +47,11 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
       fetchImages()
     }
   }, [listingId])
+
+  const { onTouchStart, onTouchEnd } = useSwipe(
+    () => setSelectedImage(i => (i + 1) % images.length),
+    () => setSelectedImage(i => (i - 1 + images.length) % images.length)
+  )
 
   // Loading skeleton
   if (loading) {
@@ -93,7 +99,11 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
   return (
     <div className="w-full md:space-y-3">
       {/* Main image - responsive aspect ratio */}
-      <div className="relative w-full aspect-[4/3] bg-gray-900 md:rounded-lg overflow-hidden md:shadow-md">
+      <div
+        className="relative w-full aspect-[4/3] bg-gray-900 md:rounded-lg overflow-hidden md:shadow-md"
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <Image
           src={images[selectedImage]}
           alt={`${altText} - Image ${selectedImage + 1}`}

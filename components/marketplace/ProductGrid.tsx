@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Listing } from '@/types/database'
 import { formatPrice } from '@/lib/utils/helpers'
 import useCart from '@/hooks/useCart'
+import { useSwipe } from '@/hooks/useSwipe'
 import { createClient } from '@/lib/supabase/client'
 import { sendMessageEnhanced } from '@/lib/chat/enhanced-actions'
 
@@ -45,6 +46,11 @@ function ProductCard({ listing }: { listing: Listing }) {
   const [quickMsgLoading, setQuickMsgLoading] = useState(false)
   const [quickMsgSent, setQuickMsgSent] = useState(false)
   const [heartToast, setHeartToast] = useState<'added' | 'removed' | null>(null)
+
+  const { onTouchStart, onTouchEnd } = useSwipe(
+    () => setImgIndex(i => (i + 1) % images.length),
+    () => setImgIndex(i => (i - 1 + images.length) % images.length)
+  )
 
   useEffect(() => {
     async function getCurrentUser() {
@@ -92,7 +98,11 @@ function ProductCard({ listing }: { listing: Listing }) {
       <Link href={`/item/${listing.id}`} className="group flex-1">
         <div>
           {/* Square Image Container */}
-          <div className="relative w-full pb-[100%] bg-gray-200 overflow-hidden">
+          <div
+            className="relative w-full pb-[100%] bg-gray-200 overflow-hidden"
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
+          >
             {/* All images rendered for instant switching — only current is visible */}
             {images.map((src, i) => (
               <img

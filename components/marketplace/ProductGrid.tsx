@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import type { Listing } from '@/types/database'
 import { formatPrice } from '@/lib/utils/helpers'
 import useCart from '@/hooks/useCart'
 import { useSwipe } from '@/hooks/useSwipe'
 import { createClient } from '@/lib/supabase/client'
 import { sendMessageEnhanced } from '@/lib/chat/enhanced-actions'
+import DeleteListingButton from '@/components/listings/DeleteListingButton'
 
 /**
  * ProductGrid Component
@@ -40,6 +42,7 @@ function ProductCard({ listing }: { listing: Listing }) {
   const inCart = isInCart(listing.id)
   const loading = loadingIds[listing.id] === true
 
+  const router = useRouter()
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
   const [imgIndex, setImgIndex] = useState(0)
@@ -219,14 +222,17 @@ function ProductCard({ listing }: { listing: Listing }) {
             {/* Seller Info (if available) */}
             {listing.user && (
               <div className="pt-2 border-t border-gray-100">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gray-300 rounded-full flex items-center justify-center text-xs font-medium text-gray-700">
-                    {listing.user.display_name?.charAt(0).toUpperCase()}
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/profile/${listing.user_id}`) }}
+                  className="flex items-center gap-2 hover:opacity-75 transition-opacity w-full text-left"
+                >
+                  <div className="w-6 h-6 bg-ume-indigo rounded-full flex items-center justify-center text-xs font-medium text-white flex-shrink-0">
+                    {(listing.user.username || listing.user.display_name)?.[0]?.toUpperCase()}
                   </div>
-                  <span className="text-xs text-gray-600 truncate">
+                  <span className="text-xs text-ume-indigo font-medium truncate">
                     @{listing.user.username || listing.user.display_name}
                   </span>
-                </div>
+                </button>
                 {listing.user.college_name && (
                   <p className="text-xs text-gray-500 mt-1 ml-8 truncate">
                     {listing.user.college_name}
@@ -238,7 +244,7 @@ function ProductCard({ listing }: { listing: Listing }) {
         </div>
       </Link>
 
-      {/* Quick Message Button */}
+      {/* Quick Message Button — non-owners only */}
       {!isOwnListing && (
         <div className="p-4 pt-0">
           <button
@@ -252,6 +258,19 @@ function ProductCard({ listing }: { listing: Listing }) {
           >
             {quickMsgLoading ? 'Sending...' : quickMsgSent ? 'Message sent!' : 'Quick Message'}
           </button>
+        </div>
+      )}
+
+      {/* Edit / Delete — own listings only */}
+      {isOwnListing && (
+        <div className="p-4 pt-0 flex gap-2">
+          <Link
+            href={`/edit/${listing.id}`}
+            className="flex-1 text-center px-4 py-2 bg-ume-indigo text-white rounded-full text-sm font-medium hover:bg-indigo-800 transition-colors"
+          >
+            Edit
+          </Link>
+          <DeleteListingButton listingId={listing.id} />
         </div>
       )}
     </div>

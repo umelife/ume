@@ -1,9 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
-import ListingCard from '@/components/listings/ListingCard'
-import DeleteListingButton from '@/components/listings/DeleteListingButton'
 import ProfileSettings from '@/components/profile/ProfileSettings'
-import Link from 'next/link'
+import ProfileListings from '@/components/profile/ProfileListings'
 import { notFound } from 'next/navigation'
 
 export default async function ProfilePage({
@@ -13,7 +11,7 @@ export default async function ProfilePage({
 }) {
   const { id } = await params
   const supabase = await createClient()
-  const { user: currentUser, error: authError } = await getUser()
+  const { user: currentUser } = await getUser()
 
   const { data: profileUser, error: userError } = await supabase
     .from('users')
@@ -32,60 +30,70 @@ export default async function ProfilePage({
     .order('created_at', { ascending: false })
 
   const isOwnProfile = currentUser?.id === id
+  const displayName = profileUser.username || profileUser.display_name || 'User'
+
+  // Attach user object to each listing so ProductGrid can show seller info
+  const listingsWithUser = (listings ?? []).map(l => ({ ...l, user: profileUser }))
 
   return (
     <div className="min-h-screen bg-ume-bg">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-          <h1 className="text-3xl font-bold text-ume-indigo mb-2">
-            {profileUser.username || profileUser.display_name}
-          </h1>
-          <p className="text-black">@{profileUser.university_domain}</p>
-          <p className="text-sm text-black mt-2">
-            Member since {new Date(profileUser.created_at).toLocaleDateString()}
-          </p>
-        </div>
 
-        {/* Profile Settings - Only show for own profile */}
+      {/* Profile Hero */}
+      <div className="bg-ume-cream border-b border-ume-indigo/10">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6">
+
+            {/* Avatar */}
+            <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ume-indigo flex items-center justify-center shadow-lg flex-shrink-0">
+              <span className="text-4xl sm:text-5xl font-black text-white select-none">
+                {displayName[0].toUpperCase()}
+              </span>
+            </div>
+
+            {/* Info */}
+            <div className="text-center sm:text-left">
+              <h1 className="text-3xl sm:text-4xl font-black text-ume-indigo">
+                @{displayName}
+              </h1>
+              {profileUser.college_name && (
+                <p className="text-gray-600 mt-1 text-base">{profileUser.college_name}</p>
+              )}
+              {profileUser.university_domain && (
+                <p className="text-sm text-gray-400 mt-0.5">{profileUser.university_domain}</p>
+              )}
+              <div className="flex items-center gap-4 mt-3 justify-center sm:justify-start">
+                <span className="text-sm text-gray-500">
+                  Member since {new Date(profileUser.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                </span>
+                <span className="text-sm font-semibold text-ume-indigo">
+                  {listingsWithUser.length} {listingsWithUser.length === 1 ? 'listing' : 'listings'}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        {/* Profile Settings — own profile only */}
         {isOwnProfile && (
           <ProfileSettings
-            currentDisplayName={profileUser.username || profileUser.display_name}
+            currentDisplayName={displayName}
             userId={id}
             currentCollegeName={profileUser.college_name}
             currentCollegeAddress={profileUser.college_address}
           />
         )}
 
-        <div className="mb-4 flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-ume-indigo">
+        {/* Listings heading */}
+        <div>
+          <h2 className="text-xl font-bold text-ume-indigo mb-5">
             {isOwnProfile ? 'Your Listings' : 'Listings'}
           </h2>
+          <ProfileListings listings={listingsWithUser} isOwnProfile={isOwnProfile} />
         </div>
 
-        {listings && listings.length === 0 && (
-          <div className="text-center py-12 bg-white rounded-lg">
-            <p className="text-black text-lg">No listings yet</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {listings?.map((listing) => (
-            <div key={listing.id} className="relative">
-              <ListingCard listing={{ ...listing, user: profileUser }} />
-              {isOwnProfile && (
-                <div className="absolute top-2 right-2 flex gap-1">
-                  <Link
-                    href={`/edit/${listing.id}`}
-                    className="bg-ume-indigo text-white px-3 py-1 rounded-full text-sm hover:bg-indigo-800"
-                  >
-                    Edit
-                  </Link>
-                  <DeleteListingButton listingId={listing.id} />
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
       </div>
     </div>
   )

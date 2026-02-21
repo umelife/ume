@@ -8,6 +8,7 @@ import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
 import MobileFooter from "@/components/MobileFooter";
 import PushNotificationWrapper from "@/components/push/PushNotificationWrapper";
+import WhatsNewModal from "@/components/WhatsNewModal";
 
 // Load Google Fonts using next/font (prevents CORB issues)
 // Using Work Sans as a free alternative to BR Shape (geometric sans-serif)
@@ -56,6 +57,7 @@ export default function RootLayout({
         <SimpleFooter />
         <MobileFooter />
         <PushNotificationWrapper />
+        <WhatsNewModal />
       </body>
     </html>
   );

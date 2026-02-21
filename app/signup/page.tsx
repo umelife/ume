@@ -284,7 +284,7 @@ export default function SignupPage() {
                     onChange={handleConfirmPasswordChange}
                     className={`appearance-none rounded-full relative block w-full px-3 py-2 pr-10 border ${
                       confirmPassword && !passwordsMatch
-                        ? 'border-black focus:ring-black focus:border-black'
+                        ? 'border-red-400 focus:ring-red-400 focus:border-red-400'
                         : 'border-gray-300 focus:ring-black focus:border-black'
                     } placeholder-gray-400 text-black focus:outline-none`}
                     placeholder="Re-enter your password"
@@ -307,7 +307,7 @@ export default function SignupPage() {
                   </button>
                 </div>
                 {confirmPassword && !passwordsMatch && (
-                  <p className="mt-1 text-sm text-black">Passwords do not match</p>
+                  <p className="mt-1 text-sm text-red-500 font-medium">Passwords do not match</p>
                 )}
               </div>
             </div>

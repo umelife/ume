@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import type { Listing } from '@/types/database'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
@@ -14,6 +15,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const inCart = isInCart(listing.id)
   const loading = loadingIds[listing.id] === true
 
+  const router = useRouter()
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [supabase] = useState(() => createClient())
 
@@ -63,9 +65,12 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             </p>
             {listing.user && (
               <div className="mb-2">
-                <p className="text-sm text-gray-700">
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/profile/${listing.user_id}`) }}
+                  className="text-sm text-ume-indigo font-medium hover:text-ume-pink transition-colors"
+                >
                   @{listing.user.username || listing.user.display_name}
-                </p>
+                </button>
                 {listing.user.college_name && (
                   <p className="text-xs text-gray-600">
                     {listing.user.college_name}

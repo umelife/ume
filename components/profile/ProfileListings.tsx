@@ -121,7 +121,7 @@ export default function ProfileListings({ listings, isOwnProfile }: ProfileListi
         </svg>
         <p className="text-gray-400 text-lg font-medium">No listings yet</p>
         {isOwnProfile && (
-          <Link href="/sell" className="inline-block mt-4 px-6 py-2 bg-ume-indigo text-white rounded-full text-sm font-medium hover:bg-indigo-800 transition-colors">
+          <Link href="/create" className="inline-block mt-4 px-6 py-2 bg-ume-indigo text-white rounded-full text-sm font-medium hover:bg-indigo-800 transition-colors">
             Post your first listing
           </Link>
         )}

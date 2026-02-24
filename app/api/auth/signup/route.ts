@@ -42,6 +42,17 @@ export async function POST(request: Request) {
       )
     }
 
+    // Validate US location via Vercel's geolocation header.
+    // The header is injected by Vercel's edge network in production;
+    // it is absent in local dev so we allow null to pass through.
+    const country = request.headers.get('x-vercel-ip-country')
+    if (country && country !== 'US') {
+      return NextResponse.json(
+        { error: 'UME is currently only available to students in the United States' },
+        { status: 403 }
+      )
+    }
+
     // Validate .edu email
     if (!isEduEmail(email)) {
       return NextResponse.json(

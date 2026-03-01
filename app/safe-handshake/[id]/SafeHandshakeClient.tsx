@@ -59,7 +59,12 @@ export default function SafeHandshakeClient({
   const [userLat, setUserLat] = useState<number | null>(null)
   const [userLon, setUserLon] = useState<number | null>(null)
   const [gpsError, setGpsError] = useState<string | null>(null)
-  const [hasArrived, setHasArrived] = useState(false)
+  // Initialise from DB so a page reload doesn't reset the arrived state
+  const [hasArrived, setHasArrived] = useState(() =>
+    currentUserId === initialHandshake.seller_id
+      ? !!initialHandshake.seller_arrived_at
+      : !!initialHandshake.buyer_arrived_at
+  )
   const [isHeading, setIsHeading] = useState(false)
   const [qrToken, setQrToken] = useState<string | null>(null)
   const [qrExpiresAt, setQrExpiresAt] = useState<string | null>(null)
@@ -444,8 +449,8 @@ export default function SafeHandshakeClient({
           </div>
         )}
 
-        {/* Step 1 → 2: Heading to Safe-Point */}
-        {(handshake.status === 'initiated' || handshake.status === 'in_progress') && !hasArrived && (
+        {/* Step 1 → 2: Heading to Safe-Point (show whenever THIS user hasn't arrived yet) */}
+        {!hasArrived && !['both_arrived', 'qr_generated', 'completed', 'cancelled'].includes(handshake.status) && (
           <div className="space-y-3">
             <button
               onClick={handleHeadingToSafePoint}
@@ -489,8 +494,8 @@ export default function SafeHandshakeClient({
           </div>
         )}
 
-        {/* Step 3 → 4: Arrived, waiting for partner */}
-        {(handshake.status === 'seller_arrived' || handshake.status === 'buyer_arrived') && (
+        {/* Step 3 → 4: Arrived, waiting for partner — only shown to the person who HAS arrived */}
+        {(handshake.status === 'seller_arrived' || handshake.status === 'buyer_arrived') && hasArrived && (
           <div className="bg-yellow-50 border border-yellow-200 rounded-2xl px-4 py-4 text-center">
             <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <p className="text-sm font-semibold text-yellow-800">Waiting for {partnerName}...</p>

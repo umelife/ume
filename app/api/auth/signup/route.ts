@@ -74,6 +74,7 @@ export async function POST(request: Request) {
           username: username,
           college_name: collegeName.trim(),
           college_address: collegeAddress.trim(),
+          student_verified: false,
         },
       },
     })

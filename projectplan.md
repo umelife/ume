@@ -228,11 +228,23 @@ npm run dev
 5. No in-app image editing or cropping
 6. Basic moderation (no auto-moderation)
 
+#### 12. Safe-Handshake ✅ (2026-02-26)
+- ✅ GPS geofencing (Haversine distance, 25m radius) around campus Blue Light stations
+- ✅ Interactive Leaflet/OpenStreetMap campus map with glowing safe-point circles
+- ✅ 5-step progress bar (Intent → Heading → Arrived → QR Code → Done)
+- ✅ Supabase Realtime — both parties see each other's arrival status live
+- ✅ One-time cryptographically random QR code (5-min expiry, single-use guard)
+- ✅ QR camera scanner + manual token fallback
+- ✅ 4-hour safety timer auto-cancels expired sessions and unlocks listing
+- ✅ Listing reservation system (active → reserved → sold) prevents double-booking
+- ✅ "Start Safe-Handshake" button in messages thread (buyer-side only)
+- ✅ Database migration: `safe_handshakes` table + `listings.status` column with RLS
+
 ## Future Enhancements (Post-MVP)
 
 1. Role-based admin authentication
 2. Email notifications
-3. Payment integration (Stripe)
+3. Payment integration (Stripe) — Safe-Handshake scan-qr will trigger fund release
 4. User ratings and reviews
 5. Advanced search and filters
 6. Mobile app

@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr'
 export async function middleware(request: NextRequest) {
   // Public routes that don't need session updates or auth checks
   // Note: /reset-password needs session updates to verify the reset token
-  const publicPaths = ['/forgot-password', '/login', '/signup']
+  const publicPaths = ['/forgot-password', '/login', '/signup', '/verify-student']
   const isPublicPath = publicPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
@@ -19,7 +19,7 @@ export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
 
   // Check authentication for protected routes
-  const protectedPaths = ['/marketplace', '/create', '/profile', '/admin', '/messages', '/edit']
+  const protectedPaths = ['/marketplace', '/create', '/profile', '/admin', '/messages', '/edit', '/safe-handshake']
   const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
@@ -53,6 +53,13 @@ export async function middleware(request: NextRequest) {
 
     if (!user) {
       return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    // Redirect new users who haven't completed student verification.
+    // Existing users have student_verified = undefined (grandfathered), so
+    // only explicitly false triggers the redirect.
+    if (user.user_metadata?.student_verified === false) {
+      return NextResponse.redirect(new URL('/verify-student', request.url))
     }
 
     // Update user activity (fire and forget - don't block the request)

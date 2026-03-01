@@ -40,6 +40,7 @@ function MessagesPageContent() {
   const [editingMessageId, setEditingMessageId] = useState<string | null>(null)
   const [editingText, setEditingText] = useState('')
   const [showMessageMenu, setShowMessageMenu] = useState<string | null>(null)
+  const [safeHandshakeLoading, setSafeHandshakeLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -296,6 +297,33 @@ function MessagesPageContent() {
     </div>
   )
 
+  async function handleStartSafeHandshake() {
+    if (!selectedConversation?.listingId || !currentUserId) return
+    const isSellerOfListing = selectedConversation.listing?.user_id === currentUserId
+    if (isSellerOfListing) {
+      alert('The buyer needs to start the Safe-Handshake from their side.')
+      return
+    }
+    setSafeHandshakeLoading(true)
+    try {
+      const res = await fetch('/api/safe-handshake/initiate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ listingId: selectedConversation.listingId }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      if (!data.existing) {
+        await sendMessage(`🤝 Safe-Handshake session started! Meet me at a campus Safe-Point to complete this exchange. Join here: ${window.location.origin}/safe-handshake/${data.id}`)
+      }
+      router.push(`/safe-handshake/${data.id}`)
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : 'Could not start Safe-Handshake')
+    } finally {
+      setSafeHandshakeLoading(false)
+    }
+  }
+
   // ── Chat header JSX ──
   const chatHeaderJSX = selectedConversation ? (
     <div className="px-4 py-3 border-b border-gray-200 bg-white flex items-center gap-3 flex-shrink-0 shadow-sm">
@@ -320,6 +348,22 @@ function MessagesPageContent() {
           <p className="text-xs text-gray-500 truncate leading-tight">{selectedConversation.listing.title}</p>
         )}
       </div>
+      {/* Safe-Handshake button — buyers only */}
+      {selectedConversation.listing?.user_id !== currentUserId && (
+        <button
+          onClick={handleStartSafeHandshake}
+          disabled={safeHandshakeLoading}
+          title="Start a Safe-Handshake to meet at a campus Blue Light station"
+          className="flex items-center gap-1.5 px-3 py-1.5 bg-ume-indigo text-white rounded-full text-xs font-semibold hover:bg-indigo-800 transition-colors disabled:opacity-60 flex-shrink-0"
+        >
+          {safeHandshakeLoading ? (
+            <span className="w-3 h-3 border border-white/40 border-t-white rounded-full animate-spin" />
+          ) : (
+            <span>🤝</span>
+          )}
+          <span className="hidden sm:inline">Safe-Handshake</span>
+        </button>
+      )}
       <div className="relative">
         <button
           onClick={() => setShowInfoDropdown(!showInfoDropdown)}

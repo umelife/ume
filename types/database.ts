@@ -73,6 +73,37 @@ export type ListingCategory =
 
 export type OrderStatus = 'pending' | 'paid' | 'processing' | 'completed' | 'refunded' | 'cancelled';
 
+export type SafeHandshakeStatus =
+  | 'initiated'
+  | 'in_progress'
+  | 'seller_arrived'
+  | 'buyer_arrived'
+  | 'both_arrived'
+  | 'qr_generated'
+  | 'completed'
+  | 'cancelled'
+
+export interface SafeHandshake {
+  id: string
+  listing_id: string
+  seller_id: string
+  buyer_id: string
+  status: SafeHandshakeStatus
+  safe_point_id?: string
+  seller_arrived_at?: string
+  buyer_arrived_at?: string
+  qr_token?: string
+  qr_token_expires_at?: string
+  qr_token_used: boolean
+  completed_at?: string
+  expires_at: string
+  created_at: string
+  updated_at: string
+  seller?: User
+  buyer?: User
+  listing?: Listing
+}
+
 export interface Order {
   id: string;
   buyer_id: string;

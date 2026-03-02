@@ -709,8 +709,7 @@ export default function SafeHandshakeClient({
         {/* Collapsed bar / header */}
         <button
           onClick={() => setShowChat(!showChat)}
-          className="w-full flex items-center justify-between px-4 py-3 bg-ume-indigo text-white shadow-lg"
-          style={{ borderRadius: showChat ? '16px 16px 0 0' : '16px 16px 0 0' }}
+          className="w-full flex items-center justify-between px-4 py-3 bg-pink-500 text-white shadow-lg rounded-t-2xl"
         >
           <div className="flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

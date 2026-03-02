@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { getNearestSafePoint } from '@/lib/haversine'
 import { SAFE_POINTS, getSafePointsForCampus } from '@/data/safe-points'
+import { useMessages } from '@/lib/hooks/useMessages'
 import StepBar from '@/components/safe-handshake/StepBar'
 import QRDisplay from '@/components/safe-handshake/QRDisplay'
 import QRScanner from '@/components/safe-handshake/QRScanner'
@@ -75,11 +76,24 @@ export default function SafeHandshakeClient({
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
   const [cancelLoading, setCancelLoading] = useState(false)
   const [showInstructions, setShowInstructions] = useState(true)
+  const [showChat, setShowChat] = useState(false)
+  const [chatText, setChatText] = useState('')
+  const [chatUnread, setChatUnread] = useState(0)
   const watchIdRef = useRef<number | null>(null)
+  const chatContainerRef = useRef<HTMLDivElement | null>(null)
+  const prevChatCountRef = useRef(0)
 
   const isSeller = currentUserId === handshake.seller_id
   const isBuyer = currentUserId === handshake.buyer_id
   const partnerName = isSeller ? buyerName : sellerName
+
+  // Reuse the existing conversation thread for in-session chat
+  const otherUserId = isSeller ? handshake.buyer_id : handshake.seller_id
+  const {
+    messages: chatMessages,
+    sending: chatSending,
+    sendMessage: sendChatMessage,
+  } = useMessages(handshake.listing_id, otherUserId, { autoMarkRead: false, autoScroll: false })
 
   // Derive campus-specific safe points from the agreed location's campusId.
   // Falls back to all safe points if no location has been agreed yet.
@@ -188,6 +202,24 @@ export default function SafeHandshakeClient({
     }
   }, [])
 
+  // Track unread messages and auto-scroll when chat is open
+  useEffect(() => {
+    const count = chatMessages.length
+    if (showChat) {
+      setChatUnread(0)
+      prevChatCountRef.current = count
+      // Scroll to bottom
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+        }
+      }, 50)
+    } else if (count > prevChatCountRef.current) {
+      setChatUnread((u) => u + (count - prevChatCountRef.current))
+      prevChatCountRef.current = count
+    }
+  }, [chatMessages.length, showChat])
+
   async function handleHeadingToSafePoint() {
     setIsHeading(true)
     startGPS()
@@ -271,6 +303,14 @@ export default function SafeHandshakeClient({
       setCancelLoading(false)
       setShowCancelConfirm(false)
     }
+  }
+
+  async function handleChatSend(e: React.FormEvent) {
+    e.preventDefault()
+    if (!chatText.trim() || chatSending) return
+    const text = chatText
+    setChatText('')
+    await sendChatMessage(text)
   }
 
   // Determine the active safe point for the map
@@ -403,7 +443,7 @@ export default function SafeHandshakeClient({
   const canScanQR = isBuyer && handshake.status === 'qr_generated'
 
   return (
-    <div className="min-h-screen bg-ume-cream">
+    <div className="min-h-screen bg-ume-cream pb-16">
       {/* Header */}
       <div className="bg-ume-indigo text-white px-4 py-4 flex items-center gap-3">
         <Link href="/messages" className="p-1.5 hover:bg-white/10 rounded-full transition-colors">
@@ -662,6 +702,91 @@ export default function SafeHandshakeClient({
             Cancel Session
           </button>
         </div>
+      </div>
+
+      {/* ── Fixed chat panel ──────────────────────────────────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 max-w-lg mx-auto">
+        {/* Collapsed bar / header */}
+        <button
+          onClick={() => setShowChat(!showChat)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-ume-indigo text-white shadow-lg"
+          style={{ borderRadius: showChat ? '16px 16px 0 0' : '16px 16px 0 0' }}
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span className="text-sm font-semibold">Chat with {partnerName}</span>
+            {!showChat && chatUnread > 0 && (
+              <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                {chatUnread > 9 ? '9+' : chatUnread}
+              </span>
+            )}
+          </div>
+          <svg
+            className={`w-4 h-4 transition-transform ${showChat ? 'rotate-180' : ''}`}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Expanded chat body */}
+        {showChat && (
+          <div className="bg-white shadow-xl border-t border-gray-100">
+            {/* Messages */}
+            <div
+              ref={chatContainerRef}
+              className="px-4 py-3 space-y-2 overflow-y-auto"
+              style={{ maxHeight: '240px' }}
+            >
+              {chatMessages.length === 0 ? (
+                <p className="text-center text-gray-400 text-xs py-4">No messages yet — say something!</p>
+              ) : (
+                chatMessages.map((msg) => {
+                  const isOwn = msg.sender_id === currentUserId
+                  return (
+                    <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`px-3 py-2 rounded-2xl text-sm leading-relaxed max-w-[75%] break-words ${
+                          isOwn
+                            ? 'bg-ume-indigo text-white rounded-br-sm'
+                            : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+                        }`}
+                      >
+                        {msg.body}
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+
+            {/* Input */}
+            <form onSubmit={handleChatSend} className="border-t border-gray-100 px-3 py-2.5 flex items-center gap-2">
+              <input
+                type="text"
+                value={chatText}
+                onChange={(e) => setChatText(e.target.value)}
+                placeholder={`Message ${partnerName}...`}
+                className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-ume-indigo/30 text-black placeholder-gray-400"
+              />
+              <button
+                type="submit"
+                disabled={!chatText.trim() || chatSending}
+                className={`p-2 rounded-full flex-shrink-0 transition-colors ${
+                  chatText.trim() && !chatSending
+                    ? 'text-ume-indigo hover:bg-indigo-50'
+                    : 'text-gray-300 cursor-not-allowed'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </form>
+          </div>
+        )}
       </div>
 
       {/* Cancel confirmation overlay */}

@@ -42,8 +42,6 @@ function MessagesPageContent() {
   const [editingText, setEditingText] = useState('')
   const [showMessageMenu, setShowMessageMenu] = useState<string | null>(null)
   const [safeHandshakeLoading, setSafeHandshakeLoading] = useState(false)
-  const [showHandshakeModal, setShowHandshakeModal] = useState(false)
-  const [selectedSafePointId, setSelectedSafePointId] = useState<string | null>(null)
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [joinSession, setJoinSession] = useState<{ id: string; safe_point_id: string | null } | null>(null)
   const router = useRouter()
@@ -302,13 +300,13 @@ function MessagesPageContent() {
     </div>
   )
 
-  // Unified 🤝 button handler — either party can propose or join
+  // Unified 🤝 button handler — sends a proposal message with location options in chat
   async function handleSafeHandshakeClick() {
     if (!selectedConversation?.listingId || !currentUserId) return
 
     setSafeHandshakeLoading(true)
     try {
-      // Check if an active session already exists for this listing+conversation pair
+      // Check if an active session already exists
       const { data: active } = await supabase
         .from('safe_handshakes')
         .select('id, safe_point_id, status')
@@ -317,31 +315,50 @@ function MessagesPageContent() {
         .maybeSingle()
 
       if (active) {
-        // Session exists — show join confirmation for whichever party clicks
+        // Session already started — show join modal
         setJoinSession({ id: active.id, safe_point_id: active.safe_point_id })
         setShowJoinModal(true)
-      } else {
-        // No session yet — either party can propose a location
-        setSelectedSafePointId(null)
-        setShowHandshakeModal(true)
+        return
       }
+
+      // Check if a proposal is already pending in the chat
+      const hasPendingProposal = messages.some((m) => m.body.includes('__HANDSHAKE_PROPOSAL__'))
+      if (hasPendingProposal) {
+        alert('A Safe-Handshake proposal is already in the chat — scroll up and click a location to confirm.')
+        return
+      }
+
+      // Send a proposal message with embedded location options
+      await sendMessage(
+        `🤝 I'd like to do a Safe-Handshake meetup! Choose a location below to confirm the session:\n__HANDSHAKE_PROPOSAL__`
+      )
     } finally {
       setSafeHandshakeLoading(false)
     }
   }
 
-  // Either party proposes a location: creates the session + sends a chat message, but stays in chat
-  async function handleProposeSafeHandshake(safePointId: string) {
+  // Called when either party clicks a location inside a proposal message
+  async function handleConfirmHandshakeLocation(safePointId: string) {
     if (!selectedConversation?.listingId || !currentUserId) return
-    const isSellerProposing = selectedConversation.listing?.user_id === currentUserId
+    const isSellerConfirming = selectedConversation.listing?.user_id === currentUserId
     setSafeHandshakeLoading(true)
-    setShowHandshakeModal(false)
     try {
-      const body: Record<string, string> = { listingId: selectedConversation.listingId, safePointId }
-      // When the seller initiates, they must pass the buyer's ID (the other participant)
-      if (isSellerProposing) {
-        body.buyerId = selectedConversation.otherUserId
+      // If a session was already created (other party clicked first), just navigate
+      const { data: existing } = await supabase
+        .from('safe_handshakes')
+        .select('id')
+        .eq('listing_id', selectedConversation.listingId)
+        .not('status', 'in', '(completed,cancelled)')
+        .maybeSingle()
+
+      if (existing) {
+        router.push(`/safe-handshake/${existing.id}`)
+        return
       }
+
+      const body: Record<string, string> = { listingId: selectedConversation.listingId, safePointId }
+      if (isSellerConfirming) body.buyerId = selectedConversation.otherUserId
+
       const res = await fetch('/api/safe-handshake/initiate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -349,15 +366,10 @@ function MessagesPageContent() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
+
       const agreedPoint = SAFE_POINTS.find((p) => p.id === safePointId)
-      if (!data.existing) {
-        await sendMessage(
-          `🤝 I'd like to meet at ${agreedPoint?.name ?? 'a Safe-Point'} for a Safe-Handshake.\n\nPress the 🤝 Safe-Handshake button above to confirm and join the session!`
-        )
-      }
-      // Stay in chat — seller needs to confirm by pressing their button
-      // Pre-load the join modal so buyer can navigate if they want
-      setJoinSession({ id: data.id, safe_point_id: safePointId })
+      await sendMessage(`📍 Location confirmed: ${agreedPoint?.name ?? 'Safe-Point'}! Opening the Safe-Handshake session now.`)
+      router.push(`/safe-handshake/${data.id}`)
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Could not start Safe-Handshake')
     } finally {
@@ -535,7 +547,31 @@ function MessagesPageContent() {
                           }`}
                           style={{ wordBreak: 'break-word' }}
                         >
-                          {message.body}
+                          {message.body.includes('__HANDSHAKE_PROPOSAL__') ? (
+                            <>
+                              <p className="mb-2">{message.body.replace('\n__HANDSHAKE_PROPOSAL__', '').replace('__HANDSHAKE_PROPOSAL__', '')}</p>
+                              <div className="flex flex-col gap-1.5 pt-1 border-t border-white/20">
+                                <p className={`text-[11px] font-semibold uppercase tracking-wide mb-0.5 ${isOwn ? 'text-white/70' : 'text-gray-400'}`}>Pick a location</p>
+                                {SAFE_POINTS.map((point) => (
+                                  <button
+                                    key={point.id}
+                                    onClick={() => handleConfirmHandshakeLocation(point.id)}
+                                    disabled={safeHandshakeLoading}
+                                    className={`text-xs rounded-xl px-3 py-2 text-left transition-colors font-medium flex items-center gap-2 disabled:opacity-50 ${
+                                      isOwn
+                                        ? 'bg-white/20 hover:bg-white/30 text-white'
+                                        : 'bg-indigo-50 hover:bg-indigo-100 text-ume-indigo border border-indigo-200'
+                                    }`}
+                                  >
+                                    <span>📍</span>
+                                    <span>{point.name}</span>
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          ) : (
+                            message.body
+                          )}
                         </div>
                         {message.edited && <span className="text-[10px] text-gray-400 px-1">Edited</span>}
                       </>
@@ -556,7 +592,7 @@ function MessagesPageContent() {
     <div className="px-4 py-2 bg-indigo-50 border-t border-indigo-100 flex items-center gap-2 flex-shrink-0">
       <span className="text-base">🤝</span>
       <p className="text-xs text-indigo-700 leading-snug">
-        Press <strong>Safe-Handshake</strong> above to propose a campus Safe-Point meetup — the other party confirms by pressing it too.
+        Press <strong>Safe-Handshake</strong> above to send a meetup proposal in chat — discuss and click a location to confirm.
       </p>
     </div>
   ) : null
@@ -600,65 +636,8 @@ function MessagesPageContent() {
     </div>
   ) : null
 
-  // Location picker modal (shared for mobile + desktop)
-  const handshakeModalJSX = showHandshakeModal ? (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40" onClick={() => setShowHandshakeModal(false)}>
-      <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-xl" onClick={(e) => e.stopPropagation()}>
-        <div className="flex items-center justify-between mb-1">
-          <h2 className="text-base font-bold text-gray-900">Propose a meetup location</h2>
-          <button onClick={() => setShowHandshakeModal(false)} className="p-1 text-gray-400 hover:text-gray-600 rounded-full transition-colors">
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
-        </div>
-        <p className="text-sm text-gray-500 mb-4">
-          Pick a Safe-Point. A proposal message will be sent in the chat — the other party presses 🤝 to confirm and join the session.
-        </p>
-        <div className="space-y-2 mb-5">
-          {SAFE_POINTS.map((point) => (
-            <button
-              key={point.id}
-              onClick={() => setSelectedSafePointId(point.id)}
-              className={`w-full text-left px-4 py-3 rounded-xl border transition-colors flex items-center gap-3 ${
-                selectedSafePointId === point.id
-                  ? 'border-ume-indigo bg-indigo-50'
-                  : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors ${
-                selectedSafePointId === point.id ? 'border-ume-indigo' : 'border-gray-300'
-              }`}>
-                {selectedSafePointId === point.id && (
-                  <div className="w-2 h-2 rounded-full bg-ume-indigo" />
-                )}
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">{point.name}</p>
-                <p className="text-xs text-gray-400">{point.description}</p>
-              </div>
-            </button>
-          ))}
-        </div>
-        <button
-          onClick={() => selectedSafePointId && handleProposeSafeHandshake(selectedSafePointId)}
-          disabled={!selectedSafePointId || safeHandshakeLoading}
-          className="w-full py-3 bg-ume-indigo text-white rounded-full font-semibold text-sm hover:bg-indigo-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {safeHandshakeLoading ? (
-            <span className="flex items-center justify-center gap-2">
-              <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-              Sending proposal...
-            </span>
-          ) : 'Send Proposal'}
-        </button>
-      </div>
-    </div>
-  ) : null
-
   return (
     <div className="flex bg-white overflow-hidden" style={{ height: pageHeight }}>
-      {handshakeModalJSX}
       {joinModalJSX}
 
       {/* ── Mobile ─────────────────────────────────────────────────────────── */}

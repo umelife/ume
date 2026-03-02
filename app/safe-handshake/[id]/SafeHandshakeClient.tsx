@@ -72,6 +72,9 @@ export default function SafeHandshakeClient({
   const [actionError, setActionError] = useState<string | null>(null)
   const [countdown, setCountdown] = useState<number>(0)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [cancelLoading, setCancelLoading] = useState(false)
+  const [showInstructions, setShowInstructions] = useState(true)
   const watchIdRef = useRef<number | null>(null)
 
   const isSeller = currentUserId === handshake.seller_id
@@ -249,6 +252,21 @@ export default function SafeHandshakeClient({
     setDeleteLoading(false)
   }
 
+  async function handleCancelSession() {
+    setCancelLoading(true)
+    try {
+      const res = await fetch(`/api/safe-handshake/${handshake.id}/cancel`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      // Realtime/polling will update handshake.status → 'cancelled'
+    } catch (err: unknown) {
+      setActionError(err instanceof Error ? err.message : 'Failed to cancel session')
+    } finally {
+      setCancelLoading(false)
+      setShowCancelConfirm(false)
+    }
+  }
+
   // Determine the active safe point for the map
   const myArrived = isSeller ? handshake.seller_arrived_at : handshake.buyer_arrived_at
   const myActiveSafePointId = myArrived ? handshake.safe_point_id ?? null : null
@@ -405,6 +423,58 @@ export default function SafeHandshakeClient({
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
 
+        {/* Agreed meeting spot badge */}
+        {handshake.safe_point_id && (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-2xl px-4 py-3 flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-ume-indigo/10 flex items-center justify-center flex-shrink-0">
+              <svg className="w-4 h-4 text-ume-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-[11px] text-indigo-500 font-medium uppercase tracking-wide">Agreed meeting spot</p>
+              <p className="text-sm font-bold text-ume-indigo">
+                {SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.name ?? handshake.safe_point_id}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* How it works — collapsible instructions */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <button
+            onClick={() => setShowInstructions(!showInstructions)}
+            className="w-full px-4 py-3 flex items-center justify-between"
+          >
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How it works</h3>
+            <svg
+              className={`w-4 h-4 text-gray-400 transition-transform ${showInstructions ? 'rotate-180' : ''}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {showInstructions && (
+            <div className="px-4 pb-4 space-y-3">
+              {[
+                { n: '1', text: 'Both of you head to the agreed Safe-Point on campus.' },
+                { n: '2', text: 'Tap "I\'m heading to a Safe-Point" — GPS will detect when you arrive.' },
+                { n: '3', text: 'No GPS? Use the manual picker below to select the location.' },
+                { n: '4', text: 'Once both have arrived, the seller taps "Generate QR Code".' },
+                { n: '5', text: 'The buyer scans the QR (or enters the code manually) to complete the exchange.' },
+              ].map((step) => (
+                <div key={step.n} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-ume-indigo text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {step.n}
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed">{step.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Map */}
         <SafeHandshakeMap
           userLat={userLat}
@@ -471,10 +541,13 @@ export default function SafeHandshakeClient({
             {isHeading && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                 <p className="text-xs font-semibold text-gray-500 mb-2">
-                  {gpsError ? 'GPS unavailable — select your Safe-Point manually:' : 'No GPS signal yet — or select manually:'}
+                  {gpsError ? 'GPS unavailable — confirm your arrival manually:' : 'No GPS signal yet — or confirm manually:'}
                 </p>
                 <div className="flex flex-col gap-2">
-                  {SAFE_POINTS.map((point) => (
+                  {(handshake.safe_point_id
+                    ? SAFE_POINTS.filter((p) => p.id === handshake.safe_point_id)
+                    : SAFE_POINTS
+                  ).map((point) => (
                     <button
                       key={point.id}
                       onClick={() => simulateArrival(point.id)}
@@ -566,13 +639,51 @@ export default function SafeHandshakeClient({
         </div>
 
         {/* Safety note */}
-        <div className="text-center pb-6">
+        <div className="text-center">
           <p className="text-xs text-gray-400">
             Safe-Points are located at campus Blue Light emergency stations.
             <br />If you feel unsafe, press the Blue Light button for immediate help.
           </p>
         </div>
+
+        {/* Cancel session */}
+        <div className="pb-6">
+          <button
+            onClick={() => setShowCancelConfirm(true)}
+            className="w-full py-3 border border-red-200 text-red-400 rounded-2xl text-sm font-semibold hover:bg-red-50 hover:text-red-500 transition-colors"
+          >
+            Cancel Session
+          </button>
+        </div>
       </div>
+
+      {/* Cancel confirmation overlay */}
+      {showCancelConfirm && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="bg-white w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-xl">
+            <h2 className="text-base font-bold text-gray-900 mb-2">Cancel this session?</h2>
+            <p className="text-sm text-gray-500 mb-6">
+              This will cancel the Safe-Handshake and release the listing back to the marketplace. You can start a new session from the messages thread.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCancelConfirm(false)}
+                disabled={cancelLoading}
+                className="flex-1 py-3 border border-gray-200 text-gray-600 rounded-full text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Keep going
+              </button>
+              <button
+                onClick={handleCancelSession}
+                disabled={cancelLoading}
+                className="flex-1 py-3 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition-colors disabled:opacity-60"
+              >
+                {cancelLoading ? 'Cancelling...' : 'Yes, cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

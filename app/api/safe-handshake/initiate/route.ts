@@ -11,10 +11,18 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { listingId } = await request.json()
+    const { listingId, safePointId } = await request.json()
 
     if (!listingId) {
       return NextResponse.json({ error: 'listingId is required' }, { status: 400 })
+    }
+
+    // Validate safePointId if provided
+    if (safePointId) {
+      const { SAFE_POINTS } = await import('@/data/safe-points')
+      if (!SAFE_POINTS.find((p) => p.id === safePointId)) {
+        return NextResponse.json({ error: 'Invalid safePointId' }, { status: 400 })
+      }
     }
 
     // Fetch the listing to determine seller
@@ -71,6 +79,7 @@ export async function POST(request: Request) {
         seller_id: sellerId,
         buyer_id: buyerId,
         status: 'initiated',
+        ...(safePointId ? { safe_point_id: safePointId } : {}),
       })
       .select('id')
       .single()
@@ -86,23 +95,27 @@ export async function POST(request: Request) {
       .update({ status: 'reserved' })
       .eq('id', listingId)
 
-    // Notify the seller by email so they know to open the Safe-Handshake link
+    // Notify both seller and buyer by email
     try {
+      const { SAFE_POINTS } = await import('@/data/safe-points')
       const [sellerResult, buyerResult] = await Promise.all([
         serviceSupabase.from('users').select('email, display_name').eq('id', sellerId).single(),
-        serviceSupabase.from('users').select('display_name').eq('id', buyerId).single(),
+        serviceSupabase.from('users').select('email, display_name').eq('id', buyerId).single(),
       ])
 
       const sellerEmail = sellerResult.data?.email
       const sellerName = sellerResult.data?.display_name ?? 'there'
       const buyerName = buyerResult.data?.display_name ?? 'A buyer'
+      const buyerEmail = buyerResult.data?.email
       const handshakeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/safe-handshake/${handshake.id}`
+      const agreedLocationName = safePointId
+        ? (SAFE_POINTS.find((p) => p.id === safePointId)?.name ?? safePointId)
+        : null
+      const locationLine = agreedLocationName
+        ? `<p><strong>Agreed meeting spot:</strong> ${agreedLocationName}</p>`
+        : ''
 
-      if (sellerEmail) {
-        await sendEmail({
-          to: sellerEmail,
-          subject: `${buyerName} wants to meet you for "${listing.title}"`,
-          html: `
+      const emailHtml = (recipientName: string, role: 'seller' | 'buyer') => `
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,12 +132,16 @@ export async function POST(request: Request) {
 </head>
 <body>
   <div class="header">
-    <h2 style="margin:0;font-size:20px;">Safe-Handshake Request</h2>
+    <h2 style="margin:0;font-size:20px;">Safe-Handshake ${role === 'seller' ? 'Request' : 'Started'}</h2>
     <p style="margin:6px 0 0;opacity:.85;font-size:14px;">UME Campus Marketplace</p>
   </div>
   <div class="content">
-    <p>Hi ${sellerName},</p>
-    <p><strong>${buyerName}</strong> wants to buy <strong>"${listing.title}"</strong> and has started a Safe-Handshake session to meet you in person at a campus Safe-Point.</p>
+    <p>Hi ${recipientName},</p>
+    ${role === 'seller'
+      ? `<p><strong>${buyerName}</strong> wants to buy <strong>"${listing.title}"</strong> and has started a Safe-Handshake session to meet you in person at a campus Safe-Point.</p>`
+      : `<p>Your Safe-Handshake session for <strong>"${listing.title}"</strong> has been started. Head to the agreed Safe-Point to complete the exchange with ${sellerName}.</p>`
+    }
+    ${locationLine}
     <div class="info-box">
       <strong>What is a Safe-Handshake?</strong><br>
       A GPS-verified in-person exchange at a campus Blue Light station. Both of you head to the same Safe-Point, and UME confirms you're both there before completing the transaction.
@@ -132,19 +149,25 @@ export async function POST(request: Request) {
     <p style="text-align:center;">
       <a href="${handshakeUrl}" class="button">Open Safe-Handshake Session</a>
     </p>
-    <p style="color:#666;font-size:13px;">This session expires in 4 hours. If you don't want to proceed, you can ignore this email and the listing will be unlocked automatically.</p>
+    <p style="color:#666;font-size:13px;">This session expires in 4 hours. You can cancel anytime from the session page.</p>
   </div>
   <div class="footer">
     <p>© ${new Date().getFullYear()} UME Marketplace. All rights reserved.</p>
   </div>
 </body>
-</html>
-          `,
-        })
-      }
+</html>`
+
+      await Promise.allSettled([
+        sellerEmail
+          ? sendEmail({ to: sellerEmail, subject: `${buyerName} wants to meet you for "${listing.title}"`, html: emailHtml(sellerName, 'seller') })
+          : Promise.resolve(),
+        buyerEmail
+          ? sendEmail({ to: buyerEmail, subject: `Safe-Handshake started for "${listing.title}"`, html: emailHtml(buyerName, 'buyer') })
+          : Promise.resolve(),
+      ])
     } catch (emailErr) {
       // Email failure is non-fatal — handshake is already created
-      console.error('Failed to send seller Safe-Handshake email:', emailErr)
+      console.error('Failed to send Safe-Handshake emails:', emailErr)
     }
 
     return NextResponse.json({ id: handshake.id })

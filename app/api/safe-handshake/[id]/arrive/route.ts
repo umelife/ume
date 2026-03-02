@@ -57,6 +57,15 @@ export async function POST(
       return NextResponse.json({ error: 'Session is already finished' }, { status: 409 })
     }
 
+    // If a location was pre-agreed in chat, validate the person goes to the right place
+    if (handshake.safe_point_id && safePointId !== handshake.safe_point_id) {
+      const agreedPoint = SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)
+      return NextResponse.json(
+        { error: `Please go to ${agreedPoint?.name ?? 'the agreed Safe-Point'} — that's where you both agreed to meet.` },
+        { status: 400 }
+      )
+    }
+
     const serviceSupabase = await createServiceClient()
     const now = new Date().toISOString()
 
@@ -79,7 +88,8 @@ export async function POST(
       newStatus = bothAtSame ? 'both_arrived' : 'seller_arrived'
       updateFields = {
         seller_arrived_at: now,
-        safe_point_id: safePointId,
+        // Only set safe_point_id if not already pre-agreed (don't overwrite the agreed location)
+        ...(handshake.safe_point_id ? {} : { safe_point_id: safePointId }),
         status: newStatus,
       }
     } else {

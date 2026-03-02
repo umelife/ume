@@ -11,7 +11,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { listingId, safePointId } = await request.json()
+    const { listingId, safePointId, buyerId: providedBuyerId } = await request.json()
 
     if (!listingId) {
       return NextResponse.json({ error: 'listingId is required' }, { status: 400 })
@@ -45,14 +45,16 @@ export async function POST(request: Request) {
     }
 
     const sellerId = listing.user_id
-    const buyerId = user.id === sellerId ? null : user.id
 
-    // Ensure the current user is either the seller or a buyer (not the owner acting as buyer)
+    // Determine buyer: if the current user is the seller, they must provide the buyer's ID
+    let buyerId: string
     if (user.id === sellerId) {
-      return NextResponse.json(
-        { error: 'You cannot start a Safe-Handshake for your own listing' },
-        { status: 400 }
-      )
+      if (!providedBuyerId) {
+        return NextResponse.json({ error: 'buyerId is required when the seller initiates' }, { status: 400 })
+      }
+      buyerId = providedBuyerId
+    } else {
+      buyerId = user.id
     }
 
     // Check if an active handshake already exists for this listing+buyer pair

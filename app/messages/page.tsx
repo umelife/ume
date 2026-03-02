@@ -302,10 +302,9 @@ function MessagesPageContent() {
     </div>
   )
 
-  // Unified 🤝 button handler — behaviour differs for buyer vs seller
+  // Unified 🤝 button handler — either party can propose or join
   async function handleSafeHandshakeClick() {
     if (!selectedConversation?.listingId || !currentUserId) return
-    const isSellerOfListing = selectedConversation.listing?.user_id === currentUserId
 
     setSafeHandshakeLoading(true)
     try {
@@ -321,11 +320,8 @@ function MessagesPageContent() {
         // Session exists — show join confirmation for whichever party clicks
         setJoinSession({ id: active.id, safe_point_id: active.safe_point_id })
         setShowJoinModal(true)
-      } else if (isSellerOfListing) {
-        // Seller, no active session — ask buyer to propose
-        alert('No Safe-Handshake has been proposed yet.\n\nAsk the buyer to press the 🤝 Safe-Handshake button to pick a location and send you a proposal.')
       } else {
-        // Buyer, no session — open location picker to propose
+        // No session yet — either party can propose a location
         setSelectedSafePointId(null)
         setShowHandshakeModal(true)
       }
@@ -334,16 +330,22 @@ function MessagesPageContent() {
     }
   }
 
-  // Buyer proposes a location: creates the session + sends a chat message, but stays in chat
+  // Either party proposes a location: creates the session + sends a chat message, but stays in chat
   async function handleProposeSafeHandshake(safePointId: string) {
     if (!selectedConversation?.listingId || !currentUserId) return
+    const isSellerProposing = selectedConversation.listing?.user_id === currentUserId
     setSafeHandshakeLoading(true)
     setShowHandshakeModal(false)
     try {
+      const body: Record<string, string> = { listingId: selectedConversation.listingId, safePointId }
+      // When the seller initiates, they must pass the buyer's ID (the other participant)
+      if (isSellerProposing) {
+        body.buyerId = selectedConversation.otherUserId
+      }
       const res = await fetch('/api/safe-handshake/initiate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ listingId: selectedConversation.listingId, safePointId }),
+        body: JSON.stringify(body),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -550,15 +552,11 @@ function MessagesPageContent() {
   )
 
   // Contextual hint above the message input
-  const isSellerInCurrentChat = selectedConversation?.listing?.user_id === currentUserId
   const handshakeHintJSX = selectedConversation ? (
     <div className="px-4 py-2 bg-indigo-50 border-t border-indigo-100 flex items-center gap-2 flex-shrink-0">
       <span className="text-base">🤝</span>
       <p className="text-xs text-indigo-700 leading-snug">
-        {isSellerInCurrentChat
-          ? <>Waiting for a Safe-Handshake proposal? The buyer presses 🤝 first to pick a location, then <strong>you confirm</strong> by pressing it too.</>
-          : <>Want to meet in person? Press <strong>Safe-Handshake</strong> above to pick a location and send a proposal — the seller confirms it from their side.</>
-        }
+        Press <strong>Safe-Handshake</strong> above to propose a campus Safe-Point meetup — the other party confirms by pressing it too.
       </p>
     </div>
   ) : null
@@ -615,7 +613,7 @@ function MessagesPageContent() {
           </button>
         </div>
         <p className="text-sm text-gray-500 mb-4">
-          Pick a Safe-Point. A proposal message will be sent to the chat — the seller presses 🤝 to confirm and join the session.
+          Pick a Safe-Point. A proposal message will be sent in the chat — the other party presses 🤝 to confirm and join the session.
         </p>
         <div className="space-y-2 mb-5">
           {SAFE_POINTS.map((point) => (

@@ -8,7 +8,7 @@ import { useConversations, type Conversation } from '@/lib/hooks/useConversation
 import { useMessages } from '@/lib/hooks/useMessages'
 import { trackEvent } from '@/lib/mixpanel/client'
 import { reportConversation, deleteConversation } from '@/lib/chat/conversation-actions'
-import { SAFE_POINTS } from '@/data/safe-points'
+import { getCampusFromEmail, getSafePointsForCampus } from '@/data/safe-points'
 
 function formatTime(dateString: string | undefined): string {
   if (!dateString) return ''
@@ -44,6 +44,7 @@ function MessagesPageContent() {
   const [safeHandshakeLoading, setSafeHandshakeLoading] = useState(false)
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [joinSession, setJoinSession] = useState<{ id: string; safe_point_id: string | null } | null>(null)
+  const [userEmail, setUserEmail] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
 
@@ -89,6 +90,7 @@ function MessagesPageContent() {
       if (!user) { router.push('/login'); return }
       if (mounted) {
         setCurrentUserId(user.id)
+        setUserEmail(user.email ?? null)
         const prefillParam = searchParams.get('prefill')
         if (prefillParam) {
           try { setPrefillText(decodeURIComponent(prefillParam)) } catch {}
@@ -300,6 +302,9 @@ function MessagesPageContent() {
     </div>
   )
 
+  // Safe points filtered to the current user's campus (auto-detected from .edu email)
+  const campusSafePoints = getSafePointsForCampus(getCampusFromEmail(userEmail)?.id)
+
   // Unified 🤝 button handler — sends a proposal message with location options in chat
   async function handleSafeHandshakeClick() {
     if (!selectedConversation?.listingId || !currentUserId) return
@@ -367,7 +372,7 @@ function MessagesPageContent() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      const agreedPoint = SAFE_POINTS.find((p) => p.id === safePointId)
+      const agreedPoint = campusSafePoints.find((p) => p.id === safePointId)
       await sendMessage(`📍 Location confirmed: ${agreedPoint?.name ?? 'Safe-Point'}! Opening the Safe-Handshake session now.`)
       router.push(`/safe-handshake/${data.id}`)
     } catch (err: unknown) {
@@ -552,7 +557,7 @@ function MessagesPageContent() {
                               <p className="mb-2">{message.body.replace('\n__HANDSHAKE_PROPOSAL__', '').replace('__HANDSHAKE_PROPOSAL__', '')}</p>
                               <div className="flex flex-col gap-1.5 pt-1 border-t border-white/20">
                                 <p className={`text-[11px] font-semibold uppercase tracking-wide mb-0.5 ${isOwn ? 'text-white/70' : 'text-gray-400'}`}>Pick a location</p>
-                                {SAFE_POINTS.map((point) => (
+                                {campusSafePoints.map((point) => (
                                   <button
                                     key={point.id}
                                     onClick={() => handleConfirmHandshakeLocation(point.id)}
@@ -618,7 +623,7 @@ function MessagesPageContent() {
             <div>
               <p className="text-[11px] text-indigo-500 font-medium uppercase tracking-wide">Meeting at</p>
               <p className="text-sm font-bold text-ume-indigo">
-                {SAFE_POINTS.find((p) => p.id === joinSession.safe_point_id)?.name ?? joinSession.safe_point_id}
+                {campusSafePoints.find((p) => p.id === joinSession.safe_point_id)?.name ?? joinSession.safe_point_id}
               </p>
             </div>
           </div>

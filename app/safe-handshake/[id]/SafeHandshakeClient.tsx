@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { getNearestSafePoint } from '@/lib/haversine'
-import { SAFE_POINTS } from '@/data/safe-points'
+import { SAFE_POINTS, getSafePointsForCampus } from '@/data/safe-points'
 import StepBar from '@/components/safe-handshake/StepBar'
 import QRDisplay from '@/components/safe-handshake/QRDisplay'
 import QRScanner from '@/components/safe-handshake/QRScanner'
@@ -81,6 +81,12 @@ export default function SafeHandshakeClient({
   const isBuyer = currentUserId === handshake.buyer_id
   const partnerName = isSeller ? buyerName : sellerName
 
+  // Derive campus-specific safe points from the agreed location's campusId.
+  // Falls back to all safe points if no location has been agreed yet.
+  const campusSafePoints = getSafePointsForCampus(
+    SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.campusId
+  )
+
   // Countdown timer
   useEffect(() => {
     const calc = () => {
@@ -150,8 +156,8 @@ export default function SafeHandshakeClient({
         setUserLat(latitude)
         setUserLon(longitude)
 
-        // Check if within a safe point
-        const nearest = getNearestSafePoint(latitude, longitude)
+        // Check if within a campus safe point
+        const nearest = getNearestSafePoint(latitude, longitude, campusSafePoints)
         if (nearest && !hasArrived) {
           setHasArrived(true)
           // Notify the server
@@ -349,7 +355,7 @@ export default function SafeHandshakeClient({
     const sellerArrived = !!handshake.seller_arrived_at
     const buyerArrived = !!handshake.buyer_arrived_at
     const pointName =
-      SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.name ?? 'a Safe-Point'
+      campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? 'a Safe-Point'
 
     if (handshake.status === 'initiated') {
       return {
@@ -435,7 +441,7 @@ export default function SafeHandshakeClient({
             <div>
               <p className="text-[11px] text-indigo-500 font-medium uppercase tracking-wide">Agreed meeting spot</p>
               <p className="text-sm font-bold text-ume-indigo">
-                {SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.name ?? handshake.safe_point_id}
+                {campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? handshake.safe_point_id}
               </p>
             </div>
           </div>
@@ -481,6 +487,7 @@ export default function SafeHandshakeClient({
           userLon={userLon}
           activeSafePointId={myActiveSafePointId}
           partnerSafePointId={partnerActiveSafePointId}
+          safePoints={campusSafePoints}
         />
 
         {/* GPS error */}
@@ -545,8 +552,8 @@ export default function SafeHandshakeClient({
                 </p>
                 <div className="flex flex-col gap-2">
                   {(handshake.safe_point_id
-                    ? SAFE_POINTS.filter((p) => p.id === handshake.safe_point_id)
-                    : SAFE_POINTS
+                    ? campusSafePoints.filter((p) => p.id === handshake.safe_point_id)
+                    : campusSafePoints
                   ).map((point) => (
                     <button
                       key={point.id}
@@ -574,7 +581,7 @@ export default function SafeHandshakeClient({
             <p className="text-sm font-semibold text-yellow-800">Waiting for {partnerName}...</p>
             <p className="text-xs text-yellow-700 mt-1">
               {(() => {
-                const name = SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.name
+                const name = campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name
                 return name ? `You are at ${name}.` : 'You are at a Safe-Point.'
               })()}
             </p>
@@ -620,7 +627,7 @@ export default function SafeHandshakeClient({
             Campus Safe-Points
           </h3>
           <div className="space-y-2">
-            {SAFE_POINTS.map((point) => {
+            {campusSafePoints.map((point) => {
               const isActive = point.id === handshake.safe_point_id
               return (
                 <div key={point.id} className={`flex items-center gap-3 p-2 rounded-lg ${isActive ? 'bg-green-50' : ''}`}>

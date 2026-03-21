@@ -41,7 +41,21 @@ export async function POST(request: Request) {
     }
 
     if (listing.status === 'reserved') {
-      return NextResponse.json({ error: 'This listing is already reserved for another handshake' }, { status: 409 })
+      // Allow if the current user has a pending Stripe order for this listing
+      // (listing was reserved when they paid — they should be able to start the handshake)
+      const supabaseService = await createServiceClient()
+      const { data: pendingOrder } = await supabaseService
+        .from('orders')
+        .select('id')
+        .eq('listing_id', listingId)
+        .eq('buyer_id', user.id)
+        .eq('status', 'pending')
+        .maybeSingle()
+
+      if (!pendingOrder) {
+        return NextResponse.json({ error: 'This listing is already reserved for another buyer' }, { status: 409 })
+      }
+      // Fall through — buyer with pending order can start the handshake
     }
 
     const sellerId = listing.user_id

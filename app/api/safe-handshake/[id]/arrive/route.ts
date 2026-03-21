@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { stripeClient } from '@/lib/stripe/client'
 import { SAFE_POINTS } from '@/data/safe-points'
 
 export async function POST(
@@ -42,6 +43,21 @@ export async function POST(
       const serviceSupabase = await createServiceClient()
       await serviceSupabase.from('safe_handshakes').update({ status: 'cancelled' }).eq('id', id)
       await serviceSupabase.from('listings').update({ status: 'active' }).eq('id', handshake.listing_id)
+
+      // Void any pending Stripe authorization
+      const { data: pendingOrder } = await serviceSupabase
+        .from('orders')
+        .select('id, stripe_payment_intent_id')
+        .eq('buyer_id', handshake.buyer_id)
+        .eq('listing_id', handshake.listing_id)
+        .eq('status', 'pending')
+        .eq('payment_method', 'stripe')
+        .maybeSingle()
+      if (pendingOrder?.stripe_payment_intent_id) {
+        await stripeClient.paymentIntents.cancel(pendingOrder.stripe_payment_intent_id).catch(() => null)
+        await serviceSupabase.from('orders').update({ status: 'cancelled' }).eq('id', pendingOrder.id)
+      }
+
       return NextResponse.json({ error: 'Session has expired' }, { status: 410 })
     }
 
@@ -73,11 +89,6 @@ export async function POST(
     const otherArrived = isSeller
       ? handshake.buyer_arrived_at !== null
       : handshake.seller_arrived_at !== null
-
-    // Both must be at the same safe point
-    const otherSafePoint = isSeller
-      ? handshake.safe_point_id  // buyer's safe_point_id (if they arrived)
-      : handshake.safe_point_id
 
     let newStatus: string
     let updateFields: Record<string, unknown>

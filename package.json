@@ -17,6 +17,7 @@
     "test:e2e:admin": "playwright test e2e/admin-moderation.spec.ts"
   },
   "dependencies": {
+    "@easypost/api": "^8.8.0",
     "@getbrevo/brevo": "^3.0.1",
     "@phosphor-icons/react": "^2.1.10",
     "@radix-ui/react-dialog": "^1.1.15",

@@ -41,14 +41,17 @@ export default async function AdminPage() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8 flex justify-between items-start">
+        <div className="mb-8 flex justify-between items-start flex-wrap gap-4">
           <div>
             <h1 className="text-3xl font-bold text-black mb-2">
               Admin Moderation Panel
             </h1>
             <p className="text-black">Review and manage reported listings</p>
+            <div className="flex gap-4 mt-2 text-sm">
+              <Link href="/admin/analytics" className="text-blue-600 hover:underline font-medium">Analytics →</Link>
+            </div>
           </div>
-          <a 
+          <a
             href="/api/admin/export-reports"
             className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
           >

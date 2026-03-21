@@ -2,6 +2,7 @@
 import type { Metadata } from 'next'
 import { handleCreateListing } from './actions' // server action (Note relative path)
 import ImageUploaderClean from '@/components/listings/ImageUploaderClean'
+import FulfillmentFields from '@/components/listings/FulfillmentFields'
 
 
 export const metadata: Metadata = {
@@ -160,6 +161,9 @@ export default function CreateListingPage() {
               />
             </div>
           </div>
+
+          {/* Fulfillment type + shipping fields */}
+          <FulfillmentFields />
 
           {/* Submit Button */}
           <div className="pt-4">

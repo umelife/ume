@@ -240,18 +240,44 @@ npm run dev
 - ✅ "Start Safe-Handshake" button in messages thread (buyer-side only)
 - ✅ Database migration: `safe_handshakes` table + `listings.status` column with RLS
 
+#### 13. Stripe + Shipping Integration ✅ (2026-03-20)
+- ✅ DB migration: `fulfillment_type`, `accepts_stripe`, shipping dimensions on listings; `fulfillment_type`, EasyPost fields, `buyer_shipping_address` on orders
+- ✅ DB migration: `tracking_number`, `tracking_url`, `carrier` on orders
+- ✅ TypeScript types updated (`FulfillmentType`, `ShippingAddress` on `Listing` and `Order`)
+- ✅ `lib/stripe/client.ts` — Stripe V2 client singleton
+- ✅ Stripe Connect V2 onboarding — sellers create Express accounts with `fees_collector: 'application'`
+- ✅ `/api/stripe/connect/onboard` — creates V2 account + account link, redirects seller to Stripe-hosted onboarding (SSN collected by Stripe)
+- ✅ `/api/stripe/connect/return` — verifies onboarding completion, sets `stripe_onboarding_completed`
+- ✅ `/api/stripe/connect/status` — live status check from Stripe V2 API
+- ✅ `StripeOnboardingBanner` — shown on seller's profile page when Stripe is not set up
+- ✅ `/api/stripe/create-checkout-session` — destination charge with `application_fee_amount: 0` (0% commission); `capture_method: 'manual'` for in-person (escrow)
+- ✅ `/api/stripe/webhook` — in-person checkout → `pending` (auth only, no charge); shipping checkout → `paid` (immediate charge); `charge.refunded`, `account.updated`
+- ✅ `/api/stripe/webhook/v2` — thin events for V2 connected accounts (requirements updated, capability changed)
+- ✅ `/api/stripe/refund` — full refund via Stripe, re-activates listing
+- ✅ Listing creation form: fulfillment type picker, `accepts_stripe` checkbox, shipping ZIP/weight/dimensions
+- ✅ Listing detail page: `BuySection` — always shows all 3 options (Stripe in-person ⭐, cash/Venmo, ship); options 1 & 3 disabled if seller has no Stripe
+- ✅ `ShippingCheckoutFlow` — multi-step: address entry → real EasyPost rate selection → Stripe checkout
+- ✅ `/orders/[id]` — order detail page: tracking link, 3-day buyer protection refund button if no tracking after 3 days
+- ✅ EasyPost shipping rates — `lib/easypost/client.ts`, `/api/shipping/rates` (real USPS/UPS/FedEx rates)
+- ✅ EasyPost label generation — `/api/shipping/create-label` saves `tracking_number`, `tracking_url`, `carrier`; `GenerateLabelButton` on order page
+- ✅ `/api/easypost/webhook` — auto-marks order `completed` + listing `sold` on delivery
+- ✅ Safe-Handshake QR scan — captures Stripe payment intent for pending Stripe orders (escrow release)
+- ✅ Safe-Handshake expiry/cancel — voids pending Stripe authorization (no charge to buyer)
+- ✅ `/orders/success` — different message for `pending` (card authorized, meet for QR) vs `paid` (charged, awaiting shipment)
+
 ## Future Enhancements (Post-MVP)
 
 1. Role-based admin authentication
-2. Email notifications
-3. Payment integration (Stripe) — Safe-Handshake scan-qr will trigger fund release
-4. User ratings and reviews
-5. Advanced search and filters
-6. Mobile app
-7. Push notifications
-8. Auto-moderation with AI
-9. Favorites/saved listings
-10. User verification badges
+2. EasyPost shipping rate shopping + label generation
+3. Commission (% platform fee) — update `application_fee_amount` in checkout session
+4. LLC/EIN registration when commission is introduced
+5. User ratings and reviews
+6. Advanced search and filters
+7. Mobile app
+8. Push notifications
+9. Auto-moderation with AI
+10. Favorites/saved listings
+11. User verification badges
 
 ## Conclusion
 

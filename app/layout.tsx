@@ -5,6 +5,7 @@ import "./globals.css";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
+import StripeSetupBanner from "@/components/StripeSetupBanner";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
 import MobileFooter from "@/components/MobileFooter";
 import PushNotificationWrapper from "@/components/push/PushNotificationWrapper";
@@ -53,6 +54,7 @@ export default function RootLayout({
         <MixpanelProvider />
         <HeaderWrapper />
         <MobileHeaderWrapper />
+        <StripeSetupBanner />
         {children}
         <SimpleFooter />
         <MobileFooter />

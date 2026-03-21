@@ -87,15 +87,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
     }
 
-    // Wait a moment for the trigger to create the profile
-    await new Promise(resolve => setTimeout(resolve, 100))
-
-    // Verify that the profile was created with the username
-    const { data: profile, error: profileError } = await supabase
-      .from('users')
-      .select('username')
-      .eq('id', authData.user.id)
-      .maybeSingle()
+    // Poll for the DB trigger to create the profile (up to 1 second, 5 attempts)
+    let profile = null
+    let profileError = null
+    for (let attempt = 0; attempt < 5; attempt++) {
+      await new Promise(resolve => setTimeout(resolve, 200))
+      const { data, error } = await supabase
+        .from('users')
+        .select('username')
+        .eq('id', authData.user.id)
+        .maybeSingle()
+      if (data) { profile = data; break }
+      profileError = error
+    }
 
     if (profileError || !profile) {
       // ROLLBACK: Delete the auth user if profile creation failed

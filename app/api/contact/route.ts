@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { sendEmail } from '@/lib/email/sendEmail'
 
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+}
+
 /**
  * Contact Form API Route
  *
@@ -44,15 +53,22 @@ export async function POST(request: NextRequest) {
     })
 
     // Send email notification to support
+    const safeFirstName = escapeHtml(firstName)
+    const safeLastName = escapeHtml(lastName)
+    const safeEmail = escapeHtml(email)
+    const safeMessage = escapeHtml(message).replace(/\n/g, '<br>')
+    const safePhone = body.phone ? escapeHtml(body.phone) : null
+    const safeReferral = body.referralSource ? escapeHtml(body.referralSource) : null
+
     const emailHtml = `
       <h2>New Contact Form Submission</h2>
-      <p><strong>From:</strong> ${firstName} ${lastName} (${email})</p>
-      ${body.phone ? `<p><strong>Phone:</strong> ${body.phone}</p>` : ''}
-      ${body.referralSource ? `<p><strong>How they heard about us:</strong> ${body.referralSource}</p>` : ''}
+      <p><strong>From:</strong> ${safeFirstName} ${safeLastName} (${safeEmail})</p>
+      ${safePhone ? `<p><strong>Phone:</strong> ${safePhone}</p>` : ''}
+      ${safeReferral ? `<p><strong>How they heard about us:</strong> ${safeReferral}</p>` : ''}
       <p><strong>Newsletter signup:</strong> ${body.signUpNewsletter ? 'Yes' : 'No'}</p>
       <hr>
       <h3>Message:</h3>
-      <p>${message.replace(/\n/g, '<br>')}</p>
+      <p>${safeMessage}</p>
       <hr>
       <p><small>Submitted at: ${new Date().toISOString()}</small></p>
     `

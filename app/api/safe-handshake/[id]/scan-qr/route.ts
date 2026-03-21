@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { stripeClient } from '@/lib/stripe/client'
 
 export async function POST(
   request: Request,
@@ -81,12 +82,65 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to complete transaction' }, { status: 500 })
     }
 
-    // Mark listing as SOLD — this is the "release escrow" moment
-    // When Stripe is re-enabled, this becomes the actual fund transfer trigger
+    // Check for a pending Stripe order (manual capture escrow)
+    const { data: stripeOrder } = await serviceSupabase
+      .from('orders')
+      .select('id, stripe_payment_intent_id, amount_cents')
+      .eq('buyer_id', handshake.buyer_id)
+      .eq('listing_id', handshake.listing_id)
+      .eq('status', 'pending')
+      .eq('payment_method', 'stripe')
+      .maybeSingle()
+
+    if (stripeOrder?.stripe_payment_intent_id) {
+      // Capture the authorized Stripe payment — buyer is now charged
+      await stripeClient.paymentIntents.capture(stripeOrder.stripe_payment_intent_id)
+
+      // Mark the existing Stripe order as completed
+      await serviceSupabase.from('orders').update({
+        status: 'completed',
+        completed_at: now,
+      }).eq('id', stripeOrder.id)
+
+      // Mark listing as sold
+      await serviceSupabase
+        .from('listings')
+        .update({ status: 'sold' })
+        .eq('id', handshake.listing_id)
+    } else {
+      // No Stripe order — cash/Venmo meetup. Fetch price and record in orders.
+      const { data: listing } = await serviceSupabase
+        .from('listings')
+        .select('price')
+        .eq('id', handshake.listing_id)
+        .single()
+
+      await serviceSupabase.from('listings').update({ status: 'sold' }).eq('id', handshake.listing_id)
+
+      await serviceSupabase.from('orders').insert({
+        buyer_id: handshake.buyer_id,
+        seller_id: handshake.seller_id,
+        listing_id: handshake.listing_id,
+        amount_cents: listing?.price ?? 0,
+        currency: 'usd',
+        platform_fee_cents: 0,
+        seller_amount_cents: listing?.price ?? 0,
+        status: 'completed',
+        payment_method: 'in_person',
+        completed_at: now,
+      })
+    }
+
+    // Increment seller's total_sales count
+    const { data: sellerData } = await serviceSupabase
+      .from('users')
+      .select('total_sales')
+      .eq('id', handshake.seller_id)
+      .single()
     await serviceSupabase
-      .from('listings')
-      .update({ status: 'sold' })
-      .eq('id', handshake.listing_id)
+      .from('users')
+      .update({ total_sales: (sellerData?.total_sales ?? 0) + 1 })
+      .eq('id', handshake.seller_id)
 
     return NextResponse.json({ success: true, completedAt: now })
   } catch (err) {

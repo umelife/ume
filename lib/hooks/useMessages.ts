@@ -156,7 +156,6 @@ export function useMessages(
 
     // Only mark as read if page is visible
     if (document.visibilityState !== 'visible') {
-      console.log('[useMessages] Page not visible, skipping mark as read')
       return
     }
 
@@ -372,8 +371,7 @@ export function useMessages(
         }
       )
       .subscribe((status) => {
-        console.log('[useMessages] Subscription status:', status)
-      })
+        })
 
     channelRef.current = channel
 

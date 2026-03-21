@@ -2,14 +2,18 @@ import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import ProfileSettings from '@/components/profile/ProfileSettings'
 import ProfileListings from '@/components/profile/ProfileListings'
+import StripeOnboardingBanner from '@/components/seller/StripeOnboardingBanner'
 import { notFound } from 'next/navigation'
 
 export default async function ProfilePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>
+  searchParams: Promise<{ stripe?: string }>
 }) {
   const { id } = await params
+  const { stripe: stripeReturnStatus } = await searchParams
   const supabase = await createClient()
   const { user: currentUser } = await getUser()
 
@@ -46,7 +50,7 @@ export default async function ProfilePage({
             {/* Avatar */}
             <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-ume-indigo flex items-center justify-center shadow-lg flex-shrink-0">
               <span className="text-4xl sm:text-5xl font-black text-white select-none">
-                {displayName[0].toUpperCase()}
+                {(displayName?.[0] ?? '?').toUpperCase()}
               </span>
             </div>
 
@@ -75,6 +79,14 @@ export default async function ProfilePage({
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        {/* Stripe onboarding banner — own profile only */}
+        {isOwnProfile && (
+          <StripeOnboardingBanner
+            isConnected={profileUser.stripe_onboarding_completed ?? false}
+            stripeReturnStatus={stripeReturnStatus ?? null}
+          />
+        )}
 
         {/* Profile Settings — own profile only */}
         {isOwnProfile && (

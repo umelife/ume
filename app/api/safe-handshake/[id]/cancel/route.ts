@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient, createServiceClient } from '@/lib/supabase/server'
+import { stripeClient } from '@/lib/stripe/client'
 
 export async function POST(
   _request: Request,
@@ -43,6 +44,20 @@ export async function POST(
       .from('listings')
       .update({ status: 'active' })
       .eq('id', handshake.listing_id)
+
+    // Void any pending Stripe authorization
+    const { data: pendingOrder } = await serviceSupabase
+      .from('orders')
+      .select('id, stripe_payment_intent_id')
+      .eq('buyer_id', handshake.buyer_id)
+      .eq('listing_id', handshake.listing_id)
+      .eq('status', 'pending')
+      .eq('payment_method', 'stripe')
+      .maybeSingle()
+    if (pendingOrder?.stripe_payment_intent_id) {
+      await stripeClient.paymentIntents.cancel(pendingOrder.stripe_payment_intent_id).catch(() => null)
+      await serviceSupabase.from('orders').update({ status: 'cancelled' }).eq('id', pendingOrder.id)
+    }
 
     return NextResponse.json({ success: true })
   } catch (err) {

@@ -1,11 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import ReportButton from '@/components/listings/ReportButton'
-import ContactSellerButton from '@/components/listings/ContactSellerButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
 import ListingImages from '@/components/listings/ListingImages'
 import CartToggleButton from '@/components/listings/CartToggleButton'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
+import BuySection from '@/components/listings/BuySection'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -29,15 +29,16 @@ export default async function ListingDetailPage({
     notFound()
   }
 
-  // Fetch the seller/user data separately
+  // Fetch the seller/user data separately (include Stripe status for buy section)
   const { data: user } = await supabase
     .from('users')
-    .select('*')
+    .select('id, display_name, username, college_name, stripe_onboarding_completed')
     .eq('id', listing.user_id)
     .single()
 
-  // Add user to listing object
+  // Add user (seller) to listing object
   listing.user = user
+  listing.seller = user
 
   const isOwner = currentUser?.id === listing.user_id
 
@@ -97,16 +98,25 @@ export default async function ListingDetailPage({
                 </div>
               )}
 
-              {/* Cart, Contact and Report for non-owners */}
+              {/* Buy section, Contact and Report for non-owners */}
               {currentUser && !isOwner && (
                 <div className="border-t pt-4 mt-4 space-y-3">
+                  <BuySection
+                    listing={{
+                      id: listing.id,
+                      title: listing.title,
+                      price: listing.price,
+                      user_id: listing.user_id,
+                      seller: listing.seller,
+                    }}
+                    currentUserId={currentUser.id}
+                  />
                   <CartToggleButton
                     listingId={listing.id}
                     listingOwnerId={listing.user_id}
                     currentUserId={currentUser.id}
                   />
-                  <ContactSellerButton listing={listing} />
-                  <div className="mt-4">
+                  <div className="mt-2">
                     <ReportButton listingId={listing.id} />
                   </div>
                 </div>

@@ -1,0 +1,54 @@
+'use client'
+
+import { useState } from 'react'
+
+export default function StripeSetupBannerClient() {
+  const [dismissed, setDismissed] = useState(false)
+  const [loading, setLoading] = useState(false)
+
+  if (dismissed) return null
+
+  const handleSetup = async () => {
+    setLoading(true)
+    try {
+      const res = await fetch('/api/stripe/connect/onboard', { method: 'POST' })
+      const data = await res.json()
+      if (data.url) window.location.href = data.url
+      else setLoading(false)
+    } catch {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <div className="bg-amber-500 text-white px-4 py-2.5 flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2.5 min-w-0">
+        <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+        </svg>
+        <p className="text-sm font-medium truncate">
+          Set up Stripe to accept card payments and offer shipping on your listings
+        </p>
+      </div>
+      <div className="flex items-center gap-2 flex-shrink-0">
+        <button
+          onClick={handleSetup}
+          disabled={loading}
+          className="bg-white text-amber-700 font-semibold text-sm px-3 py-1 rounded-full hover:bg-amber-50 transition-colors disabled:opacity-70 whitespace-nowrap"
+        >
+          {loading ? 'Setting up...' : 'Set up now →'}
+        </button>
+        <button
+          onClick={() => setDismissed(true)}
+          className="text-white/80 hover:text-white p-0.5"
+          aria-label="Dismiss"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  )
+}

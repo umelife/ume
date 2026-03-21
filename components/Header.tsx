@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import HeaderInlineSearch from './search/HeaderInlineSearch'
+import UnreadCountBadge from './UnreadCountBadge'
 
 interface HeaderProps {
   unreadMessages?: number
@@ -99,10 +100,8 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
                   <rect x="2" y="4" width="20" height="16" rx="2"/>
                   <path d="m2 7 8.5 5.5a2 2 0 0 0 2 0L22 7"/>
                 </svg>
-                {unreadMessages > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-ume-pink text-white text-[10px] font-bold rounded-full min-w-[16px] h-4 flex items-center justify-center px-1">
-                    {unreadMessages > 99 ? '99+' : unreadMessages}
-                  </span>
+                {userId && (
+                  <UnreadCountBadge userId={userId} initialCount={unreadMessages} />
                 )}
                 <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs bg-ume-indigo text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
                   Messages

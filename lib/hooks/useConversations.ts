@@ -47,6 +47,7 @@ export function useConversations(): UseConversationsReturn {
   const [supabase] = useState(() => createClient())
   const channelsRef = useRef<RealtimeChannel[]>([])
   const mountedRef = useRef(true)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   // Fetch conversations from server
   const fetchConversations = useCallback(async () => {
@@ -67,11 +68,18 @@ export function useConversations(): UseConversationsReturn {
       console.error('Error fetching conversations:', err)
       setError(err.message || 'Failed to load conversations')
     } finally {
-      if (mountedRef.current) {
-        setLoading(false)
-      }
+      // Always clear loading — safe even if unmounted (React 18 no-ops state on unmounted components)
+      setLoading(false)
     }
   }, [])
+
+  // Debounced version to coalesce rapid real-time events
+  const debouncedFetch = useCallback(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => {
+      if (mountedRef.current) fetchConversations()
+    }, 300)
+  }, [fetchConversations])
 
   // Subscribe to real-time changes
   useEffect(() => {
@@ -90,17 +98,12 @@ export function useConversations(): UseConversationsReturn {
           schema: 'public',
           table: 'conversations'
         },
-        async (payload) => {
-          console.log('[useConversations] Conversation change:', payload.eventType)
-
+        () => {
           // Refetch to get updated data with joins
-          // More reliable than trying to manually update state
-          await fetchConversations()
+          debouncedFetch()
         }
       )
-      .subscribe((status) => {
-        console.log('[useConversations] Subscription status:', status)
-      })
+      .subscribe()
 
     channelsRef.current.push(conversationsChannel)
 
@@ -114,11 +117,8 @@ export function useConversations(): UseConversationsReturn {
           schema: 'public',
           table: 'messages'
         },
-        async (payload) => {
-          console.log('[useConversations] New message detected')
-          // Refetch conversations when new message arrives
-          // Trigger will create/update conversation
-          await fetchConversations()
+        () => {
+          debouncedFetch()
         }
       )
       .on(
@@ -128,11 +128,8 @@ export function useConversations(): UseConversationsReturn {
           schema: 'public',
           table: 'messages'
         },
-        async (payload) => {
-          console.log('[useConversations] Message updated (possibly soft-deleted)')
-          // Refetch when message is soft-deleted (deleted=true)
-          // Trigger will update conversation's last_message
-          await fetchConversations()
+        () => {
+          debouncedFetch()
         }
       )
       .on(
@@ -142,11 +139,8 @@ export function useConversations(): UseConversationsReturn {
           schema: 'public',
           table: 'messages'
         },
-        async (payload) => {
-          console.log('[useConversations] Message hard-deleted')
-          // Refetch when message is hard-deleted
-          // Trigger will update conversation's last_message
-          await fetchConversations()
+        () => {
+          debouncedFetch()
         }
       )
       .subscribe()
@@ -156,6 +150,7 @@ export function useConversations(): UseConversationsReturn {
     // Cleanup on unmount
     return () => {
       mountedRef.current = false
+      if (debounceRef.current) clearTimeout(debounceRef.current)
 
       // Unsubscribe from all channels
       channelsRef.current.forEach(channel => {
@@ -163,7 +158,7 @@ export function useConversations(): UseConversationsReturn {
       })
       channelsRef.current = []
     }
-  }, [supabase, fetchConversations])
+  }, [supabase, fetchConversations, debouncedFetch])
 
   // Compute total unread count across all conversations
   const totalUnreadCount = conversations.reduce((sum, conv) => sum + conv.unreadCount, 0)

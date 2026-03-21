@@ -732,12 +732,12 @@ function MessageInput({
   disabled: boolean
   initialText?: string
 }) {
-  const [text, setText] = useState('')
-  const [suggestion, setSuggestion] = useState(initialText)
+  const [text, setText] = useState(initialText)
+  const [suggestion, setSuggestion] = useState('')
   const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
-    if (initialText) setSuggestion(initialText)
+    if (initialText) setText(initialText)
   }, [initialText])
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -757,14 +757,6 @@ function MessageInput({
 
   return (
     <div className="bg-white border-t border-gray-100 flex-shrink-0">
-      {suggestion && (
-        <div className="px-4 pt-3 pb-1">
-          <p className="text-[11px] text-gray-400 mb-1">Suggested message</p>
-          <p className="text-sm text-gray-400 italic bg-gray-50 rounded-xl px-3 py-2 border border-gray-100">
-            &ldquo;{suggestion}&rdquo;
-          </p>
-        </div>
-      )}
       <form onSubmit={handleSubmit} className="px-3 py-3 flex items-center gap-2">
         <input
           type="text"

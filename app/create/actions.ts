@@ -28,19 +28,14 @@ const supabaseAdmin = createAdminClient(
  */
 export async function handleCreateListing(formData: FormData): Promise<void> {
   try {
-    console.log('[CreateListing] Starting listing creation...')
-
     const supabase = await createClient()
     const {
       data: { user },
     } = await supabase.auth.getUser()
 
     if (!user) {
-      console.error('[CreateListing] No authenticated user')
       throw new Error('Unauthorized - Please log in first')
     }
-
-    console.log('[CreateListing] User authenticated:', user.id)
 
     const title = (formData.get('title') as string) || ''
     const description = (formData.get('description') as string) || ''
@@ -51,13 +46,21 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
     const price_cents = Math.round(priceNumber * 100)
     const imageUrlsRaw = (formData.get('imageUrls') as string) || '[]'
 
-    console.log('[CreateListing] Form data:', {
-      title,
-      category,
-      condition,
-      price_cents,
-      imageUrlsRaw: imageUrlsRaw.substring(0, 100)
-    })
+    // Fulfillment + shipping fields
+    const fulfillment_type = (formData.get('fulfillment_type') as string) || 'in_person'
+    const accepts_stripe = formData.get('accepts_stripe') === 'true'
+    const ships_from_street = (formData.get('ships_from_street') as string) || null
+    const ships_from_zip = (formData.get('ships_from_zip') as string) || null
+    const ships_from_city = (formData.get('ships_from_city') as string) || null
+    const ships_from_state = (formData.get('ships_from_state') as string) || null
+    const weight_oz_raw = formData.get('weight_oz') as string
+    const weight_oz = weight_oz_raw ? parseInt(weight_oz_raw, 10) : null
+    const pkg_length_raw = formData.get('pkg_length') as string
+    const pkg_length = pkg_length_raw ? parseFloat(pkg_length_raw) : null
+    const pkg_width_raw = formData.get('pkg_width') as string
+    const pkg_width = pkg_width_raw ? parseFloat(pkg_width_raw) : null
+    const pkg_height_raw = formData.get('pkg_height') as string
+    const pkg_height = pkg_height_raw ? parseFloat(pkg_height_raw) : null
 
     let imageUrls: string[] = []
     try {
@@ -68,7 +71,6 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
     }
 
     // Verify user profile exists (should be created during signup)
-    console.log('[CreateListing] Verifying user profile exists...')
     const { data: userProfile, error: profileCheckErr } = await supabaseAdmin
       .from('users')
       .select('id, username')
@@ -76,14 +78,10 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
       .single()
 
     if (profileCheckErr || !userProfile) {
-      console.error('[CreateListing] User profile not found:', profileCheckErr)
       throw new Error('User profile not found. Please sign out and sign back in.')
     }
 
-    console.log('[CreateListing] User profile verified:', userProfile.username)
-
     // Insert listing (price stored in cents in `price` column)
-    console.log('[CreateListing] Inserting listing...')
     const { error: insertErr, data: insertedListing } = await supabaseAdmin
       .from('listings')
       .insert([
@@ -96,21 +94,25 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
           price: price_cents,
           image_urls: imageUrls,
           created_at: new Date().toISOString(),
+          fulfillment_type,
+          accepts_stripe: fulfillment_type !== 'shipping' ? accepts_stripe : true,
+          ships_from_street,
+          ships_from_zip,
+          ships_from_city,
+          ships_from_state,
+          weight_oz,
+          pkg_length,
+          pkg_width,
+          pkg_height,
         },
       ])
       .select()
 
     if (insertErr) {
-      console.error('[CreateListing] Insert error:', insertErr)
       throw new Error(`Create listing failed: ${insertErr.message}`)
     }
 
-    console.log('[CreateListing] Listing created successfully:', insertedListing?.[0]?.id)
-    console.log('[CreateListing] Revalidating marketplace...')
-
     revalidatePath('/marketplace')
-
-    console.log('[CreateListing] Redirecting to marketplace...')
     redirect('/marketplace')
 
   } catch (error: any) {

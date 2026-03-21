@@ -135,6 +135,7 @@ async function fetchListings(searchParams: {
           .from('listings')
           .select('*, user:users(*)')
           .in('id', listingIds)
+          .not('status', 'in', '(sold,reserved)')
 
         if (listingsWithUsers) {
           // Merge distance data with user data
@@ -175,6 +176,7 @@ async function fetchListings(searchParams: {
     let query = supabase
       .from('listings')
       .select('*, user:users(*)')
+      .not('status', 'in', '(sold,reserved)')
 
     // Apply category filter
     if (categorySlug) {

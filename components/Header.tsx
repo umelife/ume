@@ -109,6 +109,22 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
               </Link>
             )}
 
+            {/* Orders */}
+            {userId && (
+              <Link
+                href="/orders"
+                className="text-ume-indigo hover:text-ume-pink transition-colors relative group"
+                aria-label="Orders"
+              >
+                <svg className="w-[18px] h-[18px]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                <span className="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs bg-ume-indigo text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+                  Orders
+                </span>
+              </Link>
+            )}
+
             {/* Profile */}
             <Link
               href={userId ? `/profile/${userId}` : "/login"}

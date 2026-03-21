@@ -96,30 +96,34 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        // Notify buyer and seller (fetch listing title + amount for notification text)
+        // Notify buyer and seller — non-fatal, don't let this crash the webhook
         if (buyerId && sellerId && listingId) {
-          const [{ data: orderData }, { data: listingData }, { data: buyerData }] = await Promise.all([
-            db.from('orders').select('amount_cents').eq('id', orderId).single(),
-            db.from('listings').select('title').eq('id', listingId).single(),
-            db.from('users').select('display_name').eq('id', buyerId).single(),
-          ])
-          await Promise.all([
-            notifyBuyerPaymentSuccess({
-              buyerId,
-              orderId,
-              listingId,
-              listingTitle: listingData?.title || 'Item',
-              amount: orderData?.amount_cents || 0,
-            }),
-            notifySellerItemSold({
-              sellerId,
-              orderId,
-              listingId,
-              listingTitle: listingData?.title || 'Item',
-              amount: orderData?.amount_cents || 0,
-              buyerName: buyerData?.display_name || 'A buyer',
-            }),
-          ]).catch(err => console.error('Notification error:', err))
+          try {
+            const [{ data: orderData }, { data: listingData }, { data: buyerData }] = await Promise.all([
+              db.from('orders').select('amount_cents').eq('id', orderId).single(),
+              db.from('listings').select('title').eq('id', listingId).single(),
+              db.from('users').select('display_name').eq('id', buyerId).single(),
+            ])
+            await Promise.all([
+              notifyBuyerPaymentSuccess({
+                buyerId,
+                orderId,
+                listingId,
+                listingTitle: listingData?.title || 'Item',
+                amount: orderData?.amount_cents || 0,
+              }),
+              notifySellerItemSold({
+                sellerId,
+                orderId,
+                listingId,
+                listingTitle: listingData?.title || 'Item',
+                amount: orderData?.amount_cents || 0,
+                buyerName: buyerData?.display_name || 'A buyer',
+              }),
+            ])
+          } catch (err) {
+            console.error('Notification error (non-fatal):', err)
+          }
         }
 
         break

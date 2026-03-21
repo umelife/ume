@@ -38,7 +38,7 @@ function OrderSuccessContent() {
       try {
         const { data, error: fetchError } = await supabase
           .from('orders')
-          .select('*, buyer:users!buyer_id(*), seller:users!seller_id(*), listing:listings(*)')
+          .select('*, buyer:users!orders_buyer_id_fkey(*), seller:users!orders_seller_id_fkey(*), listing:listings(*)')
           .eq('stripe_checkout_session_id', sessionId)
           .maybeSingle() // Use maybeSingle instead of single to handle no results gracefully
 

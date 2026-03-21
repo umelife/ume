@@ -217,7 +217,7 @@ export default async function OrderDetailPage({
 
           {/* Buyer protection — no tracking after 3 days */}
           {isBuyer && order.fulfillment_type === 'shipping' && order.status === 'paid' && !(order as any).tracking_number && (() => {
-            const paidDate = new Date((order as any).completed_at || order.created_at)
+            const paidDate = new Date(order.created_at)
             const daysSincePaid = (Date.now() - paidDate.getTime()) / (1000 * 60 * 60 * 24)
             return daysSincePaid >= 3
           })() && (

@@ -42,18 +42,11 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    // 3. Fetch live status from Stripe to ensure accuracy
-    const account = await stripeClient.v2.core.accounts.retrieve(
-      profile.stripe_account_id,
-      { include: ['configuration.recipient', 'requirements'] }
-    )
+    // 3. Fetch live status from Stripe (V1 API)
+    const account = await stripeClient.accounts.retrieve(profile.stripe_account_id)
 
-    const transfersActive =
-      account?.configuration?.recipient?.capabilities?.stripe_balance?.stripe_transfers?.status === 'active'
-
-    const requirementsStatus = (account as any).requirements?.summary?.minimum_deadline?.status
-    const onboardingComplete =
-      transfersActive || (requirementsStatus !== 'currently_due' && requirementsStatus !== 'past_due')
+    const transfersActive = account.charges_enabled === true && account.details_submitted === true
+    const onboardingComplete = transfersActive
 
     // 4. Sync status back to DB if it changed
     if (onboardingComplete !== profile.stripe_onboarding_completed) {

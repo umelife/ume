@@ -10,6 +10,7 @@ import SimpleFooter from "@/components/homepage/SimpleFooter";
 import MobileFooter from "@/components/MobileFooter";
 import PushNotificationWrapper from "@/components/push/PushNotificationWrapper";
 import WhatsNewModal from "@/components/WhatsNewModal";
+import MobileTabBar from "@/components/MobileTabBar";
 
 // Load Google Fonts using next/font (prevents CORB issues)
 // Using Work Sans as a free alternative to BR Shape (geometric sans-serif)
@@ -64,6 +65,9 @@ export default function RootLayout({
         <MobileFooter />
         <PushNotificationWrapper />
         <WhatsNewModal />
+        {/* Spacer so fixed tab bar doesn't overlap footer on mobile */}
+        <div className="h-16 md:hidden" aria-hidden="true" />
+        <MobileTabBar />
       </body>
     </html>
   );

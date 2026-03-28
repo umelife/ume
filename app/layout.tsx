@@ -65,8 +65,8 @@ export default function RootLayout({
         <MobileFooter />
         <PushNotificationWrapper />
         <WhatsNewModal />
-        {/* Spacer so fixed tab bar doesn't overlap footer on mobile */}
-        <div className="h-16 md:hidden" aria-hidden="true" />
+        {/* Spacer so floating tab bar doesn't overlap footer content */}
+        <div className="h-20" aria-hidden="true" />
         <MobileTabBar />
       </body>
     </html>

@@ -114,7 +114,7 @@ function ProductCard({ listing }: { listing: Listing }) {
                 src={src}
                 alt={listing.title}
                 fill
-                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                unoptimized
                 className={`object-cover group-hover:scale-105 transition-transform duration-200 ${i === imgIndex ? 'opacity-100' : 'opacity-0'}`}
               />
             ))}

@@ -108,8 +108,8 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
           src={images[selectedImage]}
           alt={`${altText} - Image ${selectedImage + 1}`}
           fill
+          unoptimized
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 600px"
           priority={selectedImage === 0}
         />
         {condition && (
@@ -137,9 +137,9 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
                 src={img}
                 alt={`${altText} - Thumbnail ${index + 1}`}
                 fill
+                unoptimized
                 className="object-cover"
                 loading="lazy"
-                sizes="(max-width: 640px) 20vw, (max-width: 768px) 15vw, 100px"
               />
             </button>
           ))}

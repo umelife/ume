@@ -268,8 +268,8 @@ export default function ImageUploaderClean({
                   src={url}
                   alt={`Upload preview ${index + 1}`}
                   fill
+                  unoptimized
                   className="object-cover"
-                  sizes="(max-width: 640px) 20vw, 15vw"
                 />
               </div>
               <button

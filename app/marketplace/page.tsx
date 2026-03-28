@@ -4,26 +4,14 @@ import CategoryBar from '@/components/marketplace/CategoryBar'
 import FiltersRow from '@/components/marketplace/FiltersRow'
 import MobileFilterButton from '@/components/marketplace/MobileFilterButton'
 import MobileFiltersWrapper from '@/components/marketplace/MobileFiltersWrapper'
-import ProductGrid from '@/components/marketplace/ProductGrid'
+import MarketplaceListings from '@/components/marketplace/MarketplaceListings'
 import DeleteSuccessModal from '@/components/marketplace/DeleteSuccessModal'
 import { getCategorySubtitle } from '@/lib/constants/categories'
+import { CAMPUSES } from '@/data/safe-points'
 import type { Listing } from '@/types/database'
+import type { ListingFilters } from './actions'
 
-/**
- * Marketplace Page - Server Component
- *
- * This is a server component that fetches listings based on URL search params.
- * All filtering happens server-side for better SEO and initial load performance.
- *
- * URL Parameters:
- * - category: Filter by category (e.g., "dorm-and-decor")
- * - radius: Search radius in miles
- * - userLat: User's latitude (for radius filtering)
- * - userLng: User's longitude (for radius filtering)
- * - condition: Filter by listing condition
- * - minPrice: Minimum price
- * - maxPrice: Maximum price
- */
+const PAGE_SIZE = 20
 
 interface MarketplacePageProps {
   searchParams: Promise<{
@@ -35,12 +23,10 @@ interface MarketplacePageProps {
     minPrice?: string
     maxPrice?: string
     sort?: string
+    campus?: string
   }>
 }
 
-// Category configuration
-// IMPORTANT: If you need to change category names, update this array
-// The 'slug' is used in URLs, 'display' is shown to users
 const CATEGORIES = [
   { slug: 'dorm-and-decor', display: 'Dorm & Decor' },
   { slug: 'fun-and-craft', display: 'Fun & Craft' },
@@ -52,15 +38,12 @@ const CATEGORIES = [
   { slug: 'other', display: 'Other' },
 ]
 
-// Helper: Convert category slug to display name
 function getCategoryDisplay(slug: string | undefined): string {
   if (!slug) return 'all'
   const category = CATEGORIES.find(c => c.slug === slug)
   return category ? category.display : slug
 }
 
-// Helper: Convert category slug to database value
-// ADJUST THIS if your database uses different category names
 function categorySlugToDb(slug: string): string {
   const map: Record<string, string> = {
     'dorm-and-decor': 'Dorm and Decor',
@@ -70,7 +53,7 @@ function categorySlugToDb(slug: string): string {
     'transportation': 'Transportation',
     'tech-and-gadgets': 'Tech and Gadgets',
     'giveaways': 'Giveaways',
-    'other': 'Other'
+    'other': 'Other',
   }
   return map[slug] || slug
 }
@@ -84,52 +67,42 @@ async function fetchListings(searchParams: {
   minPrice?: string
   maxPrice?: string
   sort?: string
-}): Promise<Listing[]> {
+  campus?: string
+}): Promise<{ listings: Listing[]; hasMore: boolean }> {
   const supabase = await createClient()
 
-  // Parse parameters
   const radius = searchParams.radius ? parseFloat(searchParams.radius) : null
   const userLat = searchParams.userLat ? parseFloat(searchParams.userLat) : null
   const userLng = searchParams.userLng ? parseFloat(searchParams.userLng) : null
   const categorySlug = searchParams.category
   const condition = searchParams.condition
+  const campus = searchParams.campus
   const minPrice = searchParams.minPrice ? parseFloat(searchParams.minPrice) : null
   const maxPrice = searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : null
   const sort = searchParams.sort || 'relevance'
 
   try {
-    // CASE 1: Radius filtering (requires location)
+    // CASE 1: Radius filtering
     if (radius && userLat && userLng) {
       const dbCategory = categorySlug ? categorySlugToDb(categorySlug) : null
-
-      // Call RPC function for radius filtering
       const { data, error } = await supabase.rpc('filter_by_radius', {
         user_lat: userLat,
         user_lng: userLng,
         radius_miles: radius,
-        category_filter: dbCategory
+        category_filter: dbCategory,
       })
 
-      if (error) {
-        console.error('Error fetching listings by radius:', error)
-        return []
-      }
+      if (error) { console.error('Radius fetch error:', error); return { listings: [], hasMore: false } }
 
       let filteredData = data || []
+      if (condition) filteredData = filteredData.filter((l: any) => l.condition === condition)
+      if (minPrice !== null) filteredData = filteredData.filter((l: any) => l.price >= minPrice)
+      if (maxPrice !== null) filteredData = filteredData.filter((l: any) => l.price <= maxPrice)
+      if (campus) filteredData = filteredData.filter((l: any) => l.seller_campus_id === campus)
 
-      // Apply additional client-side filters
-      if (condition) {
-        filteredData = filteredData.filter((l: any) => l.condition === condition)
-      }
-      if (minPrice !== null) {
-        filteredData = filteredData.filter((l: any) => l.price >= minPrice)
-      }
-      if (maxPrice !== null) {
-        filteredData = filteredData.filter((l: any) => l.price <= maxPrice)
-      }
+      const listingIds = filteredData.slice(0, PAGE_SIZE).map((l: any) => l.id)
+      const hasMore = filteredData.length > PAGE_SIZE
 
-      // Fetch user data for each listing
-      const listingIds = filteredData.map((l: any) => l.id)
       if (listingIds.length > 0) {
         const { data: listingsWithUsers } = await supabase
           .from('listings')
@@ -138,172 +111,142 @@ async function fetchListings(searchParams: {
           .not('status', 'in', '(sold,reserved)')
 
         if (listingsWithUsers) {
-          // Merge distance data with user data
-          let merged = listingsWithUsers.map(listing => {
-            const radiusListing = filteredData.find((l: any) => l.id === listing.id)
-            return {
-              ...listing,
-              distance_miles: radiusListing?.distance_miles
-            }
-          })
-
-          // Apply sorting to merged results
+          let merged = listingsWithUsers.map(listing => ({
+            ...listing,
+            distance_miles: filteredData.find((l: any) => l.id === listing.id)?.distance_miles,
+          }))
           switch (sort) {
-            case 'newest':
-              merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-              break
-            case 'price-asc':
-              merged.sort((a, b) => a.price - b.price)
-              break
-            case 'price-desc':
-              merged.sort((a, b) => b.price - a.price)
-              break
-            case 'relevance':
-            default:
-              // Relevance: sort by created_at desc (newest first) as default
-              merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-              break
+            case 'price-asc': merged.sort((a, b) => a.price - b.price); break
+            case 'price-desc': merged.sort((a, b) => b.price - a.price); break
+            default: merged.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
           }
-
-          return merged as Listing[]
+          return { listings: merged as Listing[], hasMore }
         }
       }
 
-      return filteredData as Listing[]
+      return { listings: filteredData as Listing[], hasMore }
     }
 
-    // CASE 2: Regular filtering (no radius)
+    // CASE 2: Regular filtering
     let query = supabase
       .from('listings')
       .select('*, user:users(*)')
       .not('status', 'in', '(sold,reserved)')
 
-    // Apply category filter
-    if (categorySlug) {
-      const dbCategory = categorySlugToDb(categorySlug)
-      query = query.eq('category', dbCategory)
-    }
+    if (categorySlug) query = query.eq('category', categorySlugToDb(categorySlug))
+    if (condition) query = query.eq('condition', condition)
+    if (campus) query = query.eq('seller_campus_id', campus)
+    if (minPrice !== null) query = query.gte('price', minPrice)
+    if (maxPrice !== null) query = query.lte('price', maxPrice)
 
-    // Apply condition filter
-    if (condition) {
-      query = query.eq('condition', condition)
-    }
-
-    // Apply price filters
-    if (minPrice !== null) {
-      query = query.gte('price', minPrice)
-    }
-    if (maxPrice !== null) {
-      query = query.lte('price', maxPrice)
-    }
-
-    // Apply sorting
     switch (sort) {
-      case 'newest':
-        query = query.order('created_at', { ascending: false })
-        break
-      case 'price-asc':
-        query = query.order('price', { ascending: true })
-        break
-      case 'price-desc':
-        query = query.order('price', { ascending: false })
-        break
-      case 'relevance':
-      default:
-        // Relevance: sort by created_at desc (newest first) as default
-        query = query.order('created_at', { ascending: false })
-        break
+      case 'price-asc': query = query.order('price', { ascending: true }); break
+      case 'price-desc': query = query.order('price', { ascending: false }); break
+      default: query = query.order('created_at', { ascending: false })
     }
+
+    query = query.range(0, PAGE_SIZE - 1)
 
     const { data, error } = await query
+    if (error) { console.error('Listings fetch error:', error); return { listings: [], hasMore: false } }
 
-    if (error) {
-      console.error('Error fetching listings:', error)
-      return []
-    }
-
-    return (data as Listing[]) || []
+    return { listings: (data as Listing[]) ?? [], hasMore: (data?.length ?? 0) === PAGE_SIZE }
   } catch (err) {
-    console.error('Unexpected error fetching listings:', err)
-    return []
+    console.error('Unexpected error:', err)
+    return { listings: [], hasMore: false }
   }
+}
+
+async function fetchCampusOptions(): Promise<{ value: string; label: string }[]> {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('listings')
+    .select('seller_campus_id')
+    .not('status', 'in', '(sold,reserved)')
+    .not('seller_campus_id', 'is', null)
+
+  if (!data) return []
+
+  const counts: Record<string, number> = {}
+  for (const row of data) {
+    if (row.seller_campus_id) counts[row.seller_campus_id] = (counts[row.seller_campus_id] || 0) + 1
+  }
+
+  return Object.entries(counts)
+    .map(([id, count]) => {
+      const campus = CAMPUSES.find(c => c.id === id)
+      return campus ? { value: id, label: `${campus.name} (${count})` } : null
+    })
+    .filter(Boolean) as { value: string; label: string }[]
 }
 
 export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {
   const params = await searchParams
-  const listings = await fetchListings(params)
-  const categoryDisplay = getCategoryDisplay(params.category)
+  const [{ listings, hasMore }, campusOptions] = await Promise.all([
+    fetchListings(params),
+    fetchCampusOptions(),
+  ])
 
-  // Generate page title and subtitle
-  const pageTitle = params.category
-    ? `SHOP ${categoryDisplay.toUpperCase()}`
-    : 'SHOP ALL'
+  const categoryDisplay = getCategoryDisplay(params.category)
+  const pageTitle = params.category ? `SHOP ${categoryDisplay.toUpperCase()}` : 'SHOP ALL'
   const pageSubtitle = getCategorySubtitle(categoryDisplay)
+
+  const filters: ListingFilters = {
+    category: params.category,
+    condition: params.condition,
+    campus: params.campus,
+    minPrice: params.minPrice ? parseFloat(params.minPrice) : null,
+    maxPrice: params.maxPrice ? parseFloat(params.maxPrice) : null,
+    sort: params.sort,
+  }
 
   return (
     <div className="min-h-screen bg-ume-bg">
-      {/* Delete Success Modal */}
       <Suspense fallback={null}>
         <DeleteSuccessModal />
       </Suspense>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-
-        {/* Page Title - Positioned at top */}
         <div className="text-center mb-4">
           <h1 className="text-3xl sm:text-4xl font-bold text-ume-indigo mb-1">{pageTitle}</h1>
           <p className="text-sm text-gray-600">{pageSubtitle}</p>
         </div>
 
-        {/* Category Bar */}
         <CategoryBar currentCategory={params.category} />
 
-        {/* Mobile Filter Button - Right aligned below categories */}
         <MobileFilterButton />
 
-        {/* Desktop Filters Row */}
         <Suspense fallback={<div className="h-20 bg-white rounded-lg animate-pulse" />}>
           <FiltersRow
             currentCondition={params.condition}
             currentSort={params.sort}
             currentMinPrice={params.minPrice ? (parseFloat(params.minPrice) / 100).toString() : undefined}
             currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
+            currentCampus={params.campus}
+            campusOptions={campusOptions}
           />
         </Suspense>
 
-        {/* Mobile Filters - Controlled from MobileHeader */}
         <MobileFiltersWrapper
           currentCondition={params.condition}
           currentSort={params.sort}
           currentMinPrice={params.minPrice ? (parseFloat(params.minPrice) / 100).toString() : undefined}
           currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
+          currentCampus={params.campus}
+          campusOptions={campusOptions}
         />
 
-        {/* Listings Count */}
         <div className="mt-4 mb-3 text-sm text-black">
-          {listings.length === 0 ? (
-            'No listings found'
-          ) : (
-            `Showing ${listings.length} listing${listings.length === 1 ? '' : 's'}`
-          )}
+          {listings.length === 0 ? 'No listings found' : `Showing ${listings.length} listing${listings.length === 1 ? '' : 's'}`}
         </div>
 
-        {/* Product Grid */}
-        {listings.length === 0 ? (
-          <div className="text-center py-10">
-            <svg className="mx-auto h-16 w-16 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
-            </svg>
-            <p className="text-black text-lg mt-4">
-              No listings match your filters
-            </p>
-            <p className="text-black text-sm mt-2">
-              Try adjusting your search criteria
-            </p>
-          </div>
-        ) : (
-          <ProductGrid listings={listings} />
-        )}
+        {/* Key resets state when filters change */}
+        <MarketplaceListings
+          key={JSON.stringify(filters)}
+          initialListings={listings}
+          hasMore={hasMore}
+          filters={filters}
+        />
       </div>
     </div>
   )

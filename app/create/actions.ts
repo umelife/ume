@@ -5,6 +5,7 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 import { createClient } from '@/lib/supabase/server' // server scoped client factory
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { getCampusFromEmail } from '@/data/safe-points'
 
 // Check if environment variables are set
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL
@@ -70,6 +71,10 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
       imageUrls = []
     }
 
+    // Derive campus from verified email (standardised — never user-typed)
+    const campus = getCampusFromEmail(user.email)
+    const seller_campus_id = campus?.id ?? null
+
     // Verify user profile exists (should be created during signup)
     const { data: userProfile, error: profileCheckErr } = await supabaseAdmin
       .from('users')
@@ -94,6 +99,7 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
           price: price_cents,
           image_urls: imageUrls,
           created_at: new Date().toISOString(),
+          seller_campus_id,
           fulfillment_type,
           accepts_stripe: fulfillment_type !== 'shipping' ? accepts_stripe : true,
           ships_from_street,

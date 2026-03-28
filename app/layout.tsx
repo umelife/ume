@@ -35,6 +35,10 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: "UME",
+    startupImage: "/api/pwa-icon/512",
+  },
+  icons: {
+    apple: "/api/pwa-icon/192",
   },
 };
 

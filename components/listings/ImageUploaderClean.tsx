@@ -7,6 +7,40 @@ import Image from 'next/image'
 const supabase = createClient()
 
 const MAX_IMAGES = 10
+const MAX_WIDTH = 1200
+
+async function compressToWebP(file: File): Promise<{ file: File; savedPercent: number }> {
+  return new Promise((resolve) => {
+    const img = new window.Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const scale = Math.min(1, MAX_WIDTH / img.width)
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(img.width * scale)
+      canvas.height = Math.round(img.height * scale)
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { resolve({ file, savedPercent: 0 }); return }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) { resolve({ file, savedPercent: 0 }); return }
+          const savedPercent = Math.round((1 - blob.size / file.size) * 100)
+          const compressed = new File(
+            [blob],
+            file.name.replace(/\.[^.]+$/, '.webp'),
+            { type: 'image/webp' }
+          )
+          resolve({ file: compressed, savedPercent: Math.max(0, savedPercent) })
+        },
+        'image/webp',
+        0.82
+      )
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); resolve({ file, savedPercent: 0 }) }
+    img.src = url
+  })
+}
 
 /**
  * ImageUploaderClean Component
@@ -24,6 +58,7 @@ export default function ImageUploaderClean({
   const [urls, setUrls] = useState<string[]>(existingImages)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [savedPercent, setSavedPercent] = useState<number | null>(null)
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
@@ -38,6 +73,7 @@ export default function ImageUploaderClean({
 
     setUploading(true)
     setError(null)
+    setSavedPercent(null)
 
     const uploadedUrls: string[] = []
 
@@ -50,10 +86,16 @@ export default function ImageUploaderClean({
       return
     }
 
+    let totalSaved = 0
+    let totalFiles = 0
+
     for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      const ext = file.name.split('.').pop()
-      const fileName = `${Math.random().toString(36).substring(2, 12)}.${ext}`
+      const original = files[i]
+      const { file, savedPercent: pct } = await compressToWebP(original)
+      totalSaved += pct
+      totalFiles++
+
+      const fileName = `${Math.random().toString(36).substring(2, 12)}.webp`
       const path = `${userId}/${fileName}`
 
       // upload
@@ -79,6 +121,7 @@ export default function ImageUploaderClean({
 
     // append to existing list
     setUrls((s) => [...s, ...uploadedUrls])
+    if (totalFiles > 0) setSavedPercent(Math.round(totalSaved / totalFiles))
     setUploading(false)
   }
 
@@ -143,6 +186,13 @@ export default function ImageUploaderClean({
           </p>
         </div>
       </label>
+
+      {/* Compression savings */}
+      {savedPercent !== null && savedPercent > 0 && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3" role="status">
+          <p className="text-green-800 text-sm">✓ Images optimized — saved ~{savedPercent}% file size</p>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (

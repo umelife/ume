@@ -9,7 +9,7 @@ const supabase = createClient()
 const MAX_IMAGES = 10
 const MAX_WIDTH = 1200
 
-async function compressToWebP(file: File): Promise<{ file: File; savedPercent: number }> {
+async function compressImage(file: File): Promise<{ file: File; savedPercent: number }> {
   return new Promise((resolve) => {
     const img = new window.Image()
     const url = URL.createObjectURL(file)
@@ -22,16 +22,31 @@ async function compressToWebP(file: File): Promise<{ file: File; savedPercent: n
       const ctx = canvas.getContext('2d')
       if (!ctx) { resolve({ file, savedPercent: 0 }); return }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // Try WebP first; fall back to JPEG if the browser doesn't support WebP encoding
       canvas.toBlob(
-        (blob) => {
-          if (!blob) { resolve({ file, savedPercent: 0 }); return }
-          const savedPercent = Math.round((1 - blob.size / file.size) * 100)
-          const compressed = new File(
-            [blob],
-            file.name.replace(/\.[^.]+$/, '.webp'),
-            { type: 'image/webp' }
+        (webpBlob) => {
+          if (webpBlob && webpBlob.size > 0) {
+            const savedPercent = Math.round((1 - webpBlob.size / file.size) * 100)
+            resolve({
+              file: new File([webpBlob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' }),
+              savedPercent: Math.max(0, savedPercent),
+            })
+            return
+          }
+          // WebP not supported — fall back to JPEG
+          canvas.toBlob(
+            (jpegBlob) => {
+              if (!jpegBlob) { resolve({ file, savedPercent: 0 }); return }
+              const savedPercent = Math.round((1 - jpegBlob.size / file.size) * 100)
+              resolve({
+                file: new File([jpegBlob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }),
+                savedPercent: Math.max(0, savedPercent),
+              })
+            },
+            'image/jpeg',
+            0.85
           )
-          resolve({ file: compressed, savedPercent: Math.max(0, savedPercent) })
         },
         'image/webp',
         0.82
@@ -91,7 +106,7 @@ export default function ImageUploaderClean({
 
     for (let i = 0; i < files.length; i++) {
       const original = files[i]
-      const { file, savedPercent: pct } = await compressToWebP(original)
+      const { file, savedPercent: pct } = await compressImage(original)
       totalSaved += pct
       totalFiles++
 
@@ -118,6 +133,9 @@ export default function ImageUploaderClean({
         uploadedUrls.push(publicData.publicUrl)
       }
     }
+
+    // Reset input so the same file can be re-selected if needed
+    e.target.value = ''
 
     // append to existing list
     setUrls((s) => [...s, ...uploadedUrls])

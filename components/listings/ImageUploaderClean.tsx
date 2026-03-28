@@ -135,6 +135,7 @@ export default function ImageUploaderClean({
   return (
     <div className="space-y-4">
       {/* Upload Area - Dashed Border Box */}
+      {/* Main upload area */}
       <label
         className={`
           relative block border-2 border-dashed rounded-3xl p-12
@@ -157,7 +158,6 @@ export default function ImageUploaderClean({
         />
 
         <div className="flex flex-col items-center justify-center text-center">
-          {/* Plus Icon */}
           <div className="mb-2">
             <svg
               className="w-8 h-8 text-gray-900"
@@ -174,18 +174,37 @@ export default function ImageUploaderClean({
               />
             </svg>
           </div>
-
-          {/* Text */}
           <p className="text-gray-900 font-medium">
-            {uploading ? 'Uploading...' : 'Add a File'}
+            {uploading ? 'Uploading...' : 'Choose from Gallery'}
           </p>
-
-          {/* File count */}
           <p className="text-sm text-gray-500 mt-2" id="upload-instructions">
             {urls.length} / {MAX_IMAGES} images
           </p>
         </div>
       </label>
+
+      {/* Take Photo button — opens camera directly on Android */}
+      {!isAtLimit && (
+        <label
+          className="relative flex items-center justify-center gap-2 w-full py-3 rounded-2xl border-2 border-gray-900 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+          aria-label="Take a photo"
+        >
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleFiles}
+            disabled={uploading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+          <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span className="text-gray-900 font-medium">Take Photo</span>
+        </label>
+      )}
 
       {/* Compression savings */}
       {savedPercent !== null && savedPercent > 0 && (

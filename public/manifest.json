@@ -11,14 +11,14 @@
   "categories": ["shopping", "education"],
   "icons": [
     {
-      "src": "/api/pwa-icon/192",
+      "src": "/icon.png",
       "sizes": "192x192",
-      "type": "image/svg+xml"
+      "type": "image/png"
     },
     {
-      "src": "/api/pwa-icon/512",
+      "src": "/icon.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any maskable"
     }
   ],

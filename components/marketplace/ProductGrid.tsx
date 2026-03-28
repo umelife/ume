@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import type { Listing } from '@/types/database'
 import { formatPrice } from '@/lib/utils/helpers'
 import useCart from '@/hooks/useCart'
@@ -108,12 +109,13 @@ function ProductCard({ listing }: { listing: Listing }) {
           >
             {/* All images rendered for instant switching — only current is visible */}
             {images.map((src, i) => (
-              <img
+              <Image
                 key={i}
                 src={src}
                 alt={listing.title}
-                className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200 ${i === imgIndex ? 'opacity-100' : 'opacity-0'}`}
-                loading="lazy"
+                fill
+                sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                className={`object-cover group-hover:scale-105 transition-transform duration-200 ${i === imgIndex ? 'opacity-100' : 'opacity-0'}`}
               />
             ))}
 

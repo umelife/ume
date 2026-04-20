@@ -57,10 +57,10 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
   if (loading) {
     return (
       <div className="w-full md:space-y-3">
-        <div className="w-full aspect-[4/3] bg-gray-200 animate-pulse md:rounded-lg" />
+        <div className="w-full aspect-square bg-gray-200 animate-pulse md:rounded-2xl" />
         <div className="grid grid-cols-4 sm:grid-cols-5 gap-2 px-4 md:px-0 mt-3">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="w-full aspect-square bg-gray-200 animate-pulse rounded" />
+            <div key={i} className="w-full aspect-square bg-gray-200 animate-pulse rounded-lg" />
           ))}
         </div>
       </div>
@@ -70,12 +70,12 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
   // Error state
   if (error) {
     return (
-      <div className="w-full aspect-[4/3] bg-gray-100 md:rounded-lg flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+      <div className="w-full aspect-square bg-ume-cream md:rounded-2xl flex items-center justify-center">
+        <div className="text-center text-gray-400">
+          <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
-          <p>Failed to load images</p>
+          <p className="text-sm">Failed to load images</p>
         </div>
       </div>
     )
@@ -84,12 +84,12 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
   // No images placeholder
   if (images.length === 0) {
     return (
-      <div className="w-full aspect-[4/3] bg-gray-100 md:rounded-lg flex items-center justify-center">
-        <div className="text-center text-gray-500">
-          <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      <div className="w-full aspect-square bg-ume-cream md:rounded-2xl flex items-center justify-center">
+        <div className="text-center text-gray-400">
+          <svg className="w-12 h-12 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
           </svg>
-          <p>No images available</p>
+          <p className="text-sm">No images available</p>
         </div>
       </div>
     )
@@ -98,9 +98,9 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
   // Render images
   return (
     <div className="w-full md:space-y-3">
-      {/* Main image - responsive aspect ratio */}
+      {/* Main image — square aspect ratio */}
       <div
-        className="relative w-full aspect-[4/3] bg-gray-900 md:rounded-lg overflow-hidden md:shadow-md"
+        className="relative w-full aspect-square bg-ume-cream md:rounded-2xl overflow-hidden md:shadow-md"
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
       >
@@ -108,28 +108,44 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
           src={images[selectedImage]}
           alt={`${altText} - Image ${selectedImage + 1}`}
           fill
-          unoptimized
+          sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover"
           priority={selectedImage === 0}
         />
+
+        {/* Condition badge — top-right per design system */}
         {condition && (
-          <div className="absolute top-2 left-2 md:top-4 md:left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700 shadow-sm">
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-semibold text-gray-700 shadow-sm">
             {condition}
+          </div>
+        )}
+
+        {/* Dot indicators — bottom-center, only when multiple images */}
+        {images.length > 1 && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5 z-10">
+            {images.map((_, i) => (
+              <span
+                key={i}
+                className={`block rounded-full transition-all duration-200 ${
+                  i === selectedImage ? 'w-4 h-1.5 bg-white' : 'w-1.5 h-1.5 bg-white/50'
+                }`}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Thumbnails - responsive grid */}
+      {/* Thumbnails — only shown when multiple images */}
       {images.length > 1 && (
         <div className="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-5 gap-2 px-4 md:px-0 mt-3">
           {images.map((img, index) => (
             <button
               key={index}
               onClick={() => setSelectedImage(index)}
-              className={`relative w-full aspect-square rounded overflow-hidden border-2 transition-all shadow-sm hover:shadow-md ${
+              className={`relative w-full aspect-square rounded-lg overflow-hidden border-2 transition-all shadow-sm hover:shadow-md ${
                 selectedImage === index
-                  ? 'border-blue-600 ring-2 ring-blue-600 ring-offset-1'
-                  : 'border-gray-200 hover:border-blue-400'
+                  ? 'border-ume-indigo ring-2 ring-ume-indigo ring-offset-1'
+                  : 'border-gray-200 hover:border-ume-indigo/50'
               }`}
               aria-label={`View image ${index + 1}`}
             >
@@ -137,7 +153,7 @@ export default function ListingImages({ listingId, altText = 'Listing image', co
                 src={img}
                 alt={`${altText} - Thumbnail ${index + 1}`}
                 fill
-                unoptimized
+                sizes="80px"
                 className="object-cover"
                 loading="lazy"
               />

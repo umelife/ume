@@ -1,5 +1,7 @@
 import { Suspense } from 'react'
+import { unstable_cache } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
+import supabasePublic from '@/lib/supabase/public'
 import CategoryBar from '@/components/marketplace/CategoryBar'
 import FiltersRow from '@/components/marketplace/FiltersRow'
 import MobileFilterButton from '@/components/marketplace/MobileFilterButton'
@@ -58,6 +60,81 @@ function categorySlugToDb(slug: string): string {
   return map[slug] || slug
 }
 
+// ─── Campus options — cached 5 minutes (changes very rarely) ─────────────────
+
+const fetchCampusOptions = unstable_cache(
+  async (): Promise<{ value: string; label: string }[]> => {
+    const { data } = await supabasePublic
+      .from('listings')
+      .select('seller_campus_id')
+      .not('status', 'in', '(sold,reserved)')
+      .not('seller_campus_id', 'is', null)
+
+    if (!data) return []
+
+    const counts: Record<string, number> = {}
+    for (const row of data) {
+      if (row.seller_campus_id) counts[row.seller_campus_id] = (counts[row.seller_campus_id] || 0) + 1
+    }
+
+    return Object.entries(counts)
+      .map(([id, count]) => {
+        const campus = CAMPUSES.find(c => c.id === id)
+        return campus ? { value: id, label: `${campus.name} (${count})` } : null
+      })
+      .filter(Boolean) as { value: string; label: string }[]
+  },
+  ['marketplace-campus-options'],
+  { revalidate: 300, tags: ['listings'] }   // 5 minutes
+)
+
+// ─── Cacheable regular-filter fetch (no user location involved) ───────────────
+
+const fetchListingsCached = unstable_cache(
+  async (params: {
+    category?: string
+    condition?: string
+    minPrice?: string
+    maxPrice?: string
+    sort?: string
+    campus?: string
+  }): Promise<{ listings: Listing[]; hasMore: boolean }> => {
+    const categorySlug = params.category
+    const condition = params.condition
+    const campus = params.campus
+    const minPrice = params.minPrice ? parseFloat(params.minPrice) : null
+    const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null
+    const sort = params.sort || 'relevance'
+
+    let query = supabasePublic
+      .from('listings')
+      .select('*, user:users(*)')
+      .not('status', 'in', '(sold,reserved)')
+
+    if (categorySlug) query = query.eq('category', categorySlugToDb(categorySlug))
+    if (condition) query = query.eq('condition', condition)
+    if (campus) query = query.eq('seller_campus_id', campus)
+    if (minPrice !== null) query = query.gte('price', minPrice)
+    if (maxPrice !== null) query = query.lte('price', maxPrice)
+
+    switch (sort) {
+      case 'price-asc': query = query.order('price', { ascending: true }); break
+      case 'price-desc': query = query.order('price', { ascending: false }); break
+      default: query = query.order('created_at', { ascending: false })
+    }
+
+    query = query.range(0, PAGE_SIZE - 1)
+
+    const { data, error } = await query
+    if (error) { console.error('Listings fetch error:', error); return { listings: [], hasMore: false } }
+    return { listings: (data as Listing[]) ?? [], hasMore: (data?.length ?? 0) === PAGE_SIZE }
+  },
+  ['marketplace-listings'],
+  { revalidate: 30, tags: ['listings'] }   // 30 seconds
+)
+
+// ─── Full fetch (radius path stays uncached — user coords are unique) ─────────
+
 async function fetchListings(searchParams: {
   category?: string
   radius?: string
@@ -69,21 +146,21 @@ async function fetchListings(searchParams: {
   sort?: string
   campus?: string
 }): Promise<{ listings: Listing[]; hasMore: boolean }> {
-  const supabase = await createClient()
-
   const radius = searchParams.radius ? parseFloat(searchParams.radius) : null
   const userLat = searchParams.userLat ? parseFloat(searchParams.userLat) : null
   const userLng = searchParams.userLng ? parseFloat(searchParams.userLng) : null
-  const categorySlug = searchParams.category
-  const condition = searchParams.condition
-  const campus = searchParams.campus
-  const minPrice = searchParams.minPrice ? parseFloat(searchParams.minPrice) : null
-  const maxPrice = searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : null
-  const sort = searchParams.sort || 'relevance'
 
-  try {
-    // CASE 1: Radius filtering
-    if (radius && userLat && userLng) {
+  // Radius queries contain user GPS coords — serve fresh, no cache.
+  if (radius && userLat && userLng) {
+    const supabase = await createClient()
+    const categorySlug = searchParams.category
+    const condition = searchParams.condition
+    const campus = searchParams.campus
+    const minPrice = searchParams.minPrice ? parseFloat(searchParams.minPrice) : null
+    const maxPrice = searchParams.maxPrice ? parseFloat(searchParams.maxPrice) : null
+    const sort = searchParams.sort || 'relevance'
+
+    try {
       const dbCategory = categorySlug ? categorySlugToDb(categorySlug) : null
       const { data, error } = await supabase.rpc('filter_by_radius', {
         user_lat: userLat,
@@ -125,59 +202,21 @@ async function fetchListings(searchParams: {
       }
 
       return { listings: filteredData as Listing[], hasMore }
+    } catch (err) {
+      console.error('Radius fetch error:', err)
+      return { listings: [], hasMore: false }
     }
-
-    // CASE 2: Regular filtering
-    let query = supabase
-      .from('listings')
-      .select('*, user:users(*)')
-      .not('status', 'in', '(sold,reserved)')
-
-    if (categorySlug) query = query.eq('category', categorySlugToDb(categorySlug))
-    if (condition) query = query.eq('condition', condition)
-    if (campus) query = query.eq('seller_campus_id', campus)
-    if (minPrice !== null) query = query.gte('price', minPrice)
-    if (maxPrice !== null) query = query.lte('price', maxPrice)
-
-    switch (sort) {
-      case 'price-asc': query = query.order('price', { ascending: true }); break
-      case 'price-desc': query = query.order('price', { ascending: false }); break
-      default: query = query.order('created_at', { ascending: false })
-    }
-
-    query = query.range(0, PAGE_SIZE - 1)
-
-    const { data, error } = await query
-    if (error) { console.error('Listings fetch error:', error); return { listings: [], hasMore: false } }
-
-    return { listings: (data as Listing[]) ?? [], hasMore: (data?.length ?? 0) === PAGE_SIZE }
-  } catch (err) {
-    console.error('Unexpected error:', err)
-    return { listings: [], hasMore: false }
-  }
-}
-
-async function fetchCampusOptions(): Promise<{ value: string; label: string }[]> {
-  const supabase = await createClient()
-  const { data } = await supabase
-    .from('listings')
-    .select('seller_campus_id')
-    .not('status', 'in', '(sold,reserved)')
-    .not('seller_campus_id', 'is', null)
-
-  if (!data) return []
-
-  const counts: Record<string, number> = {}
-  for (const row of data) {
-    if (row.seller_campus_id) counts[row.seller_campus_id] = (counts[row.seller_campus_id] || 0) + 1
   }
 
-  return Object.entries(counts)
-    .map(([id, count]) => {
-      const campus = CAMPUSES.find(c => c.id === id)
-      return campus ? { value: id, label: `${campus.name} (${count})` } : null
-    })
-    .filter(Boolean) as { value: string; label: string }[]
+  // Standard filter — served from cache.
+  return fetchListingsCached({
+    category: searchParams.category,
+    condition: searchParams.condition,
+    minPrice: searchParams.minPrice,
+    maxPrice: searchParams.maxPrice,
+    sort: searchParams.sort,
+    campus: searchParams.campus,
+  })
 }
 
 export default async function MarketplacePage({ searchParams }: MarketplacePageProps) {

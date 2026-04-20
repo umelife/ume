@@ -15,7 +15,7 @@ import MobileTabBar from "@/components/MobileTabBar";
 // Load Google Fonts using next/font (prevents CORB issues)
 // Using Work Sans as a free alternative to BR Shape (geometric sans-serif)
 const workSans = Work_Sans({
-  weight: ['300', '400', '700'],
+  weight: ['300', '400', '600', '700'],
   subsets: ['latin'],
   variable: '--font-work-sans',
   display: 'swap',

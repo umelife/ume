@@ -23,6 +23,13 @@ import DeleteListingButton from '@/components/listings/DeleteListingButton'
  * - Optional distance display for radius-filtered listings
  */
 
+// Sizes for a 2-col → 3-col → 4-col responsive grid with gap-6.
+// Tells Next.js exactly how wide each card will render so it generates
+// a perfectly-sized optimized image instead of guessing (which defaults
+// to 100vw and downloads a needlessly large source file).
+const CARD_SIZES =
+  '(max-width: 768px) calc(50vw - 16px), (max-width: 1024px) calc(33vw - 16px), calc(25vw - 16px)'
+
 interface ProductGridProps {
   listings: Listing[]
 }
@@ -30,14 +37,15 @@ interface ProductGridProps {
 export default function ProductGrid({ listings }: ProductGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {listings.map((listing) => (
-        <ProductCard key={listing.id} listing={listing} />
+      {listings.map((listing, index) => (
+        // Pass index so the first 4 cards get `priority` (above-the-fold LCP images)
+        <ProductCard key={listing.id} listing={listing} cardIndex={index} />
       ))}
     </div>
   )
 }
 
-function ProductCard({ listing }: { listing: Listing }) {
+function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: number }) {
   const images = listing.image_urls?.length ? listing.image_urls : ['/placeholder-image.jpg']
   const { isInCart, addToCart, removeFromCart, loadingIds } = useCart()
   const inCart = isInCart(listing.id)
@@ -107,17 +115,17 @@ function ProductCard({ listing }: { listing: Listing }) {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            {/* All images rendered for instant switching — only current is visible */}
-            {images.map((src, i) => (
-              <Image
-                key={i}
-                src={src}
-                alt={listing.title}
-                fill
-                unoptimized
-                className={`object-cover group-hover:scale-105 transition-transform duration-200 ${i === imgIndex ? 'opacity-100' : 'opacity-0'}`}
-              />
-            ))}
+            {/* Only the active image is rendered — no hidden images wasting bandwidth.
+                The first 4 cards are above-the-fold on desktop and get `priority`
+                so the browser prefetches them immediately for best LCP. */}
+            <Image
+              src={images[imgIndex]}
+              alt={listing.title}
+              fill
+              sizes={CARD_SIZES}
+              priority={cardIndex < 4}
+              className="object-cover group-hover:scale-105 transition-transform duration-200"
+            />
 
             {/* Heart icon — save to liked (top-right) */}
             {!isOwnListing && (

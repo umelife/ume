@@ -265,6 +265,35 @@ npm run dev
 - ✅ Safe-Handshake expiry/cancel — voids pending Stripe authorization (no charge to buyer)
 - ✅ `/orders/success` — different message for `pending` (card authorized, meet for QR) vs `paid` (charged, awaiting shipment)
 
+#### 14. Homepage Redesign & Performance ✅ (2026-04-19)
+- ✅ `components/homepage/SectionIcons.tsx` — extracted ShopIcon, ServiceIcon, CommunityIcon, EventIcon into shared component (used by page.tsx + MobileHome.tsx)
+- ✅ `components/homepage/HomeSectionRow.tsx` — removed `comingSoonCards` prop; new coming-soon design: skeleton strip with right-edge fade mask + white teaser card with pulsing pink dot
+- ✅ `components/homepage/Hero.tsx` — fully split mobile (`md:hidden`) and desktop (`hidden md:flex`) layouts; mobile integrates 2×2 compact `PlatformCards` grid between headline and CTAs so cards are visible in the first viewport (not below the fold)
+- ✅ `components/MobileHome.tsx` — imports icons from SectionIcons, drops inline SVG duplication, no longer passes `comingSoonCards`
+- ✅ `app/page.tsx` — removed `searchParams` debug prop (was forcing dynamic rendering); added `export const revalidate = 60` ISR; wraps listing query in `unstable_cache` with 60s TTL
+- ✅ `lib/supabase/public.ts` — new cookie-free singleton anon client (`persistSession: false`) safe for use inside `unstable_cache`
+- ✅ `app/marketplace/page.tsx` — `fetchCampusOptions` cached 5 min; `fetchListingsCached` cached 30s for standard queries; radius/GPS queries remain uncached (user-specific)
+- ✅ **Image optimization** — root cause of slow loading was `unoptimized={true}` bypassing Vercel CDN entirely; fixed across all 5 affected components:
+  - `components/marketplace/ProductGrid.tsx` — removed `unoptimized`; renders only the **active** carousel image (was pre-loading all images hidden); added `sizes` + `priority` for first 4 cards
+  - `components/listings/ListingImages.tsx` — removed `unoptimized` from main image and thumbnails; added correct `sizes` props
+  - `components/listings/ListingCard.tsx` — added `sizes` prop
+  - `components/listings/ImageCarousel.tsx` — added `sizes` + `priority` to main image and `sizes` to thumbnails
+  - `components/homepage/HomeListingCard.tsx` — removed `unoptimized` (already had `sizes`)
+  - `components/listings/ImageUploaderClean.tsx` — intentionally kept `unoptimized` (local blob: URLs, optimizer can't handle them)
+- ✅ Verified: all marketplace images now route through `/_next/image` (Vercel optimizer), zero raw `supabase.co/storage` URLs in browser
+
+#### 15. Design System Alignment ✅ (2026-04-20)
+- ✅ `tailwind.config.ts` — fixed `fontFamily.sans` (was broken `"BR Shape"` → `var(--font-work-sans)`); added `font-heading` (Archivo Black) and `font-display` (Maintanker) utility classes
+- ✅ Added missing brand accent colors: `ume-emerald` (#34d399), `ume-amber` (#fbbf24), `ume-sky` (#60a5fa), `ume-indigo-800/900`, `ume-pink-400`
+- ✅ Overrode Tailwind's neutral-gray shadows with indigo-tinted brand shadows (`rgba(19,1,112,…)`) for all `shadow-sm/md/lg`; added `shadow-pink` and `shadow-indigo` CTA shadows
+- ✅ `app/layout.tsx` — added Work Sans weight `600` (used for labels)
+- ✅ `app/globals.css` — fixed body font-family fallback from `Arial` to `Work Sans`
+- ✅ Hero + landing page CTAs updated to use `shadow-pink` instead of `shadow-xl`/`shadow-lg shadow-ume-pink/25`
+
+#### 16. Item Detail Page Redesign ✅ (2026-04-20)
+- ✅ `components/listings/ListingImages.tsx` — square `aspect-square` (was 4:3 rectangle); `bg-ume-cream` warm background; `md:rounded-2xl`; condition badge moved to top-right; overlaid dot indicators for multi-image carousel; thumbnail ring color → `ume-indigo`
+- ✅ `app/item/[id]/page.tsx` — full redesign matching design system: pink uppercase category label; Archivo Black uppercase title; cream chip for post time; bordered price box with meta; cream seller card with avatar initial + chevron; action buttons separated into their own card below info
+
 ## Future Enhancements (Post-MVP)
 
 1. Role-based admin authentication

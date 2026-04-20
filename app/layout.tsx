@@ -39,7 +39,12 @@ export const metadata: Metadata = {
     startupImage: "/icon.png",
   },
   icons: {
-    apple: "/icon.png",
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon.png', type: 'image/png' },        // PNG fallback for older browsers
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.png',
   },
 };
 

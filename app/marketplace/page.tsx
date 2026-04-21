@@ -10,6 +10,8 @@ import MarketplaceListings from '@/components/marketplace/MarketplaceListings'
 import DeleteSuccessModal from '@/components/marketplace/DeleteSuccessModal'
 import { getCategorySubtitle } from '@/lib/constants/categories'
 import { CAMPUSES } from '@/data/safe-points'
+import { Skeleton } from '@/components/ui/skeleton'
+import { Separator } from '@/components/ui/separator'
 import type { Listing } from '@/types/database'
 import type { ListingFilters } from './actions'
 
@@ -239,23 +241,49 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     sort: params.sort,
   }
 
+  const activeFilterCount = [
+    params.condition,
+    params.campus,
+    params.minPrice || params.maxPrice,
+    params.sort && params.sort !== 'relevance',
+  ].filter(Boolean).length
+
   return (
     <div className="min-h-screen bg-ume-bg">
       <Suspense fallback={null}>
         <DeleteSuccessModal />
       </Suspense>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center mb-4">
-          <h1 className="text-3xl sm:text-4xl font-bold text-ume-indigo mb-1">{pageTitle}</h1>
-          <p className="text-sm text-gray-600">{pageSubtitle}</p>
+      {/* ── Page header ── */}
+      <div className="bg-white border-b border-gray-100 shadow-sm">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="text-center mb-5">
+            <h1 className="font-heading text-3xl sm:text-4xl text-ume-indigo tracking-tight">
+              {pageTitle}
+            </h1>
+            {pageSubtitle && (
+              <p className="mt-1 text-sm text-gray-500">{pageSubtitle}</p>
+            )}
+          </div>
+
+          {/* Category chips */}
+          <CategoryBar currentCategory={params.category} />
         </div>
+      </div>
 
-        <CategoryBar currentCategory={params.category} />
+      {/* ── Main content area ── */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
 
-        <MobileFilterButton />
-
-        <Suspense fallback={<div className="h-20 bg-white rounded-lg animate-pulse" />}>
+        {/* ── Desktop: filters row above grid ── */}
+        <Suspense
+          fallback={
+            <div className="hidden md:flex items-center gap-2 mb-5">
+              {[1, 2, 3, 4].map(i => (
+                <Skeleton key={i} className="h-8 w-24 rounded-full" />
+              ))}
+            </div>
+          }
+        >
           <FiltersRow
             currentCondition={params.condition}
             currentSort={params.sort}
@@ -269,6 +297,12 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           />
         </Suspense>
 
+        {/* ── Mobile: filter button ── */}
+        <div className="md:hidden mb-4">
+          <MobileFilterButton />
+        </div>
+
+        {/* ── Mobile filters drawer ── */}
         <MobileFiltersWrapper
           currentCondition={params.condition}
           currentSort={params.sort}
@@ -281,11 +315,27 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           userLng={params.userLng ? parseFloat(params.userLng) : undefined}
         />
 
-        <div className="mt-4 mb-3 text-sm text-black">
-          {listings.length === 0 ? 'No listings found' : `Showing ${listings.length} listing${listings.length === 1 ? '' : 's'}`}
+        {/* ── Results meta ── */}
+        <div className="flex items-center justify-between mb-4">
+          <p className="text-sm text-gray-500">
+            {listings.length === 0
+              ? 'No listings found'
+              : (
+                <>
+                  <span className="font-semibold text-ume-indigo">{listings.length}</span>
+                  {' '}listing{listings.length === 1 ? '' : 's'}
+                  {activeFilterCount > 0 && (
+                    <span className="text-gray-400"> · {activeFilterCount} filter{activeFilterCount === 1 ? '' : 's'} applied</span>
+                  )}
+                </>
+              )
+            }
+          </p>
         </div>
 
-        {/* Key resets state when filters change */}
+        <Separator className="mb-5 bg-gray-200" />
+
+        {/* ── Listings grid ── */}
         <MarketplaceListings
           key={JSON.stringify(filters)}
           initialListings={listings}

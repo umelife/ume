@@ -65,3 +65,6 @@ Screenshot*.png
 *.html
 !app/**/*.html
 !public/**/*.html
+
+# Graphify knowledge graph cache
+graphify-out/cache/

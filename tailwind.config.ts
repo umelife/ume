@@ -1,6 +1,8 @@
 import type { Config } from "tailwindcss";
+import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
+  darkMode: ["class"],
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -9,40 +11,85 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        // Body: Work Sans (loaded via next/font, variable injected on <html>)
         sans:    ['var(--font-work-sans)', 'Work Sans', 'system-ui', 'sans-serif'],
-        // Heading: Archivo Black — all-caps, campus-poster energy
         heading: ['var(--font-archivo-black)', 'Archivo Black', 'Arial Black', 'sans-serif'],
-        // Display: Maintanker — hero wordmark only
         display: ['Maintanker', 'var(--font-archivo-black)', 'Arial Black', 'sans-serif'],
       },
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
-        // ── UME Brand ─────────────────────────────────────────────────
-        'ume-indigo':     '#130170',   // Primary — anchor, headings, buttons
-        'ume-indigo-900': '#0d0050',   // Darkest indigo (gradient stop)
-        'ume-indigo-800': '#1a0190',   // Mid indigo (gradient stop)
-        'ume-pink':       '#fa9ebc',   // Accent — CTAs, highlights
-        'ume-pink-400':   '#f87eaa',   // Pink hover
-        'ume-cream':      '#f5f5f0',   // Warm section backgrounds
-        'ume-bg':         '#f3f7f8',   // App canvas (cool off-white)
-        // ── Platform section accents ───────────────────────────────────
-        'ume-emerald':    '#34d399',   // Services (student freelancers)
-        'ume-amber':      '#fbbf24',   // Communities (campus groups)
-        'ume-sky':        '#60a5fa',   // Events (what's happening)
+        // ── shadcn/ui semantic tokens (map to CSS vars) ────────────────
+        background:  'hsl(var(--background))',
+        foreground:  'hsl(var(--foreground))',
+        card: {
+          DEFAULT:    'hsl(var(--card))',
+          foreground: 'hsl(var(--card-foreground))',
+        },
+        popover: {
+          DEFAULT:    'hsl(var(--popover))',
+          foreground: 'hsl(var(--popover-foreground))',
+        },
+        primary: {
+          DEFAULT:    'hsl(var(--primary))',
+          foreground: 'hsl(var(--primary-foreground))',
+        },
+        secondary: {
+          DEFAULT:    'hsl(var(--secondary))',
+          foreground: 'hsl(var(--secondary-foreground))',
+        },
+        muted: {
+          DEFAULT:    'hsl(var(--muted))',
+          foreground: 'hsl(var(--muted-foreground))',
+        },
+        accent: {
+          DEFAULT:    'hsl(var(--accent))',
+          foreground: 'hsl(var(--accent-foreground))',
+        },
+        destructive: {
+          DEFAULT:    'hsl(var(--destructive))',
+          foreground: 'hsl(var(--destructive-foreground))',
+        },
+        border: 'hsl(var(--border))',
+        input:  'hsl(var(--input))',
+        ring:   'hsl(var(--ring))',
+        chart: {
+          '1': 'hsl(var(--chart-1))',
+          '2': 'hsl(var(--chart-2))',
+          '3': 'hsl(var(--chart-3))',
+          '4': 'hsl(var(--chart-4))',
+          '5': 'hsl(var(--chart-5))',
+        },
+        // ── UME Brand (kept for legacy class names) ────────────────────
+        'ume-indigo':     '#130170',
+        'ume-indigo-900': '#0d0050',
+        'ume-indigo-800': '#1a0190',
+        'ume-pink':       '#fa9ebc',
+        'ume-pink-400':   '#f87eaa',
+        'ume-cream':      '#f5f5f0',
+        'ume-bg':         '#f3f7f8',
+        'ume-emerald':    '#34d399',
+        'ume-amber':      '#fbbf24',
+        'ume-sky':        '#60a5fa',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        // UME design system: shadows are indigo-tinted, never neutral black.
-        // Overrides Tailwind's default sm/md/lg with brand-aligned values.
-        sm:      '0 1px 2px rgba(19,1,112,0.06)',
-        md:      '0 4px 12px rgba(19,1,112,0.08)',
-        lg:      '0 12px 32px rgba(19,1,112,0.12)',
-        // CTA / hero-element shadows
-        pink:    '0 10px 24px rgba(250,158,188,0.35)',
-        indigo:  '0 10px 24px rgba(19,1,112,0.25)',
+        sm:     '0 1px 2px rgba(19,1,112,0.06)',
+        md:     '0 4px 12px rgba(19,1,112,0.08)',
+        lg:     '0 12px 32px rgba(19,1,112,0.12)',
+        pink:   '0 10px 24px rgba(250,158,188,0.35)',
+        indigo: '0 10px 24px rgba(19,1,112,0.25)',
       },
       keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to:   { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to:   { height: '0' },
+        },
         'fade-in': {
           '0%':   { opacity: '0', transform: 'scale(0.8)' },
           '100%': { opacity: '1', transform: 'scale(1)' },
@@ -53,10 +100,12 @@ export default {
         },
       },
       animation: {
-        'fade-in':  'fade-in 0.2s ease-out',
-        'fade-out': 'fade-out 0.2s ease-out',
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up':   'accordion-up 0.2s ease-out',
+        'fade-in':        'fade-in 0.2s ease-out',
+        'fade-out':       'fade-out 0.2s ease-out',
       },
     },
   },
-  plugins: [],
+  plugins: [tailwindcssAnimate],
 } satisfies Config;

@@ -294,6 +294,10 @@ npm run dev
 - ✅ `components/listings/ListingImages.tsx` — square `aspect-square` (was 4:3 rectangle); `bg-ume-cream` warm background; `md:rounded-2xl`; condition badge moved to top-right; overlaid dot indicators for multi-image carousel; thumbnail ring color → `ume-indigo`
 - ✅ `app/item/[id]/page.tsx` — full redesign matching design system: pink uppercase category label; Archivo Black uppercase title; cream chip for post time; bordered price box with meta; cream seller card with avatar initial + chevron; action buttons separated into their own card below info
 
+#### 17. Marketplace & FiltersRow Redesign ✅ (2026-04-21)
+- ✅ `app/marketplace/page.tsx` — clean two-zone layout: white sticky-feel header with title + CategoryBar; content area with filters above grid; results meta line shows listing count + active filter count; shadcn `Skeleton` used for FiltersRow suspense fallback; MobileFilterButton moved inside its own `md:hidden` wrapper
+- ✅ `components/marketplace/FiltersRow.tsx` — modernized pill-style filter buttons with `ume-indigo` active fill; "Filter" label prefix; separators between groups; active-filter badge (`ume-pink/15`); "Clear all" text link to wipe all filters in one click; tighter dropdown with rounded-2xl corners and separator between "All conditions" and individual items; price "Clear price filter" in pink; all logic and props unchanged
+
 ## Future Enhancements (Post-MVP)
 
 1. Role-based admin authentication

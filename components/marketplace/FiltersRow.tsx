@@ -2,6 +2,9 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
+import { Separator } from '@/components/ui/separator'
 import SearchableSelect from '@/components/ui/SearchableSelect'
 import LocationRadiusSlider from '@/components/marketplace/LocationRadiusSlider'
 
@@ -31,6 +34,54 @@ const PRICE_OPTIONS = [
   { label: '$100 to $200', min: 100, max: 200 },
   { label: '$200 & above', min: 200, max: null },
 ]
+
+/** Chevron icon used in filter trigger buttons */
+function Chevron({ open }: { open: boolean }) {
+  return (
+    <svg
+      className={`w-3 h-3 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+      fill="none"
+      stroke="currentColor"
+      viewBox="0 0 24 24"
+      aria-hidden="true"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+    </svg>
+  )
+}
+
+/** Shared dropdown container */
+function FilterDropdown({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="absolute top-full left-0 mt-1.5 bg-white border border-gray-200 rounded-2xl shadow-md z-20 min-w-[168px] py-1.5 overflow-hidden">
+      {children}
+    </div>
+  )
+}
+
+/** Single item inside a dropdown */
+function DropdownItem({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean
+  onClick: () => void
+  children: React.ReactNode
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`w-full text-left px-4 py-2 text-sm transition-colors ${
+        active
+          ? 'bg-ume-indigo/5 text-ume-indigo font-semibold'
+          : 'text-gray-700 hover:bg-gray-50'
+      }`}
+    >
+      {children}
+    </button>
+  )
+}
 
 export default function FiltersRow({
   currentCondition,
@@ -97,106 +148,190 @@ export default function FiltersRow({
     updateParam('campus', campus || null)
   }
 
-  const closeAll = () => { setSortOpen(false); setConditionOpen(false); setPriceOpen(false) }
+  const handleClearAll = () => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.delete('sort')
+    params.delete('condition')
+    params.delete('minPrice')
+    params.delete('maxPrice')
+    params.delete('campus')
+    router.push(`/marketplace?${params.toString()}`)
+    setSortOpen(false)
+    setConditionOpen(false)
+    setPriceOpen(false)
+  }
+
+  const closeAll = () => {
+    setSortOpen(false)
+    setConditionOpen(false)
+    setPriceOpen(false)
+  }
+
+  const sortLabel =
+    SORT_OPTIONS.find((o) => o.value === (currentSort || 'relevance'))?.label || 'Relevance'
+  const priceLabel = getCurrentPriceLabel()
+  const sortActive = !!currentSort && currentSort !== 'relevance'
+  const priceActive = priceLabel !== 'Price'
+  const conditionActive = !!currentCondition
+
+  const activeCount = [sortActive, conditionActive, priceActive, !!currentCampus].filter(Boolean).length
+  const hasActiveFilters = activeCount > 0
 
   return (
-    <div className="hidden md:block mb-6 space-y-3">
-      <div className="flex items-center gap-4 flex-wrap">
+    <div className="hidden md:block mb-6">
+      {/* ── Filter controls row ── */}
+      <div className="flex items-center gap-1.5 flex-wrap">
 
-        {/* Sort */}
+        {/* Label */}
+        <span className="text-xs font-medium text-gray-400 uppercase tracking-wide mr-1 select-none">
+          Filter
+        </span>
+
+        <Separator orientation="vertical" className="h-4 bg-gray-200 mx-1" />
+
+        {/* ── Sort ── */}
         <div className="relative">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => { setSortOpen(!sortOpen); setConditionOpen(false); setPriceOpen(false) }}
-            className="flex items-center gap-2 text-sm text-gray-900 hover:text-ume-indigo transition-colors"
+            className={`h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
+              sortActive
+                ? 'border-ume-indigo bg-ume-indigo text-white hover:bg-ume-indigo/90 hover:text-white shadow-sm'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-ume-indigo/40 hover:text-ume-indigo'
+            }`}
           >
-            <span>{SORT_OPTIONS.find(o => o.value === (currentSort || 'relevance'))?.label || 'Relevance'}</span>
-            <svg className={`w-4 h-4 transition-transform ${sortOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+            {sortLabel}
+            <Chevron open={sortOpen} />
+          </Button>
           {sortOpen && (
-            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[180px]">
-              {SORT_OPTIONS.map(option => (
-                <button key={option.value} onClick={() => handleSortChange(option.value)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${(currentSort || 'relevance') === option.value ? 'text-ume-indigo font-medium' : 'text-gray-900'}`}>
+            <FilterDropdown>
+              {SORT_OPTIONS.map((option) => (
+                <DropdownItem
+                  key={option.value}
+                  active={(currentSort || 'relevance') === option.value}
+                  onClick={() => handleSortChange(option.value)}
+                >
                   {option.label}
-                </button>
+                </DropdownItem>
               ))}
-            </div>
+            </FilterDropdown>
           )}
         </div>
 
-        <span className="text-gray-300">|</span>
-
-        {/* Condition */}
+        {/* ── Condition ── */}
         <div className="relative">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => { setConditionOpen(!conditionOpen); setSortOpen(false); setPriceOpen(false) }}
-            className="flex items-center gap-2 text-sm text-gray-900 hover:text-ume-indigo transition-colors"
+            className={`h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
+              conditionActive
+                ? 'border-ume-indigo bg-ume-indigo text-white hover:bg-ume-indigo/90 hover:text-white shadow-sm'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-ume-indigo/40 hover:text-ume-indigo'
+            }`}
           >
-            <span className={currentCondition ? 'text-ume-indigo font-medium' : ''}>{currentCondition || 'Condition'}</span>
-            <svg className={`w-4 h-4 transition-transform ${conditionOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+            {currentCondition || 'Condition'}
+            <Chevron open={conditionOpen} />
+          </Button>
           {conditionOpen && (
-            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[150px]">
-              <button onClick={() => handleConditionChange('all')} className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${!currentCondition ? 'text-ume-indigo font-medium' : 'text-gray-900'}`}>All</button>
-              {CONDITIONS.map(condition => (
-                <button key={condition} onClick={() => handleConditionChange(condition)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${currentCondition === condition ? 'text-ume-indigo font-medium' : 'text-gray-900'}`}>
+            <FilterDropdown>
+              <DropdownItem active={!currentCondition} onClick={() => handleConditionChange('all')}>
+                All conditions
+              </DropdownItem>
+              <Separator className="my-1 bg-gray-100" />
+              {CONDITIONS.map((condition) => (
+                <DropdownItem
+                  key={condition}
+                  active={currentCondition === condition}
+                  onClick={() => handleConditionChange(condition)}
+                >
                   {condition}
-                </button>
+                </DropdownItem>
               ))}
-            </div>
+            </FilterDropdown>
           )}
         </div>
 
-        <span className="text-gray-300">|</span>
-
-        {/* Price */}
+        {/* ── Price ── */}
         <div className="relative">
-          <button
+          <Button
+            variant="outline"
+            size="sm"
             onClick={() => { setPriceOpen(!priceOpen); setSortOpen(false); setConditionOpen(false) }}
-            className="flex items-center gap-2 text-sm text-gray-900 hover:text-ume-indigo transition-colors"
+            className={`h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
+              priceActive
+                ? 'border-ume-indigo bg-ume-indigo text-white hover:bg-ume-indigo/90 hover:text-white shadow-sm'
+                : 'border-gray-200 bg-white text-gray-600 hover:border-ume-indigo/40 hover:text-ume-indigo'
+            }`}
           >
-            <span className={getCurrentPriceLabel() !== 'Price' ? 'text-ume-indigo font-medium' : ''}>{getCurrentPriceLabel()}</span>
-            <svg className={`w-4 h-4 transition-transform ${priceOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-            </svg>
-          </button>
+            {priceLabel}
+            <Chevron open={priceOpen} />
+          </Button>
           {priceOpen && (
-            <div className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[150px]">
+            <FilterDropdown>
               {(currentMinPrice || currentMaxPrice) && (
-                <button onClick={handleClearPrice} className="w-full text-left px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 border-b border-gray-100">Clear filter</button>
+                <>
+                  <button
+                    onClick={handleClearPrice}
+                    className="w-full text-left px-4 py-2 text-xs text-ume-pink font-semibold hover:bg-ume-pink/5 transition-colors"
+                  >
+                    Clear price filter
+                  </button>
+                  <Separator className="my-1 bg-gray-100" />
+                </>
               )}
-              {PRICE_OPTIONS.map(option => (
-                <button key={option.label} onClick={() => handlePriceSelect(option.min, option.max)}
-                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 ${getCurrentPriceLabel() === option.label ? 'text-ume-indigo font-medium' : 'text-gray-900'}`}>
+              {PRICE_OPTIONS.map((option) => (
+                <DropdownItem
+                  key={option.label}
+                  active={priceLabel === option.label}
+                  onClick={() => handlePriceSelect(option.min, option.max)}
+                >
                   {option.label}
-                </button>
+                </DropdownItem>
               ))}
-            </div>
+            </FilterDropdown>
           )}
         </div>
 
-        {/* Campus — only show if there are options */}
+        {/* ── Campus ── */}
         {campusOptions.length > 0 && (
-          <>
-            <span className="text-gray-300">|</span>
+          <div className={`[&_button]:h-8 [&_button]:rounded-full [&_button]:text-xs [&_button]:font-medium [&_button]:px-3 [&_button]:border [&_button]:transition-all [&_button]:duration-150 ${
+            currentCampus
+              ? '[&_button]:border-ume-indigo [&_button]:bg-ume-indigo [&_button]:text-white [&_button]:shadow-sm'
+              : '[&_button]:border-gray-200 [&_button]:bg-white [&_button]:text-gray-600'
+          }`}>
             <SearchableSelect
               options={campusOptions}
               value={currentCampus || ''}
-              onChange={val => { closeAll(); handleCampusChange(val) }}
+              onChange={(val) => { closeAll(); handleCampusChange(val) }}
               placeholder="Campus"
               searchPlaceholder="Search campus..."
             />
+          </div>
+        )}
+
+        {/* ── Active filter count badge + Clear all ── */}
+        {hasActiveFilters && (
+          <>
+            <Separator orientation="vertical" className="h-4 bg-gray-200 mx-1" />
+            <Badge
+              className="bg-ume-pink/15 text-ume-pink border-0 text-[10px] font-bold rounded-full px-2.5 py-0.5 select-none"
+            >
+              {activeCount} active
+            </Badge>
+            <button
+              onClick={handleClearAll}
+              className="text-xs text-gray-400 hover:text-ume-indigo transition-colors underline-offset-2 hover:underline ml-0.5"
+            >
+              Clear all
+            </button>
           </>
         )}
       </div>
 
-      {/* Location radius slider — sits below the filter pills */}
-      <div className="w-64">
+      {/* ── Location radius slider — sits below the filter pills ── */}
+      <div className="mt-3 w-64">
         <LocationRadiusSlider
           initialRadius={currentRadius ?? 25}
           userLat={userLat}

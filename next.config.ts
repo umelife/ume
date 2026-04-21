@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Remotion: transpile @remotion packages so Next.js handles their ESM correctly
+  transpilePackages: ['@remotion/player', 'remotion'],
 };
 
 export default nextConfig;

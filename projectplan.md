@@ -298,6 +298,12 @@ npm run dev
 - ✅ `app/marketplace/page.tsx` — clean two-zone layout: white sticky-feel header with title + CategoryBar; content area with filters above grid; results meta line shows listing count + active filter count; shadcn `Skeleton` used for FiltersRow suspense fallback; MobileFilterButton moved inside its own `md:hidden` wrapper
 - ✅ `components/marketplace/FiltersRow.tsx` — modernized pill-style filter buttons with `ume-indigo` active fill; "Filter" label prefix; separators between groups; active-filter badge (`ume-pink/15`); "Clear all" text link to wipe all filters in one click; tighter dropdown with rounded-2xl corners and separator between "All conditions" and individual items; price "Clear price filter" in pink; all logic and props unchanged
 
+#### 18. Profile & Create Page Redesign ✅ (2026-04-21)
+- ✅ `app/profile/[id]/page.tsx` — full shadcn/ui redesign: indigo-to-pink gradient banner; shadcn `Avatar` with gradient fallback initial and `ring-4` white border; campus name as `Badge`; join date + listing count stat row with `Separator`; "New Listing" `Button` CTA for own profile; `Card` wraps the hero content overlapping the banner; listings section shows `Badge` count next to heading
+- ✅ `app/create/page.tsx` — multi-section Card layout with indigo→pink accent stripe on each card; numbered step indicators (1–4: Photos, Item Details, Pricing, Fulfillment); shadcn `Input`, `Label`, `Button`, `Card`, `Separator`; replaced boring `<select>` for category with interactive pill buttons; replaced radio condition buttons with colour-coded badge-style selectors (green=New, sky=Like New, amber=Used, purple=Refurbished); all server action / existing child components (`ImageUploaderClean`, `FulfillmentFields`) untouched
+- ✅ `components/listings/CreateListingInteractive.tsx` — new thin `'use client'` component managing category + condition state; writes to hidden `<input name="category">` and `<input name="condition">` so the server action (`handleCreateListing`) receives them unchanged via FormData
+- ✅ `lib/utils/index.ts` — created missing `cn()` utility (`clsx` + `tailwind-merge`) that all shadcn/ui components import from `@/lib/utils`; re-exports existing `helpers` and `listingFilters` so nothing breaks
+
 ## Future Enhancements (Post-MVP)
 
 1. Role-based admin authentication

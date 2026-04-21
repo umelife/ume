@@ -78,6 +78,8 @@ WHERE latitude IS NOT NULL
   AND location_geog IS NULL;
 
 -- 7. RPC function — includes seller_campus_id and status so callers can filter
+-- Drop first so we can change the return type without a conflict
+DROP FUNCTION IF EXISTS public.filter_by_radius(double precision, double precision, double precision, text);
 CREATE OR REPLACE FUNCTION public.filter_by_radius(
   user_lat        double precision,
   user_lng        double precision,

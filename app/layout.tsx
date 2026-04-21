@@ -8,7 +8,8 @@ import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
 import StripeSetupBanner from "@/components/StripeSetupBanner";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
 import MobileFooter from "@/components/MobileFooter";
-import PushNotificationWrapper from "@/components/push/PushNotificationWrapper";
+import PushNotificationWrapper from "@/components/push/PushNotificationWrapper"
+import InstallPrompt from "@/components/ui/InstallPrompt";
 import WhatsNewModal from "@/components/WhatsNewModal";
 import MobileTabBar from "@/components/MobileTabBar";
 
@@ -69,6 +70,7 @@ export default function RootLayout({
         <SimpleFooter />
         <MobileFooter />
         <PushNotificationWrapper />
+        <InstallPrompt />
         <WhatsNewModal />
         {/* Spacer so floating tab bar doesn't overlap footer content */}
         <div className="h-20" aria-hidden="true" />

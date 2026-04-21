@@ -6,6 +6,9 @@ import ListingImages from '@/components/listings/ListingImages'
 import CartToggleButton from '@/components/listings/CartToggleButton'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
 import BuySection from '@/components/listings/BuySection'
+import HomeSectionRow from '@/components/homepage/HomeSectionRow'
+import HomeListingCard from '@/components/homepage/HomeListingCard'
+import { getSimilarListings } from '@/lib/listings/actions'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -40,6 +43,13 @@ export default async function ListingDetailPage({
   listing.seller = user
 
   const isOwner = currentUser?.id === listing.user_id
+
+  // Fetch similar listings (same category + campus, exclude current)
+  const similarListings = await getSimilarListings(
+    listing.id,
+    listing.category,
+    listing.seller_campus_id ?? null,
+  )
 
   // Seller display name + avatar initial
   const sellerHandle = user?.username || user?.display_name || ''
@@ -171,6 +181,29 @@ export default async function ListingDetailPage({
           </div>
         </div>
       </div>
+
+      {/* ── Similar listings ── */}
+      {similarListings.length > 0 && (
+        <div className="mt-4 pb-8">
+          <HomeSectionRow
+            title={`More in ${listing.category}`}
+            icon={
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" aria-hidden="true">
+                <rect x="2" y="3" width="7" height="7" rx="1"/>
+                <rect x="15" y="3" width="7" height="7" rx="1"/>
+                <rect x="2" y="14" width="7" height="7" rx="1"/>
+                <rect x="15" y="14" width="7" height="7" rx="1"/>
+              </svg>
+            }
+            viewAllHref={`/marketplace?category=${encodeURIComponent(listing.category)}`}
+          >
+            {similarListings.map((item) => (
+              <HomeListingCard key={item.id} listing={item} />
+            ))}
+          </HomeSectionRow>
+        </div>
+      )}
+
     </div>
   )
 }

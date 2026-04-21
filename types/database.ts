@@ -100,6 +100,9 @@ export interface SafeHandshake {
   buyer_id: string
   status: SafeHandshakeStatus
   safe_point_id?: string
+  custom_location_text?: string
+  custom_lat?: number
+  custom_lng?: number
   seller_arrived_at?: string
   buyer_arrived_at?: string
   qr_token?: string

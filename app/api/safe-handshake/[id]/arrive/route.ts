@@ -16,14 +16,14 @@ export async function POST(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { safePointId } = await request.json()
+    const { safePointId, customArrival } = await request.json()
 
-    if (!safePointId) {
-      return NextResponse.json({ error: 'safePointId is required' }, { status: 400 })
+    if (!safePointId && !customArrival) {
+      return NextResponse.json({ error: 'safePointId or customArrival is required' }, { status: 400 })
     }
 
-    // Validate it's a real Safe-Point ID (not a fake placeholder)
-    if (!SAFE_POINTS.find((p) => p.id === safePointId)) {
+    // Validate it's a real Safe-Point ID (not a fake placeholder) — skip for custom arrivals
+    if (safePointId && !SAFE_POINTS.find((p) => p.id === safePointId)) {
       return NextResponse.json({ error: 'Invalid safePointId' }, { status: 400 })
     }
 
@@ -73,8 +73,18 @@ export async function POST(
       return NextResponse.json({ error: 'Session is already finished' }, { status: 409 })
     }
 
-    // If a location was pre-agreed in chat, validate the person goes to the right place
-    if (handshake.safe_point_id && safePointId !== handshake.safe_point_id) {
+    // Custom-location arrivals: skip safe-point validation entirely
+    if (customArrival) {
+      if (!handshake.custom_lat || !handshake.custom_lng) {
+        return NextResponse.json(
+          { error: 'This session does not have a custom location set.' },
+          { status: 400 }
+        )
+      }
+    }
+
+    // If a safe-point was pre-agreed in chat, validate the person goes to the right place
+    if (!customArrival && handshake.safe_point_id && safePointId !== handshake.safe_point_id) {
       const agreedPoint = SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)
       return NextResponse.json(
         { error: `Please go to ${agreedPoint?.name ?? 'the agreed Safe-Point'} — that's where you both agreed to meet.` },
@@ -93,7 +103,15 @@ export async function POST(
     let newStatus: string
     let updateFields: Record<string, unknown>
 
-    if (isSeller) {
+    if (customArrival) {
+      // Custom location: both parties are at the same custom spot by definition
+      const bothAtSame = otherArrived
+      newStatus = bothAtSame ? 'both_arrived' : (isSeller ? 'seller_arrived' : 'buyer_arrived')
+      updateFields = {
+        ...(isSeller ? { seller_arrived_at: now } : { buyer_arrived_at: now }),
+        status: newStatus,
+      }
+    } else if (isSeller) {
       // If buyer already arrived at a different point, still record seller's arrival
       const bothAtSame = otherArrived && (handshake.safe_point_id === safePointId || !handshake.safe_point_id)
       newStatus = bothAtSame ? 'both_arrived' : 'seller_arrived'
@@ -127,7 +145,7 @@ export async function POST(
       return NextResponse.json({ error: 'Failed to record arrival' }, { status: 500 })
     }
 
-    return NextResponse.json({ status: newStatus, safePointId })
+    return NextResponse.json({ status: newStatus, safePointId: safePointId ?? null, customArrival: customArrival ?? false })
   } catch (err) {
     console.error('Arrive error:', err)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })

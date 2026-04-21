@@ -44,6 +44,12 @@ function MessagesPageContent() {
   const [safeHandshakeLoading, setSafeHandshakeLoading] = useState(false)
   const [showJoinModal, setShowJoinModal] = useState(false)
   const [joinSession, setJoinSession] = useState<{ id: string; safe_point_id: string | null } | null>(null)
+  // Custom meetup location state (for the "Different spot" section in proposals)
+  const [showCustomSpot, setShowCustomSpot] = useState(false)
+  const [customSpotText, setCustomSpotText] = useState('')
+  const [customSpotLat, setCustomSpotLat] = useState<number | null>(null)
+  const [customSpotLng, setCustomSpotLng] = useState<number | null>(null)
+  const [gettingLocation, setGettingLocation] = useState(false)
   const [userEmail, setUserEmail] = useState<string | null>(null)
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -342,8 +348,12 @@ function MessagesPageContent() {
     }
   }
 
-  // Called when either party clicks a location inside a proposal message
-  async function handleConfirmHandshakeLocation(safePointId: string) {
+  // Called when either party clicks a location inside a proposal message.
+  // Pass safePointId for predefined safe points, or customLocation for a custom spot.
+  async function handleConfirmHandshakeLocation(
+    safePointId: string | null,
+    customLocation?: { text: string; lat: number; lng: number }
+  ) {
     if (!selectedConversation?.listingId || !currentUserId) return
     const isSellerConfirming = selectedConversation.listing?.user_id === currentUserId
     setSafeHandshakeLoading(true)
@@ -361,7 +371,9 @@ function MessagesPageContent() {
         return
       }
 
-      const body: Record<string, string> = { listingId: selectedConversation.listingId, safePointId }
+      const body: Record<string, unknown> = { listingId: selectedConversation.listingId }
+      if (safePointId) body.safePointId = safePointId
+      if (customLocation) body.customLocation = customLocation
       if (isSellerConfirming) body.buyerId = selectedConversation.otherUserId
 
       const res = await fetch('/api/safe-handshake/initiate', {
@@ -372,14 +384,44 @@ function MessagesPageContent() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
 
-      const agreedPoint = campusSafePoints.find((p) => p.id === safePointId)
-      await sendMessage(`📍 Location confirmed: ${agreedPoint?.name ?? 'Safe-Point'}! Opening the Safe-Handshake session now.`)
+      const locationName = safePointId
+        ? (campusSafePoints.find((p) => p.id === safePointId)?.name ?? 'Safe-Point')
+        : customLocation?.text ?? 'Custom location'
+      await sendMessage(`📍 Location confirmed: ${locationName}! Opening the Safe-Handshake session now.`)
+
+      // Reset custom spot state
+      setShowCustomSpot(false)
+      setCustomSpotText('')
+      setCustomSpotLat(null)
+      setCustomSpotLng(null)
+
       router.push(`/safe-handshake/${data.id}`)
     } catch (err: unknown) {
       alert(err instanceof Error ? err.message : 'Could not start Safe-Handshake')
     } finally {
       setSafeHandshakeLoading(false)
     }
+  }
+
+  // Get the user's current GPS position and store it for the custom spot
+  function handleGetCurrentLocation() {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.')
+      return
+    }
+    setGettingLocation(true)
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setCustomSpotLat(pos.coords.latitude)
+        setCustomSpotLng(pos.coords.longitude)
+        setGettingLocation(false)
+      },
+      () => {
+        alert('Could not get your location. Please allow location access and try again.')
+        setGettingLocation(false)
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
   }
 
   // ── Chat header JSX ──
@@ -572,6 +614,63 @@ function MessagesPageContent() {
                                     <span>{point.name}</span>
                                   </button>
                                 ))}
+
+                                {/* Different spot toggle */}
+                                <button
+                                  onClick={() => setShowCustomSpot((v) => !v)}
+                                  className={`text-xs rounded-xl px-3 py-2 text-left transition-colors font-medium flex items-center gap-2 ${
+                                    isOwn
+                                      ? 'bg-white/10 hover:bg-white/20 text-white/80'
+                                      : 'bg-gray-50 hover:bg-gray-100 text-gray-500 border border-gray-200'
+                                  }`}
+                                >
+                                  <span>🗺️</span>
+                                  <span>Different spot…</span>
+                                  <svg className={`w-3 h-3 ml-auto transition-transform ${showCustomSpot ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                  </svg>
+                                </button>
+
+                                {showCustomSpot && (
+                                  <div className={`rounded-xl p-3 space-y-2 ${isOwn ? 'bg-white/10' : 'bg-gray-50 border border-gray-200'}`}>
+                                    <p className={`text-[10px] font-semibold uppercase tracking-wide ${isOwn ? 'text-white/60' : 'text-amber-600'}`}>
+                                      ⚠️ Not a verified safe point — meet somewhere public
+                                    </p>
+                                    <input
+                                      type="text"
+                                      value={customSpotText}
+                                      onChange={(e) => setCustomSpotText(e.target.value)}
+                                      placeholder="e.g. Library main entrance"
+                                      className="w-full px-3 py-2 rounded-lg text-xs text-gray-900 bg-white border border-gray-200 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-ume-indigo/30"
+                                      maxLength={80}
+                                    />
+                                    <div className="flex items-center gap-2">
+                                      <button
+                                        onClick={handleGetCurrentLocation}
+                                        disabled={gettingLocation}
+                                        className="flex-1 text-xs py-1.5 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 transition-colors disabled:opacity-50 flex items-center justify-center gap-1"
+                                      >
+                                        {gettingLocation ? (
+                                          <span className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin" />
+                                        ) : (
+                                          <span>📡</span>
+                                        )}
+                                        {customSpotLat ? 'Location captured ✓' : 'Use my location'}
+                                      </button>
+                                      <button
+                                        onClick={() => {
+                                          if (!customSpotText.trim()) { alert('Enter a location name first.'); return }
+                                          if (!customSpotLat || !customSpotLng) { alert('Capture your location first so GPS verification works.'); return }
+                                          handleConfirmHandshakeLocation(null, { text: customSpotText.trim(), lat: customSpotLat, lng: customSpotLng })
+                                        }}
+                                        disabled={safeHandshakeLoading || !customSpotText.trim() || !customSpotLat}
+                                        className="flex-1 text-xs py-1.5 rounded-lg bg-ume-indigo text-white font-semibold hover:bg-indigo-800 transition-colors disabled:opacity-40"
+                                      >
+                                        Confirm spot
+                                      </button>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                             </>
                           ) : (

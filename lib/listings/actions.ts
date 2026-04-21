@@ -174,6 +174,31 @@ export async function updateListing(listingId: string, formData: FormData) {
   redirect('/item/' + listingId)
 }
 
+export async function getSimilarListings(
+  listingId: string,
+  category: string,
+  campusId?: string | null,
+  limit = 8
+) {
+  const supabase = await createClient()
+
+  let query = supabase
+    .from('listings')
+    .select('*')
+    .eq('category', category)
+    .neq('id', listingId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+
+  if (campusId) {
+    query = query.eq('seller_campus_id', campusId)
+  }
+
+  const { data, error } = await query
+  if (error) return []
+  return data ?? []
+}
+
 export async function deleteListing(listingId: string) {
   const supabase = await createClient()
   const {

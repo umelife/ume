@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { X } from '@phosphor-icons/react'
 import SearchableSelect from '@/components/ui/SearchableSelect'
+import LocationRadiusSlider from '@/components/marketplace/LocationRadiusSlider'
 
 interface MobileFiltersProps {
   isOpen: boolean
@@ -14,6 +15,9 @@ interface MobileFiltersProps {
   currentMaxPrice?: string
   currentCampus?: string
   campusOptions?: { value: string; label: string }[]
+  currentRadius?: number
+  userLat?: number
+  userLng?: number
 }
 
 const CONDITIONS = ['New', 'Like New', 'Used', 'Refurbished']
@@ -40,6 +44,9 @@ export default function MobileFilters({
   currentMaxPrice,
   currentCampus,
   campusOptions = [],
+  currentRadius,
+  userLat,
+  userLng,
 }: MobileFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -171,6 +178,15 @@ export default function MobileFilters({
               />
             </div>
           )}
+
+          {/* Distance */}
+          <div>
+            <LocationRadiusSlider
+              initialRadius={currentRadius ?? 25}
+              userLat={userLat}
+              userLng={userLng}
+            />
+          </div>
         </div>
 
         {/* Footer */}

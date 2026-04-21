@@ -99,8 +99,10 @@ export async function signIn(formData: FormData) {
     return { error: 'Authentication failed' }
   }
 
-  // Profile creation is now handled by the database trigger automatically
-  // No need for manual profile creation logic here
+  // Stamp last_reauthenticated_at so the annual reauth clock starts from login
+  await supabase.auth.updateUser({
+    data: { last_reauthenticated_at: new Date().toISOString() },
+  })
 
   revalidatePath('/', 'layout')
   revalidatePath('/marketplace', 'page')
@@ -285,4 +287,37 @@ export async function updatePassword(newPassword: string) {
     prettyLogError('Unexpected error in updatePassword:', err)
     return { error: 'An unexpected error occurred' }
   }
+}
+
+/**
+ * Verify the user's password and refresh their annual reauth timestamp.
+ * Called from /reauth page.
+ */
+export async function reauthenticate(formData: FormData) {
+  const password = formData.get('password') as string
+  if (!password) return { error: 'Password is required' }
+
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user?.email) return { error: 'Not authenticated' }
+
+  // Re-verify credentials
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: user.email,
+    password,
+  })
+
+  if (signInError) {
+    return { error: 'Incorrect password. Please try again.' }
+  }
+
+  // Refresh the annual clock
+  await supabase.auth.updateUser({
+    data: { last_reauthenticated_at: new Date().toISOString() },
+  })
+
+  const nextPath = formData.get('next') as string | null
+  revalidatePath('/', 'layout')
+  redirect(nextPath || '/marketplace')
 }

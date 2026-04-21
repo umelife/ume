@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import SearchableSelect from '@/components/ui/SearchableSelect'
+import LocationRadiusSlider from '@/components/marketplace/LocationRadiusSlider'
 
 interface FiltersRowProps {
   currentCondition?: string
@@ -11,6 +12,9 @@ interface FiltersRowProps {
   currentMaxPrice?: string
   currentCampus?: string
   campusOptions?: { value: string; label: string }[]
+  currentRadius?: number
+  userLat?: number
+  userLng?: number
 }
 
 const CONDITIONS = ['New', 'Like New', 'Used', 'Refurbished']
@@ -35,6 +39,9 @@ export default function FiltersRow({
   currentMaxPrice,
   currentCampus,
   campusOptions = [],
+  currentRadius,
+  userLat,
+  userLng,
 }: FiltersRowProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -93,7 +100,7 @@ export default function FiltersRow({
   const closeAll = () => { setSortOpen(false); setConditionOpen(false); setPriceOpen(false) }
 
   return (
-    <div className="hidden md:block mb-6">
+    <div className="hidden md:block mb-6 space-y-3">
       <div className="flex items-center gap-4 flex-wrap">
 
         {/* Sort */}
@@ -186,6 +193,15 @@ export default function FiltersRow({
             />
           </>
         )}
+      </div>
+
+      {/* Location radius slider — sits below the filter pills */}
+      <div className="w-64">
+        <LocationRadiusSlider
+          initialRadius={currentRadius ?? 25}
+          userLat={userLat}
+          userLng={userLng}
+        />
       </div>
     </div>
   )

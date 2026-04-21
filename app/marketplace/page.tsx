@@ -263,6 +263,9 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
             currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
             currentCampus={params.campus}
             campusOptions={campusOptions}
+            currentRadius={params.radius ? parseFloat(params.radius) : undefined}
+            userLat={params.userLat ? parseFloat(params.userLat) : undefined}
+            userLng={params.userLng ? parseFloat(params.userLng) : undefined}
           />
         </Suspense>
 
@@ -273,6 +276,9 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
           currentMaxPrice={params.maxPrice ? (parseFloat(params.maxPrice) / 100).toString() : undefined}
           currentCampus={params.campus}
           campusOptions={campusOptions}
+          currentRadius={params.radius ? parseFloat(params.radius) : undefined}
+          userLat={params.userLat ? parseFloat(params.userLat) : undefined}
+          userLng={params.userLng ? parseFloat(params.userLng) : undefined}
         />
 
         <div className="mt-4 mb-3 text-sm text-black">

@@ -11,10 +11,25 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { listingId, safePointId, buyerId: providedBuyerId } = await request.json()
+    const {
+      listingId,
+      safePointId,
+      buyerId: providedBuyerId,
+      customLocation,
+    }: {
+      listingId: string
+      safePointId?: string
+      buyerId?: string
+      customLocation?: { text: string; lat: number; lng: number }
+    } = await request.json()
 
     if (!listingId) {
       return NextResponse.json({ error: 'listingId is required' }, { status: 400 })
+    }
+
+    // Validate: cannot supply both a safe point and a custom location
+    if (safePointId && customLocation) {
+      return NextResponse.json({ error: 'Provide either safePointId or customLocation, not both' }, { status: 400 })
     }
 
     // Validate safePointId if provided
@@ -22,6 +37,16 @@ export async function POST(request: Request) {
       const { SAFE_POINTS } = await import('@/data/safe-points')
       if (!SAFE_POINTS.find((p) => p.id === safePointId)) {
         return NextResponse.json({ error: 'Invalid safePointId' }, { status: 400 })
+      }
+    }
+
+    // Validate customLocation if provided
+    if (customLocation) {
+      if (!customLocation.text?.trim()) {
+        return NextResponse.json({ error: 'customLocation.text is required' }, { status: 400 })
+      }
+      if (typeof customLocation.lat !== 'number' || typeof customLocation.lng !== 'number') {
+        return NextResponse.json({ error: 'customLocation must include valid lat and lng coordinates' }, { status: 400 })
       }
     }
 
@@ -96,6 +121,11 @@ export async function POST(request: Request) {
         buyer_id: buyerId,
         status: 'initiated',
         ...(safePointId ? { safe_point_id: safePointId } : {}),
+        ...(customLocation ? {
+          custom_location_text: customLocation.text.trim(),
+          custom_lat: customLocation.lat,
+          custom_lng: customLocation.lng,
+        } : {}),
       })
       .select('id')
       .single()
@@ -126,9 +156,10 @@ export async function POST(request: Request) {
       const handshakeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/safe-handshake/${handshake.id}`
       const agreedLocationName = safePointId
         ? (SAFE_POINTS.find((p) => p.id === safePointId)?.name ?? safePointId)
-        : null
+        : customLocation?.text ?? null
+      const isCustomLocation = !safePointId && !!customLocation
       const locationLine = agreedLocationName
-        ? `<p><strong>Agreed meeting spot:</strong> ${agreedLocationName}</p>`
+        ? `<p><strong>Agreed meeting spot:</strong> ${agreedLocationName}${isCustomLocation ? ' <em>(custom location)</em>' : ''}</p>${isCustomLocation ? '<p style="color:#b45309;font-size:13px;">⚠️ This is a custom location, not a verified campus Safe-Point. Meet in a public, well-lit area and stay alert.</p>' : ''}`
         : ''
 
       const emailHtml = (recipientName: string, role: 'seller' | 'buyer') => `

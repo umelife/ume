@@ -4,8 +4,8 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { getNearestSafePoint } from '@/lib/haversine'
-import { SAFE_POINTS, getSafePointsForCampus } from '@/data/safe-points'
+import { getNearestSafePoint, haversineDistance } from '@/lib/haversine'
+import { SAFE_POINTS, getSafePointsForCampus, GEOFENCE_RADIUS_METERS } from '@/data/safe-points'
 import { useMessages } from '@/lib/hooks/useMessages'
 import StepBar from '@/components/safe-handshake/StepBar'
 import QRDisplay from '@/components/safe-handshake/QRDisplay'
@@ -157,7 +157,10 @@ export default function SafeHandshakeClient({
     return () => clearInterval(interval)
   }, [supabase, handshake.id, handshake.status])
 
-  // GPS watch — starts when user taps "Heading to Safe-Point"
+  // Derive whether this session uses a custom location
+  const isCustomLocation = !handshake.safe_point_id && !!(handshake.custom_lat && handshake.custom_lng)
+
+  // GPS watch — starts when user taps "Heading to Safe-Point / Meetup Spot"
   const startGPS = useCallback(() => {
     if (!navigator.geolocation) {
       setGpsError('GPS is not available on this device')
@@ -170,16 +173,28 @@ export default function SafeHandshakeClient({
         setUserLat(latitude)
         setUserLon(longitude)
 
-        // Check if within a campus safe point
-        const nearest = getNearestSafePoint(latitude, longitude, campusSafePoints)
-        if (nearest && !hasArrived) {
-          setHasArrived(true)
-          // Notify the server
-          fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ safePointId: nearest.point.id }),
-          }).catch(console.error)
+        if (isCustomLocation && handshake.custom_lat && handshake.custom_lng) {
+          // Custom location: check distance to the stored custom coords
+          const dist = haversineDistance(latitude, longitude, handshake.custom_lat, handshake.custom_lng)
+          if (dist <= GEOFENCE_RADIUS_METERS && !hasArrived) {
+            setHasArrived(true)
+            fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ customArrival: true }),
+            }).catch(console.error)
+          }
+        } else {
+          // Predefined safe point: check campus safe points
+          const nearest = getNearestSafePoint(latitude, longitude, campusSafePoints)
+          if (nearest && !hasArrived) {
+            setHasArrived(true)
+            fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ safePointId: nearest.point.id }),
+            }).catch(console.error)
+          }
         }
       },
       (err) => {
@@ -192,7 +207,7 @@ export default function SafeHandshakeClient({
       },
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
     )
-  }, [handshake.id, hasArrived])
+  }, [handshake.id, handshake.custom_lat, handshake.custom_lng, hasArrived, isCustomLocation])
 
   useEffect(() => {
     return () => {
@@ -235,6 +250,25 @@ export default function SafeHandshakeClient({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ safePointId }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setHasArrived(true)
+    } catch (err: unknown) {
+      setActionError(err instanceof Error ? err.message : 'Failed to record arrival')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  async function simulateCustomArrival() {
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      const res = await fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customArrival: true }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -394,8 +428,9 @@ export default function SafeHandshakeClient({
   function getStatusMessage(): { you: string; partner: string } {
     const sellerArrived = !!handshake.seller_arrived_at
     const buyerArrived = !!handshake.buyer_arrived_at
-    const pointName =
-      campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? 'a Safe-Point'
+    const pointName = isCustomLocation
+      ? (handshake.custom_location_text ?? 'the meetup spot')
+      : (campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? 'a Safe-Point')
 
     if (handshake.status === 'initiated') {
       return {
@@ -470,20 +505,36 @@ export default function SafeHandshakeClient({
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
 
         {/* Agreed meeting spot badge */}
-        {handshake.safe_point_id && (
-          <div className="bg-indigo-50 border border-indigo-200 rounded-2xl px-4 py-3 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-ume-indigo/10 flex items-center justify-center flex-shrink-0">
-              <svg className="w-4 h-4 text-ume-indigo" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        {(handshake.safe_point_id || isCustomLocation) && (
+          <div className={`border rounded-2xl px-4 py-3 flex items-center gap-3 ${isCustomLocation ? 'bg-amber-50 border-amber-200' : 'bg-indigo-50 border-indigo-200'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isCustomLocation ? 'bg-amber-100' : 'bg-ume-indigo/10'}`}>
+              <svg className={`w-4 h-4 ${isCustomLocation ? 'text-amber-600' : 'text-ume-indigo'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
             <div>
-              <p className="text-[11px] text-indigo-500 font-medium uppercase tracking-wide">Agreed meeting spot</p>
-              <p className="text-sm font-bold text-ume-indigo">
-                {campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? handshake.safe_point_id}
+              <p className={`text-[11px] font-medium uppercase tracking-wide ${isCustomLocation ? 'text-amber-600' : 'text-indigo-500'}`}>
+                {isCustomLocation ? 'Custom meeting spot' : 'Agreed meeting spot'}
+              </p>
+              <p className={`text-sm font-bold ${isCustomLocation ? 'text-amber-800' : 'text-ume-indigo'}`}>
+                {isCustomLocation
+                  ? handshake.custom_location_text
+                  : (campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? handshake.safe_point_id)}
               </p>
             </div>
+          </div>
+        )}
+
+        {/* Safety warning for custom locations */}
+        {isCustomLocation && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <p className="text-xs text-amber-700 leading-snug">
+              <strong>Custom location</strong> — this is not a verified campus Safe-Point. Meet in a public, well-lit area and stay alert.
+            </p>
           </div>
         )}
 
@@ -566,7 +617,7 @@ export default function SafeHandshakeClient({
           </div>
         )}
 
-        {/* Step 1 → 2: Heading to Safe-Point (show whenever THIS user hasn't arrived yet) */}
+        {/* Step 1 → 2: Heading to Safe-Point / Custom Spot (show whenever THIS user hasn't arrived yet) */}
         {!hasArrived && !['both_arrived', 'qr_generated', 'completed', 'cancelled'].includes(handshake.status) && (
           <div className="space-y-3">
             <button
@@ -577,10 +628,10 @@ export default function SafeHandshakeClient({
               {isHeading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  GPS Active — Detecting Safe-Point...
+                  GPS Active — Detecting arrival...
                 </span>
               ) : (
-                'I am heading to a Safe-Point'
+                isCustomLocation ? 'I am heading to the meetup spot' : 'I am heading to a Safe-Point'
               )}
             </button>
 
@@ -590,25 +641,41 @@ export default function SafeHandshakeClient({
                 <p className="text-xs font-semibold text-gray-500 mb-2">
                   {gpsError ? 'GPS unavailable — confirm your arrival manually:' : 'No GPS signal yet — or confirm manually:'}
                 </p>
-                <div className="flex flex-col gap-2">
-                  {(handshake.safe_point_id
-                    ? campusSafePoints.filter((p) => p.id === handshake.safe_point_id)
-                    : campusSafePoints
-                  ).map((point) => (
-                    <button
-                      key={point.id}
-                      onClick={() => simulateArrival(point.id)}
-                      disabled={actionLoading}
-                      className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-ume-indigo hover:bg-indigo-50 transition-colors disabled:opacity-50 flex items-center gap-3"
-                    >
-                      <div className="w-3 h-3 rounded-full bg-green-400 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">{point.name}</p>
-                        <p className="text-xs text-gray-400">{point.description}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                {isCustomLocation ? (
+                  // Custom location: single "I'm here" button
+                  <button
+                    onClick={simulateCustomArrival}
+                    disabled={actionLoading}
+                    className="w-full text-left px-4 py-3 rounded-xl border border-amber-200 hover:border-amber-400 hover:bg-amber-50 transition-colors disabled:opacity-50 flex items-center gap-3"
+                  >
+                    <div className="w-3 h-3 rounded-full bg-amber-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{handshake.custom_location_text}</p>
+                      <p className="text-xs text-gray-400">Custom meeting spot</p>
+                    </div>
+                  </button>
+                ) : (
+                  // Predefined safe points
+                  <div className="flex flex-col gap-2">
+                    {(handshake.safe_point_id
+                      ? campusSafePoints.filter((p) => p.id === handshake.safe_point_id)
+                      : campusSafePoints
+                    ).map((point) => (
+                      <button
+                        key={point.id}
+                        onClick={() => simulateArrival(point.id)}
+                        disabled={actionLoading}
+                        className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-ume-indigo hover:bg-indigo-50 transition-colors disabled:opacity-50 flex items-center gap-3"
+                      >
+                        <div className="w-3 h-3 rounded-full bg-green-400 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">{point.name}</p>
+                          <p className="text-xs text-gray-400">{point.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -620,10 +687,12 @@ export default function SafeHandshakeClient({
             <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <p className="text-sm font-semibold text-yellow-800">Waiting for {partnerName}...</p>
             <p className="text-xs text-yellow-700 mt-1">
-              {(() => {
-                const name = campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name
-                return name ? `You are at ${name}.` : 'You are at a Safe-Point.'
-              })()}
+              {isCustomLocation
+                ? `You are at ${handshake.custom_location_text ?? 'the meetup spot'}.`
+                : (() => {
+                    const name = campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name
+                    return name ? `You are at ${name}.` : 'You are at a Safe-Point.'
+                  })()}
             </p>
           </div>
         )}
@@ -661,36 +730,45 @@ export default function SafeHandshakeClient({
           <QRScanner onScan={handleScanQR} disabled={actionLoading} />
         )}
 
-        {/* Safe-Points legend */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Campus Safe-Points
-          </h3>
-          <div className="space-y-2">
-            {campusSafePoints.map((point) => {
-              const isActive = point.id === handshake.safe_point_id
-              return (
-                <div key={point.id} className={`flex items-center gap-3 p-2 rounded-lg ${isActive ? 'bg-green-50' : ''}`}>
-                  <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-green-500' : 'bg-gray-200'}`} />
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">{point.name}</p>
-                    <p className="text-xs text-gray-400">{point.description}</p>
+        {/* Safe-Points legend — only shown for predefined safe-point sessions */}
+        {!isCustomLocation && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Campus Safe-Points
+            </h3>
+            <div className="space-y-2">
+              {campusSafePoints.map((point) => {
+                const isActive = point.id === handshake.safe_point_id
+                return (
+                  <div key={point.id} className={`flex items-center gap-3 p-2 rounded-lg ${isActive ? 'bg-green-50' : ''}`}>
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-green-500' : 'bg-gray-200'}`} />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{point.name}</p>
+                      <p className="text-xs text-gray-400">{point.description}</p>
+                    </div>
+                    {isActive && (
+                      <span className="ml-auto text-xs font-semibold text-green-600">Active</span>
+                    )}
                   </div>
-                  {isActive && (
-                    <span className="ml-auto text-xs font-semibold text-green-600">Active</span>
-                  )}
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Safety note */}
         <div className="text-center">
-          <p className="text-xs text-gray-400">
-            Safe-Points are located at campus Blue Light emergency stations.
-            <br />If you feel unsafe, press the Blue Light button for immediate help.
-          </p>
+          {isCustomLocation ? (
+            <p className="text-xs text-amber-600">
+              You&apos;re meeting at a custom location. Stay alert and choose a public, well-lit area.
+              <br />Campus Blue Light stations are always a safer alternative.
+            </p>
+          ) : (
+            <p className="text-xs text-gray-400">
+              Safe-Points are located at campus Blue Light emergency stations.
+              <br />If you feel unsafe, press the Blue Light button for immediate help.
+            </p>
+          )}
         </div>
 
         {/* Cancel session */}

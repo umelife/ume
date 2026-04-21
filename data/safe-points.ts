@@ -3,6 +3,9 @@ export interface Campus {
   name: string
   /** One or more email domains that identify this campus, e.g. 'ucumberlands.edu' */
   emailDomains: string[]
+  /** Geographic center of the campus — used as the default listing location */
+  lat: number
+  lng: number
 }
 
 export interface SafePoint {
@@ -22,6 +25,9 @@ export const CAMPUSES: Campus[] = [
     id: 'uc_cumberlands',
     name: 'University of the Cumberlands',
     emailDomains: ['ucumberlands.edu', 'students.ucumberlands.edu'],
+    // Geographic center of campus (average of the four Safe-Points)
+    lat: 36.7435,
+    lng: -84.1570,
   },
 ]
 

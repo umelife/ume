@@ -74,6 +74,10 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
     // Derive campus from verified email (standardised — never user-typed)
     const campus = getCampusFromEmail(user.email)
     const seller_campus_id = campus?.id ?? null
+    // Use the campus geographic centre for radius filtering.
+    // Sellers don't need to enter coordinates — their .edu domain determines it.
+    const latitude = campus?.lat ?? null
+    const longitude = campus?.lng ?? null
 
     // Verify user profile exists (should be created during signup)
     const { data: userProfile, error: profileCheckErr } = await supabaseAdmin
@@ -100,6 +104,8 @@ export async function handleCreateListing(formData: FormData): Promise<void> {
           image_urls: imageUrls,
           created_at: new Date().toISOString(),
           seller_campus_id,
+          latitude,
+          longitude,
           fulfillment_type,
           accepts_stripe: fulfillment_type !== 'shipping' ? accepts_stripe : true,
           ships_from_street,

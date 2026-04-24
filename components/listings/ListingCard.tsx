@@ -31,7 +31,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const isOwnListing = currentUserId && listing.user_id === currentUserId
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="animate-materialize bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg hover:-translate-y-0.5 transition-[shadow,transform] duration-200">
       <Link href={`/item/${listing.id}`}>
         <div>
           <div className="relative h-48 bg-gray-200">
@@ -97,7 +97,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
             }}
             disabled={loading}
             aria-pressed={inCart}
-            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-[colors,transform] duration-150 active:scale-[0.97] ${
               inCart ? 'bg-white border border-black text-black hover:bg-gray-50' : 'bg-black text-white hover:bg-gray-800'
             } ${loading ? 'opacity-60 cursor-not-allowed' : ''}`}
           >

@@ -30,25 +30,35 @@ export default function Hero({
     <section className="relative w-full h-[calc(100vh-80px)] min-h-[500px] flex">
       {/* Left Side - Dark Indigo Background with Text (transparent on mobile to show image) */}
       <div className="w-full md:w-[40%] lg:w-[35%] bg-transparent md:bg-ume-indigo flex flex-col justify-center px-8 md:px-12 lg:px-16 py-12 relative z-10">
-        {/* Headline */}
+        {/* Headline — staggered slide-up per line (Jakub Krehel / Emil Kowalski) */}
         <h1 className="text-left mb-2">
-          <span className="block text-white font-black text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight">
+          <span
+            className="block text-white font-black text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight animate-slide-up"
+            style={{ animationDelay: '0ms' }}
+          >
             YOUR UNIVERSITY
           </span>
-          <span className="block text-ume-indigo md:text-ume-pink font-black text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight">
+          <span
+            className="block text-ume-indigo md:text-ume-pink font-black text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight animate-slide-up"
+            style={{ animationDelay: '80ms' }}
+          >
             MARKETPLACE
           </span>
         </h1>
 
         {/* Subtitle */}
-        <p className="text-white md:text-white/80 text-sm md:text-base font-bold md:font-light mb-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] md:drop-shadow-none">
+        <p
+          className="text-white md:text-white/80 text-sm md:text-base font-bold md:font-light mb-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] md:drop-shadow-none animate-slide-up"
+          style={{ animationDelay: '160ms' }}
+        >
           {subtitle}
         </p>
 
-        {/* CTA Button - Indigo/white on mobile, Cream/indigo on desktop */}
+        {/* CTA Button — press scale from Emil Kowalski, expo easing */}
         <Link
           href={ctaHref}
-          className="inline-block w-fit px-8 py-3 bg-ume-indigo md:bg-ume-cream text-white md:text-ume-indigo font-semibold text-sm rounded-full hover:bg-ume-indigo/90 md:hover:bg-white transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-ume-indigo/30 md:focus:ring-white/30 shadow-lg"
+          className="inline-block w-fit px-8 py-3 bg-ume-indigo md:bg-ume-cream text-white md:text-ume-indigo font-semibold text-sm rounded-full hover:bg-ume-indigo/90 md:hover:bg-white active:scale-[0.97] transition-[colors,transform] duration-150 focus:outline-none focus:ring-4 focus:ring-ume-indigo/30 md:focus:ring-white/30 shadow-lg animate-slide-up"
+          style={{ animationDelay: '240ms' }}
         >
           {ctaText}
         </Link>

@@ -29,14 +29,16 @@ interface ProductGridProps {
 export default function ProductGrid({ listings }: ProductGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-      {listings.map((listing) => (
-        <ProductCard key={listing.id} listing={listing} />
+      {listings.map((listing, index) => (
+        <ProductCard key={listing.id} listing={listing} index={index} />
       ))}
     </div>
   )
 }
 
-function ProductCard({ listing }: { listing: Listing }) {
+function ProductCard({ listing, index = 0 }: { listing: Listing; index?: number }) {
+  // Cap stagger at 6 cards (300ms) so late cards don't wait too long — Emil Kowalski
+  const staggerDelay = Math.min(index * 50, 300)
   const images = listing.image_urls?.length ? listing.image_urls : ['/placeholder-image.jpg']
   const { isInCart, addToCart, removeFromCart, loadingIds } = useCart()
   const inCart = isInCart(listing.id)
@@ -90,7 +92,10 @@ function ProductCard({ listing }: { listing: Listing }) {
   }
 
   return (
-    <div className="relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+    <div
+      className="animate-materialize relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
+      style={{ animationDelay: `${staggerDelay}ms` }}
+    >
       {/* Toast notifications */}
       {(quickMsgSent || heartToast) && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap pointer-events-none">
@@ -132,7 +137,7 @@ function ProductCard({ listing }: { listing: Listing }) {
                   setTimeout(() => setHeartToast(null), 3000)
                 }}
                 disabled={loading}
-                className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:bg-white transition-colors"
+                className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:bg-white active:scale-90 transition-[colors,transform] duration-150"
                 aria-label={inCart ? 'Remove from liked' : 'Save to liked'}
               >
                 <svg
@@ -250,7 +255,7 @@ function ProductCard({ listing }: { listing: Listing }) {
           <button
             onClick={handleQuickMessage}
             disabled={quickMsgLoading}
-            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-[colors,transform] duration-150 active:scale-[0.97] ${
               quickMsgSent
                 ? 'bg-green-600 text-white cursor-default'
                 : 'bg-ume-indigo text-white hover:bg-indigo-800'

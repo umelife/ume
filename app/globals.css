@@ -6,9 +6,15 @@ html, body, #__next {
   height: 100%;
 }
 
+/* ─── Custom easing curves (Emil Kowalski / impeccable) ─────────────────────
+   Built-in CSS easing lacks sophistication — Bézier curves feel significantly
+   more polished and natural.                                                  */
 :root {
   --background: #f3f7f8;
   --foreground: #171717;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-spring:   cubic-bezier(0.34, 1.2, 0.64, 1);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,6 +30,18 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* ─── Reduced motion — always respect the user's OS setting ─────────────────
+   From the accessibility reference: every animation must have a reduced-motion
+   counterpart. We collapse durations to effectively instant.                  */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 @layer utilities {
   /* Pampas Background Color */
   .pampas-bg {
@@ -33,26 +51,20 @@ body {
   /* Primary Heading - Granika Style (All Caps, Centered, Large) */
   .heading-primary {
     font-family: var(--font-archivo-black), 'Archivo Black', sans-serif;
-    font-size: 3rem; /* 48px */
+    font-size: 3rem;
     font-weight: 900;
     text-transform: uppercase;
     text-align: center;
     letter-spacing: -0.03em;
     line-height: 1.2;
-    color: #130170; /* UME Indigo */
+    color: #130170;
   }
 
-  /* Responsive heading sizes */
   @media (max-width: 768px) {
-    .heading-primary {
-      font-size: 2rem; /* 32px on mobile */
-    }
+    .heading-primary { font-size: 2rem; }
   }
-
   @media (min-width: 769px) and (max-width: 1024px) {
-    .heading-primary {
-      font-size: 2.5rem; /* 40px on tablet */
-    }
+    .heading-primary { font-size: 2.5rem; }
   }
 
   .sr-only {
@@ -67,48 +79,75 @@ body {
     border-width: 0;
   }
 
+  /* ─── Jakub Krehel — materialisation entrance ────────────────────────────
+     Opacity + translateY + blur creates a "focus-in" effect that reads as
+     depth. Blur is the differentiator from a plain fade — signals the element
+     was previously out of focus rather than absent.
+     Exit animations intentionally omitted here (exits should be subtler).    */
+  @keyframes materialize {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+      filter: blur(0);
+    }
+  }
+
+  .animate-materialize {
+    animation: materialize 0.3s var(--ease-out-expo) both;
+  }
+
+  /* ─── Slide up — for hero / page-level headings ──────────────────────── */
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.5s var(--ease-out-expo) both;
+  }
+
+  /* ─── Legacy fade in/out (kept for existing usages) ─────────────────── */
   @keyframes fade-out {
-    from {
-      opacity: 1;
-      transform: scale(1);
-    }
-    to {
-      opacity: 0;
-      transform: scale(0.8);
-    }
+    from { opacity: 1; transform: scale(1); }
+    to   { opacity: 0; transform: scale(0.8); }
   }
-
   @keyframes fade-in {
-    from {
-      opacity: 0;
-      transform: scale(0.8);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
+    from { opacity: 0; transform: scale(0.9); }
+    to   { opacity: 1; transform: scale(1); }
   }
 
-  .animate-fade-out {
-    animation: fade-out 0.3s ease-out forwards;
-  }
+  .animate-fade-out { animation: fade-out 0.2s var(--ease-in-expo) forwards; }
+  .animate-fade-in  { animation: fade-in  0.2s var(--ease-out-expo) forwards; }
 
-  .animate-fade-in {
-    animation: fade-in 0.3s ease-out forwards;
-  }
-
+  /* ─── Drawer slide-in (mobile menu) ─────────────────────────────────── */
   @keyframes slide-in-right {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
+    from { transform: translateX(100%); }
+    to   { transform: translateX(0); }
   }
 
   .animate-slide-in-right {
-    animation: slide-in-right 0.3s ease-out;
+    animation: slide-in-right 0.25s var(--ease-out-expo);
+  }
+
+  /* ─── Backdrop fade ──────────────────────────────────────────────────── */
+  @keyframes fade-backdrop {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .animate-fade-backdrop {
+    animation: fade-backdrop 0.2s var(--ease-out-expo);
   }
 }
+

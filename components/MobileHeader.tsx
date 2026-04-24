@@ -95,14 +95,14 @@ export default function MobileHeader({
       {/* DRAWER MENU */}
       {isMenuOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop — fades in */}
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-50 md:hidden"
+            className="animate-fade-backdrop fixed inset-0 bg-black/50 z-50 md:hidden"
             onClick={() => setIsMenuOpen(false)}
           />
 
-          {/* Drawer */}
-          <div className="fixed top-0 right-0 bottom-0 w-56 bg-white z-50 shadow-xl md:hidden">
+          {/* Drawer — slides in from right with expo easing */}
+          <div className="animate-slide-in-right fixed top-0 right-0 bottom-0 w-56 bg-white z-50 shadow-xl md:hidden">
             <div className="px-3 py-2.5 border-b border-gray-200 flex items-center justify-between">
               <span className="text-xs font-bold text-ume-indigo">Menu</span>
               <button onClick={() => setIsMenuOpen(false)} aria-label="Close menu">

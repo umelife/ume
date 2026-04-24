@@ -1,22 +1,10 @@
-/**
- * Hero Component
- *
- * Split-layout hero section matching the UME design:
- * - Left side: Dark indigo background with headline and CTA
- * - Right side: Full-height image of students
- */
-
 import Link from 'next/link'
 import Image from 'next/image'
 
 interface HeroProps {
-  /** Background image URL for right side */
   backgroundImage?: string
-  /** Subtitle text */
   subtitle?: string
-  /** CTA button text */
   ctaText?: string
-  /** CTA button destination */
   ctaHref?: string
 }
 
@@ -27,68 +15,100 @@ export default function Hero({
   ctaHref = '/marketplace'
 }: HeroProps) {
   return (
-    <section className="relative w-full h-[calc(100vh-80px)] min-h-[500px] flex">
-      {/* Left Side - Dark Indigo Background with Text (transparent on mobile to show image) */}
-      <div className="w-full md:w-[40%] lg:w-[35%] bg-transparent md:bg-ume-indigo flex flex-col justify-center px-8 md:px-12 lg:px-16 py-12 relative z-10">
-        {/* Headline — staggered slide-up per line (Jakub Krehel / Emil Kowalski) */}
-        <h1 className="text-left mb-2">
-          <span
-            className="block text-white font-black text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight animate-slide-up"
-            style={{ animationDelay: '0ms' }}
+    <>
+      {/* ── Mobile Hero — stacked: photo top, indigo panel below ── */}
+      <section className="md:hidden">
+        <div className="relative w-full h-[240px]">
+          <Image
+            src={backgroundImage}
+            alt="Students collaborating"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={90}
+            sizes="100vw"
+          />
+        </div>
+
+        <div className="bg-ume-indigo px-6 pt-7 pb-8">
+          <h1 className="text-left mb-2">
+            <span
+              className="block text-white font-black text-4xl uppercase tracking-tight leading-tight animate-slide-up"
+              style={{ animationDelay: '0ms' }}
+            >
+              YOUR UNIVERSITY
+            </span>
+            <span
+              className="block text-ume-pink font-black text-4xl uppercase tracking-tight leading-tight animate-slide-up"
+              style={{ animationDelay: '80ms' }}
+            >
+              MARKETPLACE
+            </span>
+          </h1>
+
+          <p
+            className="text-white/80 text-sm mb-6 animate-slide-up"
+            style={{ animationDelay: '160ms' }}
           >
-            YOUR UNIVERSITY
-          </span>
-          <span
-            className="block text-ume-indigo md:text-ume-pink font-black text-4xl sm:text-5xl md:text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight animate-slide-up"
-            style={{ animationDelay: '80ms' }}
+            {subtitle}
+          </p>
+
+          <Link
+            href={ctaHref}
+            className="inline-block w-fit px-8 py-3 bg-ume-cream text-ume-indigo font-semibold text-sm rounded-full hover:bg-white active:scale-[0.97] transition-[colors,transform] duration-150 focus:outline-none focus:ring-4 focus:ring-white/30 shadow-lg animate-slide-up"
+            style={{ animationDelay: '240ms' }}
           >
-            MARKETPLACE
-          </span>
-        </h1>
+            {ctaText}
+          </Link>
+        </div>
+      </section>
 
-        {/* Subtitle */}
-        <p
-          className="text-white md:text-white/80 text-sm md:text-base font-bold md:font-light mb-8 drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] md:drop-shadow-none animate-slide-up"
-          style={{ animationDelay: '160ms' }}
-        >
-          {subtitle}
-        </p>
+      {/* ── Desktop Hero — split: indigo left, image right ── */}
+      <section className="hidden md:flex relative w-full h-[calc(100vh-80px)] min-h-[500px]">
+        <div className="md:w-[40%] lg:w-[35%] bg-ume-indigo flex flex-col justify-center px-12 lg:px-16 py-12 relative z-10">
+          <h1 className="text-left mb-2">
+            <span
+              className="block text-white font-black text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight animate-slide-up"
+              style={{ animationDelay: '0ms' }}
+            >
+              YOUR UNIVERSITY
+            </span>
+            <span
+              className="block text-ume-pink font-black text-4xl lg:text-5xl xl:text-6xl uppercase tracking-tight leading-tight animate-slide-up"
+              style={{ animationDelay: '80ms' }}
+            >
+              MARKETPLACE
+            </span>
+          </h1>
 
-        {/* CTA Button — press scale from Emil Kowalski, expo easing */}
-        <Link
-          href={ctaHref}
-          className="inline-block w-fit px-8 py-3 bg-ume-indigo md:bg-ume-cream text-white md:text-ume-indigo font-semibold text-sm rounded-full hover:bg-ume-indigo/90 md:hover:bg-white active:scale-[0.97] transition-[colors,transform] duration-150 focus:outline-none focus:ring-4 focus:ring-ume-indigo/30 md:focus:ring-white/30 shadow-lg animate-slide-up"
-          style={{ animationDelay: '240ms' }}
-        >
-          {ctaText}
-        </Link>
-      </div>
+          <p
+            className="text-white/80 text-base font-light mb-8 animate-slide-up"
+            style={{ animationDelay: '160ms' }}
+          >
+            {subtitle}
+          </p>
 
-      {/* Right Side - Image */}
-      <div className="hidden md:block md:w-[60%] lg:w-[65%] relative">
-        <Image
-          src={backgroundImage}
-          alt="Students collaborating"
-          fill
-          className="object-cover object-center"
-          priority
-          quality={90}
-          sizes="(min-width: 1024px) 65vw, 60vw"
-        />
-      </div>
+          <Link
+            href={ctaHref}
+            className="inline-block w-fit px-8 py-3 bg-ume-cream text-ume-indigo font-semibold text-sm rounded-full hover:bg-white active:scale-[0.97] transition-[colors,transform] duration-150 focus:outline-none focus:ring-4 focus:ring-white/30 shadow-lg animate-slide-up"
+            style={{ animationDelay: '240ms' }}
+          >
+            {ctaText}
+          </Link>
+        </div>
 
-      {/* Mobile: Background image fills entire panel */}
-      <div className="absolute inset-0 z-0 md:hidden">
-        <Image
-          src={backgroundImage}
-          alt="Students collaborating"
-          fill
-          className="object-cover object-center"
-          priority
-          quality={90}
-          sizes="100vw"
-        />
-      </div>
-    </section>
+        <div className="md:w-[60%] lg:w-[65%] relative">
+          <Image
+            src={backgroundImage}
+            alt="Students collaborating"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={90}
+            sizes="(min-width: 1024px) 65vw, 60vw"
+          />
+        </div>
+      </section>
+    </>
   )
 }

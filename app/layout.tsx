@@ -79,6 +79,42 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${workSans.variable} ${archivoBlack.variable}`}>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@graph": [
+              {
+                "@type": "Organization",
+                "@id": "https://umemarket.com/#organization",
+                "name": "UME",
+                "url": "https://umemarket.com",
+                "logo": "https://umemarket.com/icon.png",
+                "description": "UME is a university marketplace where college students buy and sell items safely within their campus community.",
+                "foundingDate": "2024",
+                "founders": [
+                  { "@type": "Person", "name": "Ruthiik Satti" },
+                  { "@type": "Person", "name": "Bryndis" }
+                ],
+                "sameAs": []
+              },
+              {
+                "@type": "WebSite",
+                "@id": "https://umemarket.com/#website",
+                "url": "https://umemarket.com",
+                "name": "UME — University Marketplace",
+                "publisher": { "@id": "https://umemarket.com/#organization" },
+                "potentialAction": {
+                  "@type": "SearchAction",
+                  "target": "https://umemarket.com/marketplace?q={search_term_string}",
+                  "query-input": "required name=search_term_string"
+                }
+              }
+            ]
+          })}}
+        />
+      </head>
       <body className={`${workSans.className} bg-ume-bg`} style={{ isolation: 'isolate', fontWeight: 300 }} suppressHydrationWarning>
         <MixpanelProvider />
         <HeaderWrapper />

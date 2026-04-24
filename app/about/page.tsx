@@ -2,13 +2,43 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 
 export const metadata: Metadata = {
-  title: 'About Us - UME',
-  description: 'Learn about UME - the student marketplace built for students, by students',
+  title: 'About Us',
+  description: 'UME is a university marketplace built by two college students — Ruthiik and Bryndis — to make campus life more affordable, sustainable, and connected.',
+}
+
+const aboutJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AboutPage",
+  "name": "About UME",
+  "url": "https://umemarket.com/about",
+  "description": "UME is a university marketplace built by students, for students.",
+  "publisher": {
+    "@type": "Organization",
+    "@id": "https://umemarket.com/#organization",
+  },
+  "mentions": [
+    {
+      "@type": "Person",
+      "name": "Ruthiik Satti",
+      "jobTitle": "Co-founder",
+      "worksFor": { "@id": "https://umemarket.com/#organization" },
+    },
+    {
+      "@type": "Person",
+      "name": "Bryndis",
+      "jobTitle": "Co-founder",
+      "worksFor": { "@id": "https://umemarket.com/#organization" },
+    },
+  ],
 }
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-ume-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(aboutJsonLd) }}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* What's UME? - Centered Section */}

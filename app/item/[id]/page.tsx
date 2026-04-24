@@ -94,8 +94,37 @@ export default async function ListingDetailPage({
   const sellerHandle = user?.username || user?.display_name || ''
   const avatarInitial = sellerHandle[0]?.toUpperCase() ?? '?'
 
+  const productJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": listing.title,
+    "description": listing.description ?? undefined,
+    "image": listing.image_urls?.[0] ?? undefined,
+    "url": `https://umemarket.com/item/${listing.id}`,
+    "offers": {
+      "@type": "Offer",
+      "price": listing.price ? (listing.price / 100).toFixed(2) : "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock",
+      "seller": {
+        "@type": "Person",
+        "name": user?.display_name ?? user?.username ?? "UME Seller",
+      },
+    },
+    "category": listing.category ?? undefined,
+    "condition": listing.condition === "Like New"
+      ? "https://schema.org/LikeNewCondition"
+      : listing.condition === "Used"
+      ? "https://schema.org/UsedCondition"
+      : "https://schema.org/NewCondition",
+  }
+
   return (
     <div className="min-h-screen bg-ume-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productJsonLd) }}
+      />
       <ViewListingTracker listingId={listing.id} title={listing.title} category={listing.category} />
 
       {/* ── Main content ── */}

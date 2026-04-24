@@ -41,14 +41,14 @@ export default function MobileHeader({
             </Link>
 
             {/* Icons */}
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-1">
               {/* Search */}
               <button
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
-                className="p-1"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
-                <svg className="w-4 h-4 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                   <circle cx="11" cy="11" r="8"/>
                   <path d="m21 21-4.35-4.35"/>
                 </svg>
@@ -58,13 +58,13 @@ export default function MobileHeader({
               <button
                 onClick={() => router.push('/cart')}
                 aria-label="Liked"
-                className="p-1 relative"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center relative"
               >
-                <svg className="w-4 h-4 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
                 {cartItemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-ume-pink text-white text-[9px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-1">
+                  <span className="absolute top-1 right-1 bg-ume-pink text-white text-[9px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-1">
                     {cartItemCount > 99 ? '99+' : cartItemCount}
                   </span>
                 )}
@@ -74,9 +74,9 @@ export default function MobileHeader({
               <button
                 onClick={() => setIsMenuOpen(true)}
                 aria-label="Menu"
-                className="p-1"
+                className="p-2.5 min-w-[44px] min-h-[44px] flex items-center justify-center"
               >
-                <svg className="w-4 h-4 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-ume-indigo" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                 </svg>
               </button>

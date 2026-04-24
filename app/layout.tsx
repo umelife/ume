@@ -80,6 +80,10 @@ export const metadata: Metadata = {
       'Buy and sell textbooks, dorm items, tech, clothing, and more with verified students on your campus.',
     images: ['/placeholders/hero-main.png'],
   },
+  icons: {
+    apple: '/placeholders/hero-main.png',
+    icon: '/placeholders/hero-main.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
@@ -90,6 +94,10 @@ export const metadata: Metadata = {
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
+  minimumScale: 1,
+  // Prevents iOS from auto-zooming into inputs (font-size < 16px triggers it)
+  maximumScale: 5,
+  themeColor: '#1e1b4b',
 };
 
 export default function RootLayout({

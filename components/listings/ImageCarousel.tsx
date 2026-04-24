@@ -47,6 +47,8 @@ export default function ImageCarousel({ images, title }: ImageCarouselProps) {
           src={images[currentIndex]}
           alt={`${title} - Image ${currentIndex + 1}`}
           fill
+          sizes="(max-width: 768px) 100vw, 50vw"
+          priority={currentIndex === 0}
           className="object-cover"
         />
 
@@ -122,6 +124,7 @@ export default function ImageCarousel({ images, title }: ImageCarouselProps) {
                 src={url}
                 alt={`Thumbnail ${i + 1}`}
                 fill
+                sizes="80px"
                 className="object-cover"
               />
             </button>

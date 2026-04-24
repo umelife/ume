@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import type { Listing } from '@/types/database'
 import { formatPrice } from '@/lib/utils/helpers'
 import useCart from '@/hooks/useCart'
@@ -22,6 +23,13 @@ import DeleteListingButton from '@/components/listings/DeleteListingButton'
  * - Optional distance display for radius-filtered listings
  */
 
+// Sizes for a 2-col → 3-col → 4-col responsive grid with gap-6.
+// Tells Next.js exactly how wide each card will render so it generates
+// a perfectly-sized optimized image instead of guessing (which defaults
+// to 100vw and downloads a needlessly large source file).
+const CARD_SIZES =
+  '(max-width: 768px) calc(50vw - 16px), (max-width: 1024px) calc(33vw - 16px), calc(25vw - 16px)'
+
 interface ProductGridProps {
   listings: Listing[]
 }
@@ -30,15 +38,14 @@ export default function ProductGrid({ listings }: ProductGridProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {listings.map((listing, index) => (
-        <ProductCard key={listing.id} listing={listing} index={index} />
+        // Pass index so the first 4 cards get `priority` (above-the-fold LCP images)
+        <ProductCard key={listing.id} listing={listing} cardIndex={index} />
       ))}
     </div>
   )
 }
 
-function ProductCard({ listing, index = 0 }: { listing: Listing; index?: number }) {
-  // Cap stagger at 6 cards (300ms) so late cards don't wait too long — Emil Kowalski
-  const staggerDelay = Math.min(index * 50, 300)
+function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: number }) {
   const images = listing.image_urls?.length ? listing.image_urls : ['/placeholder-image.jpg']
   const { isInCart, addToCart, removeFromCart, loadingIds } = useCart()
   const inCart = isInCart(listing.id)
@@ -92,10 +99,7 @@ function ProductCard({ listing, index = 0 }: { listing: Listing; index?: number 
   }
 
   return (
-    <div
-      className="animate-materialize relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
-      style={{ animationDelay: `${staggerDelay}ms` }}
-    >
+    <div className="relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
       {/* Toast notifications */}
       {(quickMsgSent || heartToast) && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap pointer-events-none">
@@ -111,16 +115,17 @@ function ProductCard({ listing, index = 0 }: { listing: Listing; index?: number 
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            {/* All images rendered for instant switching — only current is visible */}
-            {images.map((src, i) => (
-              <img
-                key={i}
-                src={src}
-                alt={listing.title}
-                className={`absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200 ${i === imgIndex ? 'opacity-100' : 'opacity-0'}`}
-                loading="lazy"
-              />
-            ))}
+            {/* Only the active image is rendered — no hidden images wasting bandwidth.
+                The first 4 cards are above-the-fold on desktop and get `priority`
+                so the browser prefetches them immediately for best LCP. */}
+            <Image
+              src={images[imgIndex]}
+              alt={listing.title}
+              fill
+              sizes={CARD_SIZES}
+              priority={cardIndex < 4}
+              className="object-cover group-hover:scale-105 transition-transform duration-200"
+            />
 
             {/* Heart icon — save to liked (top-right) */}
             {!isOwnListing && (
@@ -137,7 +142,7 @@ function ProductCard({ listing, index = 0 }: { listing: Listing; index?: number 
                   setTimeout(() => setHeartToast(null), 3000)
                 }}
                 disabled={loading}
-                className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:bg-white active:scale-90 transition-[colors,transform] duration-150"
+                className="absolute top-2 right-2 z-20 w-8 h-8 flex items-center justify-center bg-white/80 rounded-full shadow-sm hover:bg-white transition-colors"
                 aria-label={inCart ? 'Remove from liked' : 'Save to liked'}
               >
                 <svg
@@ -255,7 +260,7 @@ function ProductCard({ listing, index = 0 }: { listing: Listing; index?: number 
           <button
             onClick={handleQuickMessage}
             disabled={quickMsgLoading}
-            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-[colors,transform] duration-150 active:scale-[0.97] ${
+            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-colors ${
               quickMsgSent
                 ? 'bg-green-600 text-white cursor-default'
                 : 'bg-ume-indigo text-white hover:bg-indigo-800'

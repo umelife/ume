@@ -4,8 +4,9 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
-import { getNearestSafePoint } from '@/lib/haversine'
-import { SAFE_POINTS } from '@/data/safe-points'
+import { getNearestSafePoint, haversineDistance } from '@/lib/haversine'
+import { SAFE_POINTS, getSafePointsForCampus, GEOFENCE_RADIUS_METERS } from '@/data/safe-points'
+import { useMessages } from '@/lib/hooks/useMessages'
 import StepBar from '@/components/safe-handshake/StepBar'
 import QRDisplay from '@/components/safe-handshake/QRDisplay'
 import QRScanner from '@/components/safe-handshake/QRScanner'
@@ -72,11 +73,33 @@ export default function SafeHandshakeClient({
   const [actionError, setActionError] = useState<string | null>(null)
   const [countdown, setCountdown] = useState<number>(0)
   const [deleteLoading, setDeleteLoading] = useState(false)
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [cancelLoading, setCancelLoading] = useState(false)
+  const [showInstructions, setShowInstructions] = useState(true)
+  const [showChat, setShowChat] = useState(false)
+  const [chatText, setChatText] = useState('')
+  const [chatUnread, setChatUnread] = useState(0)
   const watchIdRef = useRef<number | null>(null)
+  const chatContainerRef = useRef<HTMLDivElement | null>(null)
+  const prevChatCountRef = useRef(0)
 
   const isSeller = currentUserId === handshake.seller_id
   const isBuyer = currentUserId === handshake.buyer_id
   const partnerName = isSeller ? buyerName : sellerName
+
+  // Reuse the existing conversation thread for in-session chat
+  const otherUserId = isSeller ? handshake.buyer_id : handshake.seller_id
+  const {
+    messages: chatMessages,
+    sending: chatSending,
+    sendMessage: sendChatMessage,
+  } = useMessages(handshake.listing_id, otherUserId, { autoMarkRead: false, autoScroll: false })
+
+  // Derive campus-specific safe points from the agreed location's campusId.
+  // Falls back to all safe points if no location has been agreed yet.
+  const campusSafePoints = getSafePointsForCampus(
+    SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.campusId
+  )
 
   // Countdown timer
   useEffect(() => {
@@ -134,7 +157,10 @@ export default function SafeHandshakeClient({
     return () => clearInterval(interval)
   }, [supabase, handshake.id, handshake.status])
 
-  // GPS watch — starts when user taps "Heading to Safe-Point"
+  // Derive whether this session uses a custom location
+  const isCustomLocation = !handshake.safe_point_id && !!(handshake.custom_lat && handshake.custom_lng)
+
+  // GPS watch — starts when user taps "Heading to Safe-Point / Meetup Spot"
   const startGPS = useCallback(() => {
     if (!navigator.geolocation) {
       setGpsError('GPS is not available on this device')
@@ -147,16 +173,28 @@ export default function SafeHandshakeClient({
         setUserLat(latitude)
         setUserLon(longitude)
 
-        // Check if within a safe point
-        const nearest = getNearestSafePoint(latitude, longitude)
-        if (nearest && !hasArrived) {
-          setHasArrived(true)
-          // Notify the server
-          fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ safePointId: nearest.point.id }),
-          }).catch(console.error)
+        if (isCustomLocation && handshake.custom_lat && handshake.custom_lng) {
+          // Custom location: check distance to the stored custom coords
+          const dist = haversineDistance(latitude, longitude, handshake.custom_lat, handshake.custom_lng)
+          if (dist <= GEOFENCE_RADIUS_METERS && !hasArrived) {
+            setHasArrived(true)
+            fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ customArrival: true }),
+            }).catch(console.error)
+          }
+        } else {
+          // Predefined safe point: check campus safe points
+          const nearest = getNearestSafePoint(latitude, longitude, campusSafePoints)
+          if (nearest && !hasArrived) {
+            setHasArrived(true)
+            fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ safePointId: nearest.point.id }),
+            }).catch(console.error)
+          }
         }
       },
       (err) => {
@@ -169,7 +207,7 @@ export default function SafeHandshakeClient({
       },
       { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
     )
-  }, [handshake.id, hasArrived])
+  }, [handshake.id, handshake.custom_lat, handshake.custom_lng, hasArrived, isCustomLocation])
 
   useEffect(() => {
     return () => {
@@ -178,6 +216,24 @@ export default function SafeHandshakeClient({
       }
     }
   }, [])
+
+  // Track unread messages and auto-scroll when chat is open
+  useEffect(() => {
+    const count = chatMessages.length
+    if (showChat) {
+      setChatUnread(0)
+      prevChatCountRef.current = count
+      // Scroll to bottom
+      setTimeout(() => {
+        if (chatContainerRef.current) {
+          chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+        }
+      }, 50)
+    } else if (count > prevChatCountRef.current) {
+      setChatUnread((u) => u + (count - prevChatCountRef.current))
+      prevChatCountRef.current = count
+    }
+  }, [chatMessages.length, showChat])
 
   async function handleHeadingToSafePoint() {
     setIsHeading(true)
@@ -194,6 +250,25 @@ export default function SafeHandshakeClient({
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ safePointId }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setHasArrived(true)
+    } catch (err: unknown) {
+      setActionError(err instanceof Error ? err.message : 'Failed to record arrival')
+    } finally {
+      setActionLoading(false)
+    }
+  }
+
+  async function simulateCustomArrival() {
+    setActionLoading(true)
+    setActionError(null)
+    try {
+      const res = await fetch(`/api/safe-handshake/${handshake.id}/arrive`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customArrival: true }),
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error)
@@ -247,6 +322,29 @@ export default function SafeHandshakeClient({
     await deleteListing(handshake.listing_id)
     // deleteListing redirects to /marketplace on success; only reaches here on error
     setDeleteLoading(false)
+  }
+
+  async function handleCancelSession() {
+    setCancelLoading(true)
+    try {
+      const res = await fetch(`/api/safe-handshake/${handshake.id}/cancel`, { method: 'POST' })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      // Realtime/polling will update handshake.status → 'cancelled'
+    } catch (err: unknown) {
+      setActionError(err instanceof Error ? err.message : 'Failed to cancel session')
+    } finally {
+      setCancelLoading(false)
+      setShowCancelConfirm(false)
+    }
+  }
+
+  async function handleChatSend(e: React.FormEvent) {
+    e.preventDefault()
+    if (!chatText.trim() || chatSending) return
+    const text = chatText
+    setChatText('')
+    await sendChatMessage(text)
   }
 
   // Determine the active safe point for the map
@@ -330,8 +428,9 @@ export default function SafeHandshakeClient({
   function getStatusMessage(): { you: string; partner: string } {
     const sellerArrived = !!handshake.seller_arrived_at
     const buyerArrived = !!handshake.buyer_arrived_at
-    const pointName =
-      SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.name ?? 'a Safe-Point'
+    const pointName = isCustomLocation
+      ? (handshake.custom_location_text ?? 'the meetup spot')
+      : (campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? 'a Safe-Point')
 
     if (handshake.status === 'initiated') {
       return {
@@ -379,7 +478,7 @@ export default function SafeHandshakeClient({
   const canScanQR = isBuyer && handshake.status === 'qr_generated'
 
   return (
-    <div className="min-h-screen bg-ume-cream">
+    <div className="min-h-screen bg-ume-cream pb-16">
       {/* Header */}
       <div className="bg-ume-indigo text-white px-4 py-4 flex items-center gap-3">
         <Link href="/messages" className="p-1.5 hover:bg-white/10 rounded-full transition-colors">
@@ -405,12 +504,81 @@ export default function SafeHandshakeClient({
 
       <div className="max-w-lg mx-auto px-4 py-4 space-y-4">
 
+        {/* Agreed meeting spot badge */}
+        {(handshake.safe_point_id || isCustomLocation) && (
+          <div className={`border rounded-2xl px-4 py-3 flex items-center gap-3 ${isCustomLocation ? 'bg-amber-50 border-amber-200' : 'bg-indigo-50 border-indigo-200'}`}>
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${isCustomLocation ? 'bg-amber-100' : 'bg-ume-indigo/10'}`}>
+              <svg className={`w-4 h-4 ${isCustomLocation ? 'text-amber-600' : 'text-ume-indigo'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <p className={`text-[11px] font-medium uppercase tracking-wide ${isCustomLocation ? 'text-amber-600' : 'text-indigo-500'}`}>
+                {isCustomLocation ? 'Custom meeting spot' : 'Agreed meeting spot'}
+              </p>
+              <p className={`text-sm font-bold ${isCustomLocation ? 'text-amber-800' : 'text-ume-indigo'}`}>
+                {isCustomLocation
+                  ? handshake.custom_location_text
+                  : (campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name ?? handshake.safe_point_id)}
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* Safety warning for custom locations */}
+        {isCustomLocation && (
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 flex items-start gap-3">
+            <svg className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+            <p className="text-xs text-amber-700 leading-snug">
+              <strong>Custom location</strong> — this is not a verified campus Safe-Point. Meet in a public, well-lit area and stay alert.
+            </p>
+          </div>
+        )}
+
+        {/* How it works — collapsible instructions */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+          <button
+            onClick={() => setShowInstructions(!showInstructions)}
+            className="w-full px-4 py-3 flex items-center justify-between"
+          >
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">How it works</h3>
+            <svg
+              className={`w-4 h-4 text-gray-400 transition-transform ${showInstructions ? 'rotate-180' : ''}`}
+              fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          {showInstructions && (
+            <div className="px-4 pb-4 space-y-3">
+              {[
+                { n: '1', text: 'Both of you head to the agreed Safe-Point on campus.' },
+                { n: '2', text: 'Tap "I\'m heading to a Safe-Point" — GPS will detect when you arrive.' },
+                { n: '3', text: 'No GPS? Use the manual picker below to select the location.' },
+                { n: '4', text: 'Once both have arrived, the seller taps "Generate QR Code".' },
+                { n: '5', text: 'The buyer scans the QR (or enters the code manually) to complete the exchange.' },
+              ].map((step) => (
+                <div key={step.n} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-ume-indigo text-white text-[10px] font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                    {step.n}
+                  </div>
+                  <p className="text-sm text-gray-600 leading-relaxed">{step.text}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* Map */}
         <SafeHandshakeMap
           userLat={userLat}
           userLon={userLon}
           activeSafePointId={myActiveSafePointId}
           partnerSafePointId={partnerActiveSafePointId}
+          safePoints={campusSafePoints}
         />
 
         {/* GPS error */}
@@ -449,7 +617,7 @@ export default function SafeHandshakeClient({
           </div>
         )}
 
-        {/* Step 1 → 2: Heading to Safe-Point (show whenever THIS user hasn't arrived yet) */}
+        {/* Step 1 → 2: Heading to Safe-Point / Custom Spot (show whenever THIS user hasn't arrived yet) */}
         {!hasArrived && !['both_arrived', 'qr_generated', 'completed', 'cancelled'].includes(handshake.status) && (
           <div className="space-y-3">
             <button
@@ -460,10 +628,10 @@ export default function SafeHandshakeClient({
               {isHeading ? (
                 <span className="flex items-center justify-center gap-2">
                   <span className="w-4 h-4 border-2 border-white/40 border-t-white rounded-full animate-spin" />
-                  GPS Active — Detecting Safe-Point...
+                  GPS Active — Detecting arrival...
                 </span>
               ) : (
-                'I am heading to a Safe-Point'
+                isCustomLocation ? 'I am heading to the meetup spot' : 'I am heading to a Safe-Point'
               )}
             </button>
 
@@ -471,24 +639,43 @@ export default function SafeHandshakeClient({
             {isHeading && (
               <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
                 <p className="text-xs font-semibold text-gray-500 mb-2">
-                  {gpsError ? 'GPS unavailable — select your Safe-Point manually:' : 'No GPS signal yet — or select manually:'}
+                  {gpsError ? 'GPS unavailable — confirm your arrival manually:' : 'No GPS signal yet — or confirm manually:'}
                 </p>
-                <div className="flex flex-col gap-2">
-                  {SAFE_POINTS.map((point) => (
-                    <button
-                      key={point.id}
-                      onClick={() => simulateArrival(point.id)}
-                      disabled={actionLoading}
-                      className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-ume-indigo hover:bg-indigo-50 transition-colors disabled:opacity-50 flex items-center gap-3"
-                    >
-                      <div className="w-3 h-3 rounded-full bg-green-400 flex-shrink-0" />
-                      <div>
-                        <p className="text-sm font-semibold text-gray-800">{point.name}</p>
-                        <p className="text-xs text-gray-400">{point.description}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                {isCustomLocation ? (
+                  // Custom location: single "I'm here" button
+                  <button
+                    onClick={simulateCustomArrival}
+                    disabled={actionLoading}
+                    className="w-full text-left px-4 py-3 rounded-xl border border-amber-200 hover:border-amber-400 hover:bg-amber-50 transition-colors disabled:opacity-50 flex items-center gap-3"
+                  >
+                    <div className="w-3 h-3 rounded-full bg-amber-400 flex-shrink-0" />
+                    <div>
+                      <p className="text-sm font-semibold text-gray-800">{handshake.custom_location_text}</p>
+                      <p className="text-xs text-gray-400">Custom meeting spot</p>
+                    </div>
+                  </button>
+                ) : (
+                  // Predefined safe points
+                  <div className="flex flex-col gap-2">
+                    {(handshake.safe_point_id
+                      ? campusSafePoints.filter((p) => p.id === handshake.safe_point_id)
+                      : campusSafePoints
+                    ).map((point) => (
+                      <button
+                        key={point.id}
+                        onClick={() => simulateArrival(point.id)}
+                        disabled={actionLoading}
+                        className="w-full text-left px-4 py-3 rounded-xl border border-gray-200 hover:border-ume-indigo hover:bg-indigo-50 transition-colors disabled:opacity-50 flex items-center gap-3"
+                      >
+                        <div className="w-3 h-3 rounded-full bg-green-400 flex-shrink-0" />
+                        <div>
+                          <p className="text-sm font-semibold text-gray-800">{point.name}</p>
+                          <p className="text-xs text-gray-400">{point.description}</p>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -500,10 +687,12 @@ export default function SafeHandshakeClient({
             <div className="w-8 h-8 border-2 border-yellow-400 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
             <p className="text-sm font-semibold text-yellow-800">Waiting for {partnerName}...</p>
             <p className="text-xs text-yellow-700 mt-1">
-              {(() => {
-                const name = SAFE_POINTS.find((p) => p.id === handshake.safe_point_id)?.name
-                return name ? `You are at ${name}.` : 'You are at a Safe-Point.'
-              })()}
+              {isCustomLocation
+                ? `You are at ${handshake.custom_location_text ?? 'the meetup spot'}.`
+                : (() => {
+                    const name = campusSafePoints.find((p) => p.id === handshake.safe_point_id)?.name
+                    return name ? `You are at ${name}.` : 'You are at a Safe-Point.'
+                  })()}
             </p>
           </div>
         )}
@@ -541,38 +730,169 @@ export default function SafeHandshakeClient({
           <QRScanner onScan={handleScanQR} disabled={actionLoading} />
         )}
 
-        {/* Safe-Points legend */}
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
-          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
-            Campus Safe-Points
-          </h3>
-          <div className="space-y-2">
-            {SAFE_POINTS.map((point) => {
-              const isActive = point.id === handshake.safe_point_id
-              return (
-                <div key={point.id} className={`flex items-center gap-3 p-2 rounded-lg ${isActive ? 'bg-green-50' : ''}`}>
-                  <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-green-500' : 'bg-gray-200'}`} />
-                  <div>
-                    <p className="text-sm font-medium text-gray-800">{point.name}</p>
-                    <p className="text-xs text-gray-400">{point.description}</p>
+        {/* Safe-Points legend — only shown for predefined safe-point sessions */}
+        {!isCustomLocation && (
+          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">
+              Campus Safe-Points
+            </h3>
+            <div className="space-y-2">
+              {campusSafePoints.map((point) => {
+                const isActive = point.id === handshake.safe_point_id
+                return (
+                  <div key={point.id} className={`flex items-center gap-3 p-2 rounded-lg ${isActive ? 'bg-green-50' : ''}`}>
+                    <div className={`w-3 h-3 rounded-full flex-shrink-0 ${isActive ? 'bg-green-500' : 'bg-gray-200'}`} />
+                    <div>
+                      <p className="text-sm font-medium text-gray-800">{point.name}</p>
+                      <p className="text-xs text-gray-400">{point.description}</p>
+                    </div>
+                    {isActive && (
+                      <span className="ml-auto text-xs font-semibold text-green-600">Active</span>
+                    )}
                   </div>
-                  {isActive && (
-                    <span className="ml-auto text-xs font-semibold text-green-600">Active</span>
-                  )}
-                </div>
-              )
-            })}
+                )
+              })}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Safety note */}
-        <div className="text-center pb-6">
-          <p className="text-xs text-gray-400">
-            Safe-Points are located at campus Blue Light emergency stations.
-            <br />If you feel unsafe, press the Blue Light button for immediate help.
-          </p>
+        <div className="text-center">
+          {isCustomLocation ? (
+            <p className="text-xs text-amber-600">
+              You&apos;re meeting at a custom location. Stay alert and choose a public, well-lit area.
+              <br />Campus Blue Light stations are always a safer alternative.
+            </p>
+          ) : (
+            <p className="text-xs text-gray-400">
+              Safe-Points are located at campus Blue Light emergency stations.
+              <br />If you feel unsafe, press the Blue Light button for immediate help.
+            </p>
+          )}
+        </div>
+
+        {/* Cancel session */}
+        <div className="pb-6">
+          <button
+            onClick={() => setShowCancelConfirm(true)}
+            className="w-full py-3 border border-red-200 text-red-400 rounded-2xl text-sm font-semibold hover:bg-red-50 hover:text-red-500 transition-colors"
+          >
+            Cancel Session
+          </button>
         </div>
       </div>
+
+      {/* ── Fixed chat panel ──────────────────────────────────────────────── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 max-w-lg mx-auto">
+        {/* Collapsed bar / header */}
+        <button
+          onClick={() => setShowChat(!showChat)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-pink-500 text-white shadow-lg rounded-t-2xl"
+        >
+          <div className="flex items-center gap-2">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span className="text-sm font-semibold">Chat with {partnerName}</span>
+            {!showChat && chatUnread > 0 && (
+              <span className="bg-red-500 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                {chatUnread > 9 ? '9+' : chatUnread}
+              </span>
+            )}
+          </div>
+          <svg
+            className={`w-4 h-4 transition-transform ${showChat ? 'rotate-180' : ''}`}
+            fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+
+        {/* Expanded chat body */}
+        {showChat && (
+          <div className="bg-white shadow-xl border-t border-gray-100">
+            {/* Messages */}
+            <div
+              ref={chatContainerRef}
+              className="px-4 py-3 space-y-2 overflow-y-auto"
+              style={{ maxHeight: '240px' }}
+            >
+              {chatMessages.length === 0 ? (
+                <p className="text-center text-gray-400 text-xs py-4">No messages yet — say something!</p>
+              ) : (
+                chatMessages.map((msg) => {
+                  const isOwn = msg.sender_id === currentUserId
+                  return (
+                    <div key={msg.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
+                      <div
+                        className={`px-3 py-2 rounded-2xl text-sm leading-relaxed max-w-[75%] break-words ${
+                          isOwn
+                            ? 'bg-ume-indigo text-white rounded-br-sm'
+                            : 'bg-gray-100 text-gray-800 rounded-bl-sm'
+                        }`}
+                      >
+                        {msg.body}
+                      </div>
+                    </div>
+                  )
+                })
+              )}
+            </div>
+
+            {/* Input */}
+            <form onSubmit={handleChatSend} className="border-t border-gray-100 px-3 py-2.5 flex items-center gap-2">
+              <input
+                type="text"
+                value={chatText}
+                onChange={(e) => setChatText(e.target.value)}
+                placeholder={`Message ${partnerName}...`}
+                className="flex-1 px-4 py-2 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-ume-indigo/30 text-black placeholder-gray-400"
+              />
+              <button
+                type="submit"
+                disabled={!chatText.trim() || chatSending}
+                className={`p-2 rounded-full flex-shrink-0 transition-colors ${
+                  chatText.trim() && !chatSending
+                    ? 'text-ume-indigo hover:bg-indigo-50'
+                    : 'text-gray-300 cursor-not-allowed'
+                }`}
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+
+      {/* Cancel confirmation overlay */}
+      {showCancelConfirm && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40">
+          <div className="bg-white w-full sm:max-w-sm rounded-t-2xl sm:rounded-2xl p-6 shadow-xl">
+            <h2 className="text-base font-bold text-gray-900 mb-2">Cancel this session?</h2>
+            <p className="text-sm text-gray-500 mb-6">
+              This will cancel the Safe-Handshake and release the listing back to the marketplace. You can start a new session from the messages thread.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowCancelConfirm(false)}
+                disabled={cancelLoading}
+                className="flex-1 py-3 border border-gray-200 text-gray-600 rounded-full text-sm font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
+              >
+                Keep going
+              </button>
+              <button
+                onClick={handleCancelSession}
+                disabled={cancelLoading}
+                className="flex-1 py-3 bg-red-500 text-white rounded-full text-sm font-semibold hover:bg-red-600 transition-colors disabled:opacity-60"
+              >
+                {cancelLoading ? 'Cancelling...' : 'Yes, cancel'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

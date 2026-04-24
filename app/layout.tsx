@@ -5,15 +5,18 @@ import "./globals.css";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
+import StripeSetupBanner from "@/components/StripeSetupBanner";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
 import MobileFooter from "@/components/MobileFooter";
-import PushNotificationWrapper from "@/components/push/PushNotificationWrapper";
+import PushNotificationWrapper from "@/components/push/PushNotificationWrapper"
+import InstallPrompt from "@/components/ui/InstallPrompt";
 import WhatsNewModal from "@/components/WhatsNewModal";
+import MobileTabBar from "@/components/MobileTabBar";
 
 // Load Google Fonts using next/font (prevents CORB issues)
 // Using Work Sans as a free alternative to BR Shape (geometric sans-serif)
 const workSans = Work_Sans({
-  weight: ['300', '400', '700'],
+  weight: ['300', '400', '600', '700'],
   subsets: ['latin'],
   variable: '--font-work-sans',
   display: 'swap',
@@ -81,13 +84,18 @@ export const metadata: Metadata = {
     images: ['/placeholders/hero-main.png'],
   },
   icons: {
-    apple: '/placeholders/hero-main.png',
-    icon: '/placeholders/hero-main.png',
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/icon.png', type: 'image/png' },
+    ],
+    shortcut: '/icon.svg',
+    apple: '/icon.png',
   },
   appleWebApp: {
     capable: true,
     statusBarStyle: 'default',
     title: 'UME',
+    startupImage: '/icon.png',
   },
 };
 
@@ -138,11 +146,16 @@ export default function RootLayout({
         <MixpanelProvider />
         <HeaderWrapper />
         <MobileHeaderWrapper />
+        <StripeSetupBanner />
         {children}
         <SimpleFooter />
         <MobileFooter />
         <PushNotificationWrapper />
+        <InstallPrompt />
         <WhatsNewModal />
+        {/* Spacer so floating tab bar doesn't overlap footer content */}
+        <div className="h-20" aria-hidden="true" />
+        <MobileTabBar />
       </body>
     </html>
   );

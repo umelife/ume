@@ -5,7 +5,7 @@
 import { useEffect, useRef } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
-import { SAFE_POINTS, GEOFENCE_RADIUS_METERS } from '@/data/safe-points'
+import { SAFE_POINTS, GEOFENCE_RADIUS_METERS, type SafePoint } from '@/data/safe-points'
 
 // Fix Leaflet's broken default marker icons in webpack/Next.js environments
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)._getIconUrl
@@ -20,6 +20,8 @@ interface Props {
   userLon: number | null
   activeSafePointId: string | null  // which safe point is "glowing" (user is inside)
   partnerSafePointId?: string | null // partner's safe point (for display)
+  /** Campus-filtered safe points. Defaults to all safe points. */
+  safePoints?: SafePoint[]
 }
 
 export default function SafeHandshakeMap({
@@ -27,6 +29,7 @@ export default function SafeHandshakeMap({
   userLon,
   activeSafePointId,
   partnerSafePointId,
+  safePoints = SAFE_POINTS,
 }: Props) {
   const mapRef = useRef<L.Map | null>(null)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -37,11 +40,14 @@ export default function SafeHandshakeMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
 
+    // Centre the map on the first safe point (campus centre approximation)
+    const centre = safePoints[0] ?? { lat: 36.7435, lng: -84.1570 }
+
     const map = L.map(containerRef.current, {
       zoomControl: true,
       attributionControl: false,
       scrollWheelZoom: false,
-    }).setView([36.7435, -84.1570], 17)
+    }).setView([centre.lat, centre.lng], 17)
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap contributors',
@@ -49,7 +55,7 @@ export default function SafeHandshakeMap({
     }).addTo(map)
 
     // Draw safe-point circles
-    SAFE_POINTS.forEach((point) => {
+    safePoints.forEach((point) => {
       const circle = L.circle([point.lat, point.lng], {
         radius: GEOFENCE_RADIUS_METERS,
         color: '#22c55e',
@@ -86,11 +92,12 @@ export default function SafeHandshakeMap({
       map.remove()
       mapRef.current = null
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Update safe-point circle styles when active point changes
   useEffect(() => {
-    SAFE_POINTS.forEach((point) => {
+    safePoints.forEach((point) => {
       const circle = circlesRef.current[point.id]
       if (!circle) return
 
@@ -108,7 +115,7 @@ export default function SafeHandshakeMap({
         circle.setStyle({ color: '#22c55e', weight: 2, fillOpacity: 0.15 })
       }
     })
-  }, [activeSafePointId, partnerSafePointId])
+  }, [activeSafePointId, partnerSafePointId, safePoints])
 
   // Update "You are here" dot
   useEffect(() => {

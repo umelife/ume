@@ -102,7 +102,7 @@ export async function getAllConversations() {
   const userIds = new Set<string>()
   const listingIds = new Set<string>()
 
-  messages.forEach((message: any) => {
+  messages.forEach((message: { sender_id: string; receiver_id: string; listing_id: string }) => {
     userIds.add(message.sender_id)
     userIds.add(message.receiver_id)
     listingIds.add(message.listing_id)
@@ -130,7 +130,9 @@ export async function getAllConversations() {
     const otherUserId = message.sender_id === user.id ? message.receiver_id : message.sender_id
     const otherUser = usersMap.get(otherUserId)
     const listing = listingsMap.get(message.listing_id)
-    const key = `${message.listing_id}-${otherUserId}`
+    // Use listing_id + both participant IDs (sorted) to uniquely identify a conversation
+    const participants = [user.id, otherUserId].sort().join('-')
+    const key = `${message.listing_id}-${participants}`
 
     if (!conversationsMap.has(key)) {
       conversationsMap.set(key, {

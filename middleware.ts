@@ -5,7 +5,7 @@ import { createServerClient } from '@supabase/ssr'
 export async function middleware(request: NextRequest) {
   // Public routes that don't need session updates or auth checks
   // Note: /reset-password needs session updates to verify the reset token
-  const publicPaths = ['/forgot-password', '/login', '/signup', '/verify-student']
+  const publicPaths = ['/forgot-password', '/login', '/signup', '/verify-student', '/reauth']
   const isPublicPath = publicPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
@@ -60,6 +60,19 @@ export async function middleware(request: NextRequest) {
     // only explicitly false triggers the redirect.
     if (user.user_metadata?.student_verified === false) {
       return NextResponse.redirect(new URL('/verify-student', request.url))
+    }
+
+    // Annual reauthentication check — only if timestamp is set (won't affect
+    // legacy accounts until they next log in and receive the stamp).
+    const lastReauth = user.user_metadata?.last_reauthenticated_at
+    if (lastReauth && !request.nextUrl.pathname.startsWith('/reauth')) {
+      const ONE_YEAR_MS = 365 * 24 * 60 * 60 * 1000
+      const age = Date.now() - new Date(lastReauth).getTime()
+      if (age > ONE_YEAR_MS) {
+        const url = new URL('/reauth', request.url)
+        url.searchParams.set('next', request.nextUrl.pathname)
+        return NextResponse.redirect(url)
+      }
     }
 
     // Update user activity (fire and forget - don't block the request)

@@ -40,6 +40,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
                 src={imageUrl}
                 alt={listing.title}
                 fill
+                sizes="(max-width: 768px) calc(50vw - 16px), (max-width: 1024px) calc(33vw - 16px), calc(25vw - 16px)"
                 className="object-cover"
               />
             ) : (

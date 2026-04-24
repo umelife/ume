@@ -1,175 +1,204 @@
 /**
- * Stripe Checkout Session API Route
+ * Stripe Checkout Session Route
  *
- * TEMPORARILY DISABLED - Stripe integration on hold until business registration
+ * Creates a Stripe hosted checkout session for a buyer to purchase a listing.
+ * Supports both in-person (Stripe escrow) and shipping fulfillment types.
  *
- * TODO: Enable after LLC setup and Stripe account activation
+ * Flow:
+ *   1. POST with { listingId, fulfillmentType, shippingAddress?, easypostRateId?, shippingCostCents? }
+ *   2. Server validates listing, seller Stripe account, and buyer auth
+ *   3. Creates pending order in database
+ *   4. Creates Stripe Checkout Session with destination charge (0% platform fee)
+ *   5. Returns { url } — frontend redirects buyer to Stripe hosted checkout
+ *   6. After payment, Stripe webhook updates order to 'paid'
  *
- * Original Flow (when re-enabled):
- * 1. Buyer clicks "Buy Now" on a listing
- * 2. Frontend calls this endpoint with listingId
- * 3. Server creates Stripe Checkout Session
- * 4. Server creates pending order in database
- * 5. Returns checkout URL to redirect buyer
- * 6. Buyer completes payment on Stripe
- * 7. Webhook updates order status to 'paid'
+ * Commission: 0% — no application fee collected (add fee here when commission is introduced)
+ * Payout: Funds transfer directly to seller's Stripe Express account via destination charge
  */
 
 import { NextRequest, NextResponse } from 'next/server'
-// import Stripe from 'stripe' // DISABLED - Uncomment when ready
-// import { createClient } from '@/lib/supabase/server' // DISABLED
+import { stripeClient } from '@/lib/stripe/client'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 
 export const runtime = 'nodejs'
 
-// DISABLED - Stripe initialization
-// const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-//   apiVersion: '2025-10-29.clover'
-// })
-
-// Platform fee percentage (e.g., 10% = 0.10)
-// const PLATFORM_FEE_PERCENTAGE = 0.10
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
 export async function POST(request: NextRequest) {
-  // DISABLED - Payments not available
-  return NextResponse.json(
-    {
-      error: 'Payments are currently disabled',
-      message: 'Payment processing is not yet available. We are finalizing business registration and payment setup. Please check back soon!'
-    },
-    { status: 503 } // Service Unavailable
-  )
-
-  /* DISABLED - Original payment flow
   try {
-    // Check if payments are enabled
-    const paymentsEnabled = process.env.FEATURE_PAYMENTS_ENABLED === 'true'
-    if (!paymentsEnabled) {
-      return NextResponse.json(
-        {
-          error: 'Payments are currently disabled',
-          message: 'Payment processing is not yet available. Please check back later or contact support.'
-        },
-        { status: 503 } // Service Unavailable
-      )
-    }
-
+    // 1. Parse the request body
     const body = await request.json()
-    const { listingId } = body
+    const {
+      listingId,
+      fulfillmentType = 'in_person',
+      shippingAddress,
+      easypostRateId,
+      easypostShipmentId,
+      shippingCostCents = 0,
+    } = body
 
     if (!listingId) {
-      return NextResponse.json(
-        { error: 'Missing listingId' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Missing listingId' }, { status: 400 })
     }
 
-    // Get authenticated user (buyer)
+    // 2. Authenticate the buyer
     const supabase = await createClient()
     const { data: { user }, error: authError } = await supabase.auth.getUser()
 
     if (authError || !user) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const buyerId = user.id
+    const db = await createServiceClient()
 
-    // Fetch listing details
-    const { data: listing, error: listingError } = await supabase
+    // 3. Fetch the listing and seller details
+    const { data: listing, error: listingError } = await db
       .from('listings')
-      .select('*, user:users(*)')
+      .select('*, seller:users!listings_user_id_fkey(id, display_name, email, stripe_account_id, stripe_onboarding_completed)')
       .eq('id', listingId)
       .single()
 
     if (listingError || !listing) {
-      return NextResponse.json(
-        { error: 'Listing not found' },
-        { status: 404 }
-      )
+      return NextResponse.json({ error: 'Listing not found' }, { status: 404 })
     }
 
-    // Prevent buying your own listing
-    if (listing.user_id === buyerId) {
+    // 4. Prevent buying your own listing
+    if (listing.user_id === user.id) {
+      return NextResponse.json({ error: 'Cannot purchase your own listing' }, { status: 400 })
+    }
+
+    // 5. Prevent buying already-sold listings
+    if (listing.status === 'sold' || listing.status === 'reserved') {
+      return NextResponse.json({ error: 'This listing is no longer available' }, { status: 400 })
+    }
+
+    const seller = listing.seller as any
+
+    // 6. Verify seller has completed Stripe Express onboarding
+    //    Required to transfer funds to the seller after payment
+    if (!seller?.stripe_account_id || !seller?.stripe_onboarding_completed) {
       return NextResponse.json(
-        { error: 'Cannot purchase your own listing' },
+        { error: 'Seller has not set up Stripe payments yet' },
         { status: 400 }
       )
     }
 
-    // Calculate amounts (price is already in cents in database)
-    const amountCents = listing.price // Price is stored in cents
-    const platformFeeCents = Math.round(amountCents * PLATFORM_FEE_PERCENTAGE)
-    const sellerAmountCents = amountCents - platformFeeCents
+    // 7. If shipping, require a shipping address
+    if (fulfillmentType === 'shipping' && !shippingAddress) {
+      return NextResponse.json({ error: 'Shipping address required for shipped orders' }, { status: 400 })
+    }
 
-    // Get buyer details
-    const { data: buyer } = await supabase
+    // 8. Calculate amounts
+    //    price is stored in cents in the database
+    const listingPriceCents = listing.price
+    const totalAmountCents = listingPriceCents + shippingCostCents
+    // Platform fee = 0 (no commission yet — update this line when commission is introduced)
+    const platformFeeCents = 0
+    const sellerAmountCents = totalAmountCents - platformFeeCents
+
+    // 9. Fetch buyer profile
+    const { data: buyer } = await db
       .from('users')
       .select('email, display_name')
-      .eq('id', buyerId)
+      .eq('id', user.id)
       .single()
 
-    // Create Stripe Checkout Session
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
-      line_items: [
-        {
-          price_data: {
-            currency: 'usd',
-            product_data: {
-              name: listing.title,
-              description: listing.description?.substring(0, 500) || 'RECLAIM marketplace item',
-              images: listing.image_urls?.slice(0, 1) || [], // Stripe allows max 8 images
-            },
-            unit_amount: amountCents,
+    // 10. Build line items — listing price + optional shipping surcharge
+    const lineItems: any[] = [
+      {
+        price_data: {
+          currency: 'usd',
+          product_data: {
+            name: listing.title,
+            description: listing.description?.substring(0, 500) || undefined,
+            images: listing.image_urls?.slice(0, 1) || [],
           },
-          quantity: 1,
+          unit_amount: listingPriceCents,
         },
-      ],
-      customer_email: buyer?.email || user.email,
-      metadata: {
-        listingId: listing.id,
-        buyerId: buyerId,
-        sellerId: listing.user_id,
-        platformFeeCents: platformFeeCents.toString(),
-        sellerAmountCents: sellerAmountCents.toString(),
+        quantity: 1,
       },
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/orders/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/item/${listingId}?cancelled=true`,
-      expires_at: Math.floor(Date.now() / 1000) + (30 * 60), // 30 minutes
-    })
+    ]
 
-    // Create pending order in database
-    const { data: order, error: orderError } = await supabase
+    if (shippingCostCents > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'usd',
+          product_data: { name: 'Shipping' },
+          unit_amount: shippingCostCents,
+        },
+        quantity: 1,
+      })
+    }
+
+    // 11. Create a pending order in the database
+    const { data: order, error: orderError } = await db
       .from('orders')
       .insert({
-        buyer_id: buyerId,
+        buyer_id: user.id,
         seller_id: listing.user_id,
         listing_id: listing.id,
-        stripe_checkout_session_id: session.id,
-        amount_cents: amountCents,
+        amount_cents: totalAmountCents,
         currency: 'usd',
         platform_fee_cents: platformFeeCents,
         seller_amount_cents: sellerAmountCents,
         status: 'pending',
+        payment_method: 'stripe',
         buyer_email: buyer?.email || user.email,
-        buyer_name: buyer?.display_name || 'Anonymous',
+        buyer_name: buyer?.display_name || 'Buyer',
+        fulfillment_type: fulfillmentType,
+        shipping_cost_cents: shippingCostCents,
+        easypost_shipment_id: easypostShipmentId || null,
+        easypost_rate_id: easypostRateId || null,
+        buyer_shipping_address: shippingAddress || null,
       })
       .select()
       .single()
 
-    if (orderError) {
+    if (orderError || !order) {
       console.error('Error creating order:', orderError)
-      // Still return session URL - webhook will handle order creation if needed
+      return NextResponse.json({ error: 'Failed to create order' }, { status: 500 })
     }
 
-    // Return checkout URL
+    // 12. Create the Stripe Checkout Session
+    //     Uses a destination charge — buyer pays UME, funds transfer to seller's Express account
+    //     application_fee_amount = 0 (no commission yet)
+    const session = await stripeClient.checkout.sessions.create({
+      mode: 'payment',
+      payment_method_types: ['card'],
+      line_items: lineItems,
+      customer_email: buyer?.email || user.email || undefined,
+      payment_intent_data: {
+        // Transfer the full amount to the seller (0% fee)
+        application_fee_amount: platformFeeCents,
+        transfer_data: {
+          destination: seller.stripe_account_id,
+        },
+        // In-person: authorize only — funds captured when QR scan confirms meetup
+        ...(fulfillmentType === 'in_person' ? { capture_method: 'manual' } : {}),
+      },
+      metadata: {
+        orderId: order.id,
+        listingId: listing.id,
+        buyerId: user.id,
+        sellerId: listing.user_id,
+        fulfillmentType,
+      },
+      success_url: `${APP_URL}/orders/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order.id}`,
+      cancel_url: `${APP_URL}/item/${listingId}?cancelled=true`,
+      // Session expires in 30 minutes
+      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
+    })
+
+    // 13. Save the checkout session ID to the order
+    await db
+      .from('orders')
+      .update({ stripe_checkout_session_id: session.id })
+      .eq('id', order.id)
+
     return NextResponse.json({
       url: session.url,
       sessionId: session.id,
-      orderId: order?.id
+      orderId: order.id,
     })
 
   } catch (error: any) {
@@ -179,5 +208,4 @@ export async function POST(request: NextRequest) {
       { status: 500 }
     )
   }
-  */
 }

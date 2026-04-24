@@ -6,40 +6,164 @@ html, body, #__next {
   height: 100%;
 }
 
-/* ─── Custom easing curves (Emil Kowalski / impeccable) ─────────────────────
-   Built-in CSS easing lacks sophistication — Bézier curves feel significantly
-   more polished and natural.                                                  */
-:root {
-  --background: #f3f7f8;
-  --foreground: #171717;
-  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-in-expo:  cubic-bezier(0.7, 0, 0.84, 0);
-  --ease-spring:   cubic-bezier(0.34, 1.2, 0.64, 1);
+@layer base {
+  :root {
+    /* ── Canvas ── */
+    --background:          240 27% 97%;   /* ume-bg #f3f7f8  */
+    --foreground:          240 10%  10%;  /* near-black      */
+
+    /* ── Cards / surfaces ── */
+    --card:                0 0% 100%;
+    --card-foreground:     240 10%  10%;
+    --popover:             0 0% 100%;
+    --popover-foreground:  240 10%  10%;
+
+    /* ── Primary = UME Indigo #130170 ── */
+    --primary:             249 97%  22%;
+    --primary-foreground:  0 0% 100%;
+
+    /* ── Secondary = soft indigo tint ── */
+    --secondary:           240 40%  96%;
+    --secondary-foreground: 249 97% 22%;
+
+    /* ── Muted ── */
+    --muted:               220 14%  94%;
+    --muted-foreground:    220 9%   46%;
+
+    /* ── Accent = UME Pink #fa9ebc ── */
+    --accent:              340 90%  80%;
+    --accent-foreground:   249 97%  22%;
+
+    /* ── Destructive ── */
+    --destructive:         0 84%  60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* ── Borders / inputs ── */
+    --border:              220 13%  89%;
+    --input:               220 13%  89%;
+    --ring:                249 97%  22%;
+
+    /* ── Chart colours ── */
+    --chart-1: 249 97% 22%;
+    --chart-2: 340 90% 80%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 43  96% 56%;
+    --chart-5: 200 80% 60%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background:          240 10%   8%;
+    --foreground:          220 14%  96%;
+    --card:                240 10%  11%;
+    --card-foreground:     220 14%  96%;
+    --popover:             240 10%  11%;
+    --popover-foreground:  220 14%  96%;
+    --primary:             249 97%  65%;
+    --primary-foreground:  0 0% 100%;
+    --secondary:           240 10%  18%;
+    --secondary-foreground: 220 14% 96%;
+    --muted:               240 10%  18%;
+    --muted-foreground:    220 9%   56%;
+    --accent:              340 80%  70%;
+    --accent-foreground:   0 0% 100%;
+    --destructive:         0 62%  50%;
+    --destructive-foreground: 0 0% 100%;
+    --border:              240 10%  20%;
+    --input:               240 10%  20%;
+    --ring:                249 97%  65%;
+  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Work Sans loaded via next/font (layout.tsx) takes over; this is just a safe fallback */
+  font-family: 'Work Sans', system-ui, sans-serif;
 }
 
-/* ─── Reduced motion — always respect the user's OS setting ─────────────────
-   From the accessibility reference: every animation must have a reduced-motion
-   counterpart. We collapse durations to effectively instant.                  */
+/* ── Hero animations ──────────────────────────────────────────────────────── */
+
+/* Floating background blobs */
+@keyframes blob-drift-1 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(22px, -18px) scale(1.06); }
+  66%       { transform: translate(-14px, 12px) scale(0.94); }
+}
+@keyframes blob-drift-2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33%       { transform: translate(-18px, 16px) scale(1.1); }
+  66%       { transform: translate(12px, -10px) scale(0.9); }
+}
+@keyframes blob-drift-3 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%       { transform: translate(14px, 10px) scale(1.07); }
+}
+.animate-blob-1 { animation: blob-drift-1 9s ease-in-out infinite; }
+.animate-blob-2 { animation: blob-drift-2 11s ease-in-out infinite; }
+.animate-blob-3 { animation: blob-drift-3 7s ease-in-out infinite; }
+
+/* Staggered entrance slide-up */
+@keyframes hero-slide-up {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-hero-0 { animation: hero-slide-up 0.55s ease-out 0.00s both; }
+.animate-hero-1 { animation: hero-slide-up 0.55s ease-out 0.08s both; }
+.animate-hero-2 { animation: hero-slide-up 0.55s ease-out 0.16s both; }
+.animate-hero-3 { animation: hero-slide-up 0.55s ease-out 0.24s both; }
+.animate-hero-4 { animation: hero-slide-up 0.55s ease-out 0.34s both; }
+.animate-hero-5 { animation: hero-slide-up 0.55s ease-out 0.44s both; }
+.animate-hero-6 { animation: hero-slide-up 0.55s ease-out 0.54s both; }
+.animate-hero-7 { animation: hero-slide-up 0.55s ease-out 0.64s both; }
+
+/* Slow ping for "live" dot */
+@keyframes ping-slow {
+  0%       { transform: scale(1); opacity: 1; }
+  75%, 100%{ transform: scale(2.4); opacity: 0; }
+}
+.animate-ping-slow { animation: ping-slow 2.2s cubic-bezier(0,0,0.2,1) infinite; }
+
+/* Slow bounce for scroll hint */
+@keyframes bounce-slow {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(7px); }
+}
+.animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+
+/* Card shine sweep */
+@keyframes card-shine {
+  0%   { transform: translateX(-100%) skewX(-15deg); }
+  100% { transform: translateX(250%) skewX(-15deg); }
+}
+.animate-card-shine { animation: card-shine 3.5s ease-in-out 1.2s infinite; }
+
+/* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  .animate-blob-1, .animate-blob-2, .animate-blob-3,
+  .animate-hero-0, .animate-hero-1, .animate-hero-2,
+  .animate-hero-3, .animate-hero-4, .animate-hero-5,
+  .animate-hero-6, .animate-hero-7,
+  .animate-ping-slow, .animate-bounce-slow, .animate-card-shine {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
+}
+
+/* Global scrollbar hiding utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
 
 @layer utilities {
@@ -51,20 +175,26 @@ body {
   /* Primary Heading - Granika Style (All Caps, Centered, Large) */
   .heading-primary {
     font-family: var(--font-archivo-black), 'Archivo Black', sans-serif;
-    font-size: 3rem;
+    font-size: 3rem; /* 48px */
     font-weight: 900;
     text-transform: uppercase;
     text-align: center;
     letter-spacing: -0.03em;
     line-height: 1.2;
-    color: #130170;
+    color: #130170; /* UME Indigo */
   }
 
+  /* Responsive heading sizes */
   @media (max-width: 768px) {
-    .heading-primary { font-size: 2rem; }
+    .heading-primary {
+      font-size: 2rem; /* 32px on mobile */
+    }
   }
+
   @media (min-width: 769px) and (max-width: 1024px) {
-    .heading-primary { font-size: 2.5rem; }
+    .heading-primary {
+      font-size: 2.5rem; /* 40px on tablet */
+    }
   }
 
   .sr-only {
@@ -79,75 +209,48 @@ body {
     border-width: 0;
   }
 
-  /* ─── Jakub Krehel — materialisation entrance ────────────────────────────
-     Opacity + translateY + blur creates a "focus-in" effect that reads as
-     depth. Blur is the differentiator from a plain fade — signals the element
-     was previously out of focus rather than absent.
-     Exit animations intentionally omitted here (exits should be subtler).    */
-  @keyframes materialize {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-      filter: blur(4px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-      filter: blur(0);
-    }
-  }
-
-  .animate-materialize {
-    animation: materialize 0.3s var(--ease-out-expo) both;
-  }
-
-  /* ─── Slide up — for hero / page-level headings ──────────────────────── */
-  @keyframes slide-up {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  .animate-slide-up {
-    animation: slide-up 0.5s var(--ease-out-expo) both;
-  }
-
-  /* ─── Legacy fade in/out (kept for existing usages) ─────────────────── */
   @keyframes fade-out {
-    from { opacity: 1; transform: scale(1); }
-    to   { opacity: 0; transform: scale(0.8); }
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.8);
+    }
   }
+
   @keyframes fade-in {
-    from { opacity: 0; transform: scale(0.9); }
-    to   { opacity: 1; transform: scale(1); }
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
   }
 
-  .animate-fade-out { animation: fade-out 0.2s var(--ease-in-expo) forwards; }
-  .animate-fade-in  { animation: fade-in  0.2s var(--ease-out-expo) forwards; }
+  .animate-fade-out {
+    animation: fade-out 0.3s ease-out forwards;
+  }
 
-  /* ─── Drawer slide-in (mobile menu) ─────────────────────────────────── */
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+
   @keyframes slide-in-right {
-    from { transform: translateX(100%); }
-    to   { transform: translateX(0); }
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
   }
 
   .animate-slide-in-right {
-    animation: slide-in-right 0.25s var(--ease-out-expo);
-  }
-
-  /* ─── Backdrop fade ──────────────────────────────────────────────────── */
-  @keyframes fade-backdrop {
-    from { opacity: 0; }
-    to   { opacity: 1; }
-  }
-
-  .animate-fade-backdrop {
-    animation: fade-backdrop 0.2s var(--ease-out-expo);
+    animation: slide-in-right 0.3s ease-out;
   }
 }
-

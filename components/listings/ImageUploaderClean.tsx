@@ -7,6 +7,55 @@ import Image from 'next/image'
 const supabase = createClient()
 
 const MAX_IMAGES = 10
+const MAX_WIDTH = 1200
+
+async function compressImage(file: File): Promise<{ file: File; savedPercent: number }> {
+  return new Promise((resolve) => {
+    const img = new window.Image()
+    const url = URL.createObjectURL(file)
+    img.onload = () => {
+      URL.revokeObjectURL(url)
+      const scale = Math.min(1, MAX_WIDTH / img.width)
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.round(img.width * scale)
+      canvas.height = Math.round(img.height * scale)
+      const ctx = canvas.getContext('2d')
+      if (!ctx) { resolve({ file, savedPercent: 0 }); return }
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+      // Try WebP first; fall back to JPEG if the browser doesn't support WebP encoding
+      canvas.toBlob(
+        (webpBlob) => {
+          if (webpBlob && webpBlob.size > 0) {
+            const savedPercent = Math.round((1 - webpBlob.size / file.size) * 100)
+            resolve({
+              file: new File([webpBlob], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' }),
+              savedPercent: Math.max(0, savedPercent),
+            })
+            return
+          }
+          // WebP not supported — fall back to JPEG
+          canvas.toBlob(
+            (jpegBlob) => {
+              if (!jpegBlob) { resolve({ file, savedPercent: 0 }); return }
+              const savedPercent = Math.round((1 - jpegBlob.size / file.size) * 100)
+              resolve({
+                file: new File([jpegBlob], file.name.replace(/\.[^.]+$/, '.jpg'), { type: 'image/jpeg' }),
+                savedPercent: Math.max(0, savedPercent),
+              })
+            },
+            'image/jpeg',
+            0.85
+          )
+        },
+        'image/webp',
+        0.82
+      )
+    }
+    img.onerror = () => { URL.revokeObjectURL(url); resolve({ file, savedPercent: 0 }) }
+    img.src = url
+  })
+}
 
 /**
  * ImageUploaderClean Component
@@ -24,6 +73,7 @@ export default function ImageUploaderClean({
   const [urls, setUrls] = useState<string[]>(existingImages)
   const [uploading, setUploading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [savedPercent, setSavedPercent] = useState<number | null>(null)
 
   async function handleFiles(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.target.files
@@ -38,6 +88,7 @@ export default function ImageUploaderClean({
 
     setUploading(true)
     setError(null)
+    setSavedPercent(null)
 
     const uploadedUrls: string[] = []
 
@@ -50,10 +101,16 @@ export default function ImageUploaderClean({
       return
     }
 
+    let totalSaved = 0
+    let totalFiles = 0
+
     for (let i = 0; i < files.length; i++) {
-      const file = files[i]
-      const ext = file.name.split('.').pop()
-      const fileName = `${Math.random().toString(36).substring(2, 12)}.${ext}`
+      const original = files[i]
+      const { file, savedPercent: pct } = await compressImage(original)
+      totalSaved += pct
+      totalFiles++
+
+      const fileName = `${Math.random().toString(36).substring(2, 12)}.webp`
       const path = `${userId}/${fileName}`
 
       // upload
@@ -77,8 +134,12 @@ export default function ImageUploaderClean({
       }
     }
 
+    // Reset input so the same file can be re-selected if needed
+    e.target.value = ''
+
     // append to existing list
     setUrls((s) => [...s, ...uploadedUrls])
+    if (totalFiles > 0) setSavedPercent(Math.round(totalSaved / totalFiles))
     setUploading(false)
   }
 
@@ -92,6 +153,7 @@ export default function ImageUploaderClean({
   return (
     <div className="space-y-4">
       {/* Upload Area - Dashed Border Box */}
+      {/* Main upload area */}
       <label
         className={`
           relative block border-2 border-dashed rounded-3xl p-12
@@ -114,7 +176,6 @@ export default function ImageUploaderClean({
         />
 
         <div className="flex flex-col items-center justify-center text-center">
-          {/* Plus Icon */}
           <div className="mb-2">
             <svg
               className="w-8 h-8 text-gray-900"
@@ -131,18 +192,44 @@ export default function ImageUploaderClean({
               />
             </svg>
           </div>
-
-          {/* Text */}
           <p className="text-gray-900 font-medium">
-            {uploading ? 'Uploading...' : 'Add a File'}
+            {uploading ? 'Uploading...' : 'Choose from Gallery'}
           </p>
-
-          {/* File count */}
           <p className="text-sm text-gray-500 mt-2" id="upload-instructions">
             {urls.length} / {MAX_IMAGES} images
           </p>
         </div>
       </label>
+
+      {/* Take Photo button — opens camera directly on Android */}
+      {!isAtLimit && (
+        <label
+          className="relative flex items-center justify-center gap-2 w-full py-3 rounded-2xl border-2 border-gray-900 bg-white hover:bg-gray-50 cursor-pointer transition-colors"
+          aria-label="Take a photo"
+        >
+          <input
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleFiles}
+            disabled={uploading}
+            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          />
+          <svg className="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span className="text-gray-900 font-medium">Take Photo</span>
+        </label>
+      )}
+
+      {/* Compression savings */}
+      {savedPercent !== null && savedPercent > 0 && (
+        <div className="bg-green-50 border border-green-200 rounded-lg p-3" role="status">
+          <p className="text-green-800 text-sm">✓ Images optimized — saved ~{savedPercent}% file size</p>
+        </div>
+      )}
 
       {/* Error Message */}
       {error && (
@@ -181,8 +268,8 @@ export default function ImageUploaderClean({
                   src={url}
                   alt={`Upload preview ${index + 1}`}
                   fill
+                  unoptimized
                   className="object-cover"
-                  sizes="(max-width: 640px) 20vw, 15vw"
                 />
               </div>
               <button

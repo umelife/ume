@@ -16,6 +16,8 @@ export interface User {
 
 export type ListingCondition = 'New' | 'Like New' | 'Used' | 'Refurbished';
 
+export type FulfillmentType = 'in_person' | 'shipping' | 'both';
+
 export interface Listing {
   id: string;
   user_id: string;
@@ -34,6 +36,14 @@ export interface Listing {
   latitude?: number;
   longitude?: number;
   distance_miles?: number;
+  // Fulfillment + shipping fields
+  fulfillment_type?: FulfillmentType;
+  accepts_stripe?: boolean;
+  ships_from_zip?: string;
+  weight_oz?: number;
+  pkg_length?: number;
+  pkg_width?: number;
+  pkg_height?: number;
   user?: User;
 }
 
@@ -90,6 +100,9 @@ export interface SafeHandshake {
   buyer_id: string
   status: SafeHandshakeStatus
   safe_point_id?: string
+  custom_location_text?: string
+  custom_lat?: number
+  custom_lng?: number
   seller_arrived_at?: string
   buyer_arrived_at?: string
   qr_token?: string
@@ -102,6 +115,15 @@ export interface SafeHandshake {
   seller?: User
   buyer?: User
   listing?: Listing
+}
+
+export interface ShippingAddress {
+  name: string;
+  street1: string;
+  street2?: string;
+  city: string;
+  state: string;
+  zip: string;
 }
 
 export interface Order {
@@ -125,6 +147,13 @@ export interface Order {
   refunded_at?: string;
   created_at: string;
   updated_at: string;
+  // Fulfillment + shipping fields
+  fulfillment_type?: FulfillmentType;
+  easypost_shipment_id?: string;
+  easypost_rate_id?: string;
+  shipping_label_url?: string;
+  shipping_cost_cents?: number;
+  buyer_shipping_address?: ShippingAddress;
   buyer?: User;
   seller?: User;
   listing?: Listing;

@@ -28,16 +28,18 @@ export function haversineDistance(
 }
 
 /**
- * Returns the nearest Safe-Point if the user is within the geofence radius,
- * otherwise returns null.
+ * Returns the nearest Safe-Point within the geofence radius, or null.
+ * Accepts an optional `points` list — pass campus-filtered safe points
+ * so only relevant locations are checked.
  */
 export function getNearestSafePoint(
   userLat: number,
-  userLon: number
+  userLon: number,
+  points: SafePoint[] = SAFE_POINTS
 ): { point: SafePoint; distanceMeters: number } | null {
   let nearest: { point: SafePoint; distanceMeters: number } | null = null
 
-  for (const point of SAFE_POINTS) {
+  for (const point of points) {
     const dist = haversineDistance(userLat, userLon, point.lat, point.lng)
     if (dist <= GEOFENCE_RADIUS_METERS) {
       if (!nearest || dist < nearest.distanceMeters) {
@@ -55,9 +57,10 @@ export function getNearestSafePoint(
 export function distanceToSafePoint(
   userLat: number,
   userLon: number,
-  pointId: string
+  pointId: string,
+  points: SafePoint[] = SAFE_POINTS
 ): number | null {
-  const point = SAFE_POINTS.find((p) => p.id === pointId)
+  const point = points.find((p) => p.id === pointId)
   if (!point) return null
   return haversineDistance(userLat, userLon, point.lat, point.lng)
 }

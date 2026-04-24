@@ -3,18 +3,8 @@
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { X } from '@phosphor-icons/react'
-
-/**
- * MobileFilters Component
- *
- * Mobile-only filter drawer for marketplace filtering.
- * Features:
- * - Sort dropdown
- * - Condition dropdown
- * - Price range inputs
- * - Apply and Clear buttons
- * - Slides in from bottom
- */
+import SearchableSelect from '@/components/ui/SearchableSelect'
+import LocationRadiusSlider from '@/components/marketplace/LocationRadiusSlider'
 
 interface MobileFiltersProps {
   isOpen: boolean
@@ -23,6 +13,11 @@ interface MobileFiltersProps {
   currentSort?: string
   currentMinPrice?: string
   currentMaxPrice?: string
+  currentCampus?: string
+  campusOptions?: { value: string; label: string }[]
+  currentRadius?: number
+  userLat?: number
+  userLng?: number
 }
 
 const CONDITIONS = ['New', 'Like New', 'Used', 'Refurbished']
@@ -46,15 +41,20 @@ export default function MobileFilters({
   currentCondition,
   currentSort,
   currentMinPrice,
-  currentMaxPrice
+  currentMaxPrice,
+  currentCampus,
+  campusOptions = [],
+  currentRadius,
+  userLat,
+  userLng,
 }: MobileFiltersProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [sort, setSort] = useState(currentSort || 'relevance')
   const [condition, setCondition] = useState(currentCondition || 'all')
+  const [campus, setCampus] = useState(currentCampus || '')
   const [selectedPriceOption, setSelectedPriceOption] = useState<string>('')
 
-  // Determine current price option from props
   const getCurrentPriceOption = () => {
     if (!currentMinPrice && !currentMaxPrice) return ''
     const min = currentMinPrice ? parseFloat(currentMinPrice) : 0
@@ -65,40 +65,31 @@ export default function MobileFilters({
     return ''
   }
 
-  // Update local state when props change
   useEffect(() => {
     setSort(currentSort || 'relevance')
     setCondition(currentCondition || 'all')
+    setCampus(currentCampus || '')
     setSelectedPriceOption(getCurrentPriceOption())
-  }, [currentSort, currentCondition, currentMinPrice, currentMaxPrice])
+  }, [currentSort, currentCondition, currentMinPrice, currentMaxPrice, currentCampus])
 
   const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams.toString())
 
-    // Sort
-    if (sort === 'relevance') {
-      params.delete('sort')
-    } else {
-      params.set('sort', sort)
-    }
+    if (sort === 'relevance') params.delete('sort')
+    else params.set('sort', sort)
 
-    // Condition
-    if (condition === 'all') {
-      params.delete('condition')
-    } else {
-      params.set('condition', condition)
-    }
+    if (condition === 'all') params.delete('condition')
+    else params.set('condition', condition)
 
-    // Price
+    if (campus) params.set('campus', campus)
+    else params.delete('campus')
+
     if (selectedPriceOption) {
       const option = PRICE_OPTIONS.find(o => o.label === selectedPriceOption)
       if (option) {
         params.set('minPrice', (option.min * 100).toString())
-        if (option.max !== null) {
-          params.set('maxPrice', (option.max * 100).toString())
-        } else {
-          params.delete('maxPrice')
-        }
+        if (option.max !== null) params.set('maxPrice', (option.max * 100).toString())
+        else params.delete('maxPrice')
       }
     } else {
       params.delete('minPrice')
@@ -112,11 +103,13 @@ export default function MobileFilters({
   const handleClearFilters = () => {
     setSort('relevance')
     setCondition('all')
+    setCampus('')
     setSelectedPriceOption('')
 
     const params = new URLSearchParams(searchParams.toString())
     params.delete('sort')
     params.delete('condition')
+    params.delete('campus')
     params.delete('minPrice')
     params.delete('maxPrice')
 
@@ -128,98 +121,82 @@ export default function MobileFilters({
 
   return (
     <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 bg-black/50 z-40 md:hidden"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+      <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} aria-hidden="true" />
 
-      {/* Drawer */}
       <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 md:hidden max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-black">Filters</h2>
-          <button
-            onClick={onClose}
-            className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors"
-            aria-label="Close filters"
-          >
+          <button onClick={onClose} className="p-2 text-black hover:bg-gray-100 rounded-full transition-colors" aria-label="Close filters">
             <X size={20} weight="bold" />
           </button>
         </div>
 
-        {/* Content */}
         <div className="px-4 py-6 space-y-6">
           {/* Sort */}
           <div>
-            <label className="block text-sm font-medium text-black mb-2">
-              Sort By
-            </label>
-            <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
+            <label className="block text-sm font-medium text-black mb-2">Sort By</label>
+            <select value={sort} onChange={e => setSort(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black">
+              {SORT_OPTIONS.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
               ))}
             </select>
           </div>
 
           {/* Condition */}
           <div>
-            <label className="block text-sm font-medium text-black mb-2">
-              Condition
-            </label>
-            <select
-              value={condition}
-              onChange={(e) => setCondition(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-            >
+            <label className="block text-sm font-medium text-black mb-2">Condition</label>
+            <select value={condition} onChange={e => setCondition(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black">
               <option value="all">All Conditions</option>
-              {CONDITIONS.map((cond) => (
-                <option key={cond} value={cond}>
-                  {cond}
-                </option>
-              ))}
+              {CONDITIONS.map(cond => <option key={cond} value={cond}>{cond}</option>)}
             </select>
           </div>
 
           {/* Price */}
           <div>
-            <label className="block text-sm font-medium text-black mb-2">
-              Price
-            </label>
-            <select
-              value={selectedPriceOption}
-              onChange={(e) => setSelectedPriceOption(e.target.value)}
-              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
-            >
+            <label className="block text-sm font-medium text-black mb-2">Price</label>
+            <select value={selectedPriceOption} onChange={e => setSelectedPriceOption(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-full bg-white text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-black">
               <option value="">All Prices</option>
-              {PRICE_OPTIONS.map((option) => (
-                <option key={option.label} value={option.label}>
-                  {option.label}
-                </option>
-              ))}
+              {PRICE_OPTIONS.map(option => <option key={option.label} value={option.label}>{option.label}</option>)}
             </select>
+          </div>
+
+          {/* Campus */}
+          {campusOptions.length > 0 && (
+            <div>
+              <label className="block text-sm font-medium text-black mb-2">Campus</label>
+              <SearchableSelect
+                options={campusOptions}
+                value={campus}
+                onChange={setCampus}
+                placeholder="All Campuses"
+                searchPlaceholder="Search campus..."
+                fullWidth
+              />
+            </div>
+          )}
+
+          {/* Distance */}
+          <div>
+            <LocationRadiusSlider
+              initialRadius={currentRadius ?? 25}
+              userLat={userLat}
+              userLng={userLng}
+            />
           </div>
         </div>
 
-        {/* Footer Actions */}
+        {/* Footer */}
         <div className="px-4 py-4 border-t border-gray-200 flex gap-3">
-          <button
-            onClick={handleClearFilters}
-            className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition-colors"
-          >
+          <button onClick={handleClearFilters}
+            className="flex-1 px-4 py-3 border border-gray-300 text-gray-700 text-sm font-medium rounded-full hover:bg-gray-50 transition-colors min-h-[52px]">
             Clear All
           </button>
-          <button
-            onClick={handleApplyFilters}
-            className="flex-1 px-4 py-3 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors"
-          >
+          <button onClick={handleApplyFilters}
+            className="flex-1 px-4 py-3 bg-black text-white text-sm font-medium rounded-full hover:bg-gray-800 transition-colors min-h-[52px]">
             Apply Filters
           </button>
         </div>

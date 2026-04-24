@@ -16,13 +16,23 @@ interface MobileFiltersWrapperProps {
   currentSort?: string
   currentMinPrice?: string
   currentMaxPrice?: string
+  currentCampus?: string
+  campusOptions?: { value: string; label: string }[]
+  currentRadius?: number
+  userLat?: number
+  userLng?: number
 }
 
 export default function MobileFiltersWrapper({
   currentCondition,
   currentSort,
   currentMinPrice,
-  currentMaxPrice
+  currentMaxPrice,
+  currentCampus,
+  campusOptions,
+  currentRadius,
+  userLat,
+  userLng,
 }: MobileFiltersWrapperProps) {
   const searchParams = useSearchParams()
   const [isOpen, setIsOpen] = useState(false)
@@ -48,6 +58,11 @@ export default function MobileFiltersWrapper({
       currentSort={currentSort}
       currentMinPrice={currentMinPrice}
       currentMaxPrice={currentMaxPrice}
+      currentCampus={currentCampus}
+      campusOptions={campusOptions}
+      currentRadius={currentRadius}
+      userLat={userLat}
+      userLng={userLng}
     />
   )
 }

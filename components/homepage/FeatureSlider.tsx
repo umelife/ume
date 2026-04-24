@@ -21,6 +21,7 @@ interface Slide {
   id: string
   headline: string
   subtitle: string
+  icon?: React.ReactNode
 }
 
 interface FeatureSliderProps {
@@ -32,17 +33,34 @@ const defaultSlides: Slide[] = [
   {
     id: '1',
     headline: 'REAL-TIME CHAT',
-    subtitle: 'Message sellers instantly and arrange pickups easily'
+    subtitle: 'Message sellers instantly and arrange pickups easily',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    )
   },
   {
     id: '2',
     headline: 'VERIFIED STUDENTS ONLY',
-    subtitle: '.edu email verification ensures you\'re trading within your campus community'
+    subtitle: '.edu email verification ensures you\'re trading within your campus community',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M22 10v6M2 10l10-5 10 5-10 5-10-5z"/>
+        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+      </svg>
+    )
   },
   {
     id: '3',
     headline: 'SAFE & SIMPLE',
-    subtitle: 'Report inappropriate listings and trade with confidence'
+    subtitle: 'Report inappropriate listings and trade with confidence',
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <polyline points="9 12 11 14 15 10"/>
+      </svg>
+    )
   }
 ]
 
@@ -182,6 +200,13 @@ export default function FeatureSlider({
                   }
                 }}
               >
+                {slide.icon && (
+                  <div className={`text-ume-indigo mb-2 sm:mb-3 ${
+                    isCenter ? 'w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12' : 'w-5 h-5 sm:w-6 sm:h-6'
+                  }`}>
+                    {slide.icon}
+                  </div>
+                )}
                 <h3
                   className={`text-ume-indigo font-black uppercase tracking-tight ${
                     isCenter

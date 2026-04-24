@@ -18,6 +18,9 @@ import { createClient } from '@/lib/supabase/server'
 import { createClient as createServiceClient } from '@supabase/supabase-js'
 import { handleMessageNotifications } from '@/lib/notifications/messageNotifications'
 
+/** How long (in ms) a sender has to edit their message after sending */
+const MESSAGE_EDIT_WINDOW_MS = 2 * 60 * 1000 // 2 minutes
+
 // Create service role client (server-side only)
 function getServiceClient() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
@@ -237,11 +240,10 @@ export async function editMessageEnhanced(
       return { error: 'Unauthorized to edit this message' }
     }
 
-    // Check if message is within 2-minute edit window
+    // Check if message is within the edit window
     const messageAge = Date.now() - new Date(message.created_at).getTime()
-    const twoMinutesInMs = 2 * 60 * 1000
 
-    if (messageAge > twoMinutesInMs) {
+    if (messageAge > MESSAGE_EDIT_WINDOW_MS) {
       return { error: 'Message can only be edited within 2 minutes of sending' }
     }
 
@@ -376,9 +378,13 @@ export async function getConversationsEnhanced() {
     }
 
     // Transform conversations to include otherUser and user's unread count
-    const transformedConversations = conversations?.map(conv => {
+    const transformedConversations = (conversations?.map(conv => {
       const isParticipant1 = conv.participant_1_id === user.id
       const otherUser = isParticipant1 ? conv.participant_2 : conv.participant_1
+
+      // Skip conversations where the other user's account has been deleted
+      if (!otherUser) return null
+
       const unreadCount = isParticipant1
         ? conv.participant_1_unread_count
         : conv.participant_2_unread_count
@@ -394,7 +400,7 @@ export async function getConversationsEnhanced() {
         unreadCount,
         updatedAt: conv.updated_at
       }
-    }) || []
+    }) || []).filter(<T>(c: T | null): c is T => c !== null)
 
     return { conversations: transformedConversations }
   } catch (error: any) {

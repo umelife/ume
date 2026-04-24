@@ -240,18 +240,83 @@ npm run dev
 - ✅ "Start Safe-Handshake" button in messages thread (buyer-side only)
 - ✅ Database migration: `safe_handshakes` table + `listings.status` column with RLS
 
+#### 13. Stripe + Shipping Integration ✅ (2026-03-20)
+- ✅ DB migration: `fulfillment_type`, `accepts_stripe`, shipping dimensions on listings; `fulfillment_type`, EasyPost fields, `buyer_shipping_address` on orders
+- ✅ DB migration: `tracking_number`, `tracking_url`, `carrier` on orders
+- ✅ TypeScript types updated (`FulfillmentType`, `ShippingAddress` on `Listing` and `Order`)
+- ✅ `lib/stripe/client.ts` — Stripe V2 client singleton
+- ✅ Stripe Connect V2 onboarding — sellers create Express accounts with `fees_collector: 'application'`
+- ✅ `/api/stripe/connect/onboard` — creates V2 account + account link, redirects seller to Stripe-hosted onboarding (SSN collected by Stripe)
+- ✅ `/api/stripe/connect/return` — verifies onboarding completion, sets `stripe_onboarding_completed`
+- ✅ `/api/stripe/connect/status` — live status check from Stripe V2 API
+- ✅ `StripeOnboardingBanner` — shown on seller's profile page when Stripe is not set up
+- ✅ `/api/stripe/create-checkout-session` — destination charge with `application_fee_amount: 0` (0% commission); `capture_method: 'manual'` for in-person (escrow)
+- ✅ `/api/stripe/webhook` — in-person checkout → `pending` (auth only, no charge); shipping checkout → `paid` (immediate charge); `charge.refunded`, `account.updated`
+- ✅ `/api/stripe/webhook/v2` — thin events for V2 connected accounts (requirements updated, capability changed)
+- ✅ `/api/stripe/refund` — full refund via Stripe, re-activates listing
+- ✅ Listing creation form: fulfillment type picker, `accepts_stripe` checkbox, shipping ZIP/weight/dimensions
+- ✅ Listing detail page: `BuySection` — always shows all 3 options (Stripe in-person ⭐, cash/Venmo, ship); options 1 & 3 disabled if seller has no Stripe
+- ✅ `ShippingCheckoutFlow` — multi-step: address entry → real EasyPost rate selection → Stripe checkout
+- ✅ `/orders/[id]` — order detail page: tracking link, 3-day buyer protection refund button if no tracking after 3 days
+- ✅ EasyPost shipping rates — `lib/easypost/client.ts`, `/api/shipping/rates` (real USPS/UPS/FedEx rates)
+- ✅ EasyPost label generation — `/api/shipping/create-label` saves `tracking_number`, `tracking_url`, `carrier`; `GenerateLabelButton` on order page
+- ✅ `/api/easypost/webhook` — auto-marks order `completed` + listing `sold` on delivery
+- ✅ Safe-Handshake QR scan — captures Stripe payment intent for pending Stripe orders (escrow release)
+- ✅ Safe-Handshake expiry/cancel — voids pending Stripe authorization (no charge to buyer)
+- ✅ `/orders/success` — different message for `pending` (card authorized, meet for QR) vs `paid` (charged, awaiting shipment)
+
+#### 14. Homepage Redesign & Performance ✅ (2026-04-19)
+- ✅ `components/homepage/SectionIcons.tsx` — extracted ShopIcon, ServiceIcon, CommunityIcon, EventIcon into shared component (used by page.tsx + MobileHome.tsx)
+- ✅ `components/homepage/HomeSectionRow.tsx` — removed `comingSoonCards` prop; new coming-soon design: skeleton strip with right-edge fade mask + white teaser card with pulsing pink dot
+- ✅ `components/homepage/Hero.tsx` — fully split mobile (`md:hidden`) and desktop (`hidden md:flex`) layouts; mobile integrates 2×2 compact `PlatformCards` grid between headline and CTAs so cards are visible in the first viewport (not below the fold)
+- ✅ `components/MobileHome.tsx` — imports icons from SectionIcons, drops inline SVG duplication, no longer passes `comingSoonCards`
+- ✅ `app/page.tsx` — removed `searchParams` debug prop (was forcing dynamic rendering); added `export const revalidate = 60` ISR; wraps listing query in `unstable_cache` with 60s TTL
+- ✅ `lib/supabase/public.ts` — new cookie-free singleton anon client (`persistSession: false`) safe for use inside `unstable_cache`
+- ✅ `app/marketplace/page.tsx` — `fetchCampusOptions` cached 5 min; `fetchListingsCached` cached 30s for standard queries; radius/GPS queries remain uncached (user-specific)
+- ✅ **Image optimization** — root cause of slow loading was `unoptimized={true}` bypassing Vercel CDN entirely; fixed across all 5 affected components:
+  - `components/marketplace/ProductGrid.tsx` — removed `unoptimized`; renders only the **active** carousel image (was pre-loading all images hidden); added `sizes` + `priority` for first 4 cards
+  - `components/listings/ListingImages.tsx` — removed `unoptimized` from main image and thumbnails; added correct `sizes` props
+  - `components/listings/ListingCard.tsx` — added `sizes` prop
+  - `components/listings/ImageCarousel.tsx` — added `sizes` + `priority` to main image and `sizes` to thumbnails
+  - `components/homepage/HomeListingCard.tsx` — removed `unoptimized` (already had `sizes`)
+  - `components/listings/ImageUploaderClean.tsx` — intentionally kept `unoptimized` (local blob: URLs, optimizer can't handle them)
+- ✅ Verified: all marketplace images now route through `/_next/image` (Vercel optimizer), zero raw `supabase.co/storage` URLs in browser
+
+#### 15. Design System Alignment ✅ (2026-04-20)
+- ✅ `tailwind.config.ts` — fixed `fontFamily.sans` (was broken `"BR Shape"` → `var(--font-work-sans)`); added `font-heading` (Archivo Black) and `font-display` (Maintanker) utility classes
+- ✅ Added missing brand accent colors: `ume-emerald` (#34d399), `ume-amber` (#fbbf24), `ume-sky` (#60a5fa), `ume-indigo-800/900`, `ume-pink-400`
+- ✅ Overrode Tailwind's neutral-gray shadows with indigo-tinted brand shadows (`rgba(19,1,112,…)`) for all `shadow-sm/md/lg`; added `shadow-pink` and `shadow-indigo` CTA shadows
+- ✅ `app/layout.tsx` — added Work Sans weight `600` (used for labels)
+- ✅ `app/globals.css` — fixed body font-family fallback from `Arial` to `Work Sans`
+- ✅ Hero + landing page CTAs updated to use `shadow-pink` instead of `shadow-xl`/`shadow-lg shadow-ume-pink/25`
+
+#### 16. Item Detail Page Redesign ✅ (2026-04-20)
+- ✅ `components/listings/ListingImages.tsx` — square `aspect-square` (was 4:3 rectangle); `bg-ume-cream` warm background; `md:rounded-2xl`; condition badge moved to top-right; overlaid dot indicators for multi-image carousel; thumbnail ring color → `ume-indigo`
+- ✅ `app/item/[id]/page.tsx` — full redesign matching design system: pink uppercase category label; Archivo Black uppercase title; cream chip for post time; bordered price box with meta; cream seller card with avatar initial + chevron; action buttons separated into their own card below info
+
+#### 17. Marketplace & FiltersRow Redesign ✅ (2026-04-21)
+- ✅ `app/marketplace/page.tsx` — clean two-zone layout: white sticky-feel header with title + CategoryBar; content area with filters above grid; results meta line shows listing count + active filter count; shadcn `Skeleton` used for FiltersRow suspense fallback; MobileFilterButton moved inside its own `md:hidden` wrapper
+- ✅ `components/marketplace/FiltersRow.tsx` — modernized pill-style filter buttons with `ume-indigo` active fill; "Filter" label prefix; separators between groups; active-filter badge (`ume-pink/15`); "Clear all" text link to wipe all filters in one click; tighter dropdown with rounded-2xl corners and separator between "All conditions" and individual items; price "Clear price filter" in pink; all logic and props unchanged
+
+#### 18. Profile & Create Page Redesign ✅ (2026-04-21)
+- ✅ `app/profile/[id]/page.tsx` — full shadcn/ui redesign: indigo-to-pink gradient banner; shadcn `Avatar` with gradient fallback initial and `ring-4` white border; campus name as `Badge`; join date + listing count stat row with `Separator`; "New Listing" `Button` CTA for own profile; `Card` wraps the hero content overlapping the banner; listings section shows `Badge` count next to heading
+- ✅ `app/create/page.tsx` — multi-section Card layout with indigo→pink accent stripe on each card; numbered step indicators (1–4: Photos, Item Details, Pricing, Fulfillment); shadcn `Input`, `Label`, `Button`, `Card`, `Separator`; replaced boring `<select>` for category with interactive pill buttons; replaced radio condition buttons with colour-coded badge-style selectors (green=New, sky=Like New, amber=Used, purple=Refurbished); all server action / existing child components (`ImageUploaderClean`, `FulfillmentFields`) untouched
+- ✅ `components/listings/CreateListingInteractive.tsx` — new thin `'use client'` component managing category + condition state; writes to hidden `<input name="category">` and `<input name="condition">` so the server action (`handleCreateListing`) receives them unchanged via FormData
+- ✅ `lib/utils/index.ts` — created missing `cn()` utility (`clsx` + `tailwind-merge`) that all shadcn/ui components import from `@/lib/utils`; re-exports existing `helpers` and `listingFilters` so nothing breaks
+
 ## Future Enhancements (Post-MVP)
 
 1. Role-based admin authentication
-2. Email notifications
-3. Payment integration (Stripe) — Safe-Handshake scan-qr will trigger fund release
-4. User ratings and reviews
-5. Advanced search and filters
-6. Mobile app
-7. Push notifications
-8. Auto-moderation with AI
-9. Favorites/saved listings
-10. User verification badges
+2. EasyPost shipping rate shopping + label generation
+3. Commission (% platform fee) — update `application_fee_amount` in checkout session
+4. LLC/EIN registration when commission is introduced
+5. User ratings and reviews
+6. Advanced search and filters
+7. Mobile app
+8. Push notifications
+9. Auto-moderation with AI
+10. Favorites/saved listings
+11. User verification badges
 
 ## Conclusion
 

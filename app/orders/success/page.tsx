@@ -38,7 +38,7 @@ function OrderSuccessContent() {
       try {
         const { data, error: fetchError } = await supabase
           .from('orders')
-          .select('*, buyer:users!buyer_id(*), seller:users!seller_id(*), listing:listings(*)')
+          .select('*, buyer:users!orders_buyer_id_fkey(*), seller:users!orders_seller_id_fkey(*), listing:listings(*)')
           .eq('stripe_checkout_session_id', sessionId)
           .maybeSingle() // Use maybeSingle instead of single to handle no results gracefully
 
@@ -123,14 +123,24 @@ function OrderSuccessContent() {
           </div>
         ) : order ? (
           <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-            {/* Success Header */}
-            <div className="bg-green-50 border-b border-green-200 p-8 text-center">
-              <svg className="mx-auto h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              <h1 className="text-3xl font-bold text-gray-900 mt-4">Payment Successful!</h1>
-              <p className="text-gray-600 mt-2">Thank you for your purchase</p>
-            </div>
+            {/* Success Header — different for escrow (pending) vs charged (paid/completed) */}
+            {order.status === 'pending' ? (
+              <div className="bg-blue-50 border-b border-blue-200 p-8 text-center">
+                <svg className="mx-auto h-16 w-16 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h1 className="text-3xl font-bold text-gray-900 mt-4">Card Authorized!</h1>
+                <p className="text-gray-600 mt-2">Your card has been authorized but not charged yet</p>
+              </div>
+            ) : (
+              <div className="bg-green-50 border-b border-green-200 p-8 text-center">
+                <svg className="mx-auto h-16 w-16 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <h1 className="text-3xl font-bold text-gray-900 mt-4">Payment Successful!</h1>
+                <p className="text-gray-600 mt-2">Thank you for your purchase</p>
+              </div>
+            )}
 
             {/* Order Details */}
             <div className="p-8">
@@ -214,35 +224,67 @@ function OrderSuccessContent() {
               )}
 
               {/* Next Steps */}
-              <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
-                <h3 className="font-semibold text-blue-900 mb-2">What's Next?</h3>
-                <ul className="text-sm text-blue-800 space-y-2">
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>The seller has been notified of your purchase</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>Contact the seller via messages to arrange pickup/delivery</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                    </svg>
-                    <span>A confirmation email has been sent to {order.buyer_email}</span>
-                  </li>
-                </ul>
-              </div>
+              {order.status === 'pending' ? (
+                <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h3 className="font-semibold text-blue-900 mb-2">What happens next?</h3>
+                  <ul className="text-sm text-blue-800 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>Your card is <strong>authorized but not charged</strong> — funds are held in escrow</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>Meet the seller at a Safe-Point on campus and <strong>scan the QR code</strong> to release payment</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>If the seller doesn&apos;t show up within 4 hours, the authorization is automatically voided — no charge</span>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-6">
+                  <h3 className="font-semibold text-blue-900 mb-2">What&apos;s Next?</h3>
+                  <ul className="text-sm text-blue-800 space-y-2">
+                    <li className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>The seller has been notified of your purchase</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>The seller will ship your item shortly — tracking info will appear on your order page</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <svg className="w-5 h-5 text-blue-600 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      <span>A confirmation email has been sent to {order.buyer_email}</span>
+                    </li>
+                  </ul>
+                </div>
+              )}
 
               {/* Action Buttons */}
               <div className="mt-8 flex flex-col sm:flex-row gap-4">
                 <Link
+                  href={`/orders/${order.id}`}
+                  className="flex-1 bg-ume-indigo text-white px-6 py-3 rounded-lg font-medium text-center hover:bg-indigo-800 transition-colors"
+                >
+                  View Order
+                </Link>
+                <Link
                   href={`/messages?listing=${order.listing_id}`}
-                  className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg font-medium text-center hover:bg-blue-700 transition-colors"
+                  className="flex-1 bg-gray-200 text-gray-900 px-6 py-3 rounded-lg font-medium text-center hover:bg-gray-300 transition-colors"
                 >
                   Message Seller
                 </Link>

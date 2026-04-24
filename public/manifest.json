@@ -30,7 +30,7 @@
     },
     {
       "name": "Sell Item",
-      "url": "/sell",
+      "url": "/create",
       "description": "List a new item for sale"
     }
   ]

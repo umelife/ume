@@ -1,5 +1,39 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
+
+export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+  const { data: listing } = await supabase
+    .from('listings')
+    .select('title, description, image_urls, price')
+    .eq('id', id)
+    .single()
+
+  if (!listing) return { title: 'Listing' }
+
+  const title = listing.title
+  const description = listing.description?.slice(0, 155) ?? `Buy ${title} on UME — the campus marketplace.`
+  const image = listing.image_urls?.[0]
+  const price = listing.price ? `$${(listing.price / 100).toFixed(2)}` : undefined
+
+  return {
+    title,
+    description: price ? `${price} — ${description}` : description,
+    openGraph: {
+      title: `${title} | UME`,
+      description,
+      ...(image && { images: [{ url: image }] }),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${title} | UME`,
+      description,
+      ...(image && { images: [image] }),
+    },
+  }
+}
 import ReportButton from '@/components/listings/ReportButton'
 import ViewListingTracker from '@/components/analytics/ViewListingTracker'
 import ListingImages from '@/components/listings/ListingImages'

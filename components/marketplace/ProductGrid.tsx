@@ -98,8 +98,13 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
     }
   }
 
+  const delay = Math.min(cardIndex * 50, 300)
+
   return (
-    <div className="relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col">
+    <div
+      className="relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col animate-materialize"
+      style={{ animationDelay: `${delay}ms` }}
+    >
       {/* Toast notifications */}
       {(quickMsgSent || heartToast) && (
         <div className="absolute top-3 left-1/2 -translate-x-1/2 z-50 bg-green-600 text-white text-xs font-medium px-3 py-1.5 rounded-full shadow-lg whitespace-nowrap pointer-events-none">

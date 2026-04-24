@@ -58,7 +58,7 @@ export default function MobileHeader({
               size="icon"
               onClick={() => setSearchOpen(true)}
               aria-label="Search"
-              className="h-9 w-9 text-ume-indigo/70 hover:text-ume-indigo hover:bg-ume-indigo/5"
+              className="h-11 w-11 text-ume-indigo/70 hover:text-ume-indigo hover:bg-ume-indigo/5"
             >
               <svg className="w-[17px] h-[17px]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8" />
@@ -91,7 +91,7 @@ export default function MobileHeader({
                   variant="ghost"
                   size="icon"
                   aria-label="Open menu"
-                  className="h-9 w-9 text-ume-indigo/70 hover:text-ume-indigo hover:bg-ume-indigo/5"
+                  className="h-11 w-11 text-ume-indigo/70 hover:text-ume-indigo hover:bg-ume-indigo/5"
                 >
                   <svg className="w-[17px] h-[17px]" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />

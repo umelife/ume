@@ -1,4 +1,14 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
+
+export const metadata: Metadata = {
+  title: 'Marketplace',
+  description: 'Browse and buy items listed by students on your campus — textbooks, dorm supplies, tech, clothing and more.',
+  openGraph: {
+    title: 'UME Marketplace',
+    description: 'Browse campus listings — textbooks, dorm supplies, tech, clothing and more.',
+  },
+}
 import { unstable_cache } from 'next/cache'
 import { createClient } from '@/lib/supabase/server'
 import supabasePublic from '@/lib/supabase/public'

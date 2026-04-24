@@ -11,7 +11,7 @@ import MobileFooter from "@/components/MobileFooter";
 import PushNotificationWrapper from "@/components/push/PushNotificationWrapper"
 import InstallPrompt from "@/components/ui/InstallPrompt";
 import WhatsNewModal from "@/components/WhatsNewModal";
-import MobileTabBar from "@/components/MobileTabBar";
+import MobileTabBarWrapper from "@/components/MobileTabBarWrapper";
 
 // Load Google Fonts using next/font (prevents CORB issues)
 // Using Work Sans as a free alternative to BR Shape (geometric sans-serif)
@@ -30,8 +30,10 @@ const archivoBlack = Archivo_Black({
 });
 
 export const metadata: Metadata = {
-  title: "UME - University Market Exchange",
-  description: "Buy and sell items safely within your university community",
+  title: { default: "UME — University Marketplace", template: "%s | UME" },
+  description: "Buy and sell items safely within your university community. UME is the campus marketplace built for college students.",
+  keywords: ["university marketplace", "campus marketplace", "college buy sell", "student marketplace", "UME"],
+  metadataBase: new URL('https://umemarket.com'),
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -42,16 +44,32 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/icon.png', type: 'image/png' },        // PNG fallback for older browsers
+      { url: '/icon.png', type: 'image/png' },
     ],
     shortcut: '/icon.svg',
     apple: '/icon.png',
+  },
+  openGraph: {
+    type: 'website',
+    siteName: 'UME',
+    title: 'UME — University Marketplace',
+    description: 'Buy and sell items safely within your university community.',
+    images: [{ url: '/icon.png', width: 1024, height: 1024, alt: 'UME' }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'UME — University Marketplace',
+    description: 'Buy and sell items safely within your university community.',
+    images: ['/icon.png'],
   },
 };
 
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
+  minimumScale: 1,
+  maximumScale: 5,
+  themeColor: '#312e81',
 };
 
 export default function RootLayout({
@@ -74,7 +92,7 @@ export default function RootLayout({
         <WhatsNewModal />
         {/* Spacer so floating tab bar doesn't overlap footer content */}
         <div className="h-20" aria-hidden="true" />
-        <MobileTabBar />
+        <MobileTabBarWrapper />
       </body>
     </html>
   );

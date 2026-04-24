@@ -31,7 +31,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const isOwnListing = currentUserId && listing.user_id === currentUserId
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow animate-materialize">
       <Link href={`/item/${listing.id}`}>
         <div>
           <div className="relative h-48 bg-gray-200">
@@ -40,7 +40,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
                 src={imageUrl}
                 alt={listing.title}
                 fill
-                sizes="(max-width: 768px) calc(50vw - 16px), (max-width: 1024px) calc(33vw - 16px), calc(25vw - 16px)"
+                unoptimized
                 className="object-cover"
               />
             ) : (

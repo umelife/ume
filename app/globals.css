@@ -137,6 +137,65 @@ body {
 }
 .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
 
+/* ── Motion Design System ─────────────────────────────── */
+:root {
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:   cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes materialize {
+  from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+.animate-materialize {
+  animation: materialize 0.45s var(--ease-out-expo) both;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.4s var(--ease-out-expo) both;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.28s var(--ease-out-expo);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-backdrop {
+  animation: fade-in 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-materialize,
+  .animate-slide-up,
+  .animate-slide-in-right,
+  .animate-fade-backdrop,
+  .animate-hero-0,
+  .animate-hero-1,
+  .animate-hero-2,
+  .animate-hero-3,
+  .animate-hero-4,
+  .animate-hero-5,
+  .animate-hero-6,
+  .animate-hero-7 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
 /* Card shine sweep */
 @keyframes card-shine {
   0%   { transform: translateX(-100%) skewX(-15deg); }

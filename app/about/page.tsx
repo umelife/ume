@@ -10,24 +10,24 @@ const aboutJsonLd = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
   "name": "About UME",
-  "url": "https://umemarket.com/about",
+  "url": "https://ume-life.com/about",
   "description": "UME is a university marketplace built by students, for students.",
   "publisher": {
     "@type": "Organization",
-    "@id": "https://umemarket.com/#organization",
+    "@id": "https://ume-life.com/#organization",
   },
   "mentions": [
     {
       "@type": "Person",
       "name": "Ruthiik Satti",
       "jobTitle": "Co-founder",
-      "worksFor": { "@id": "https://umemarket.com/#organization" },
+      "worksFor": { "@id": "https://ume-life.com/#organization" },
     },
     {
       "@type": "Person",
       "name": "Bryndis",
       "jobTitle": "Co-founder",
-      "worksFor": { "@id": "https://umemarket.com/#organization" },
+      "worksFor": { "@id": "https://ume-life.com/#organization" },
     },
   ],
 }

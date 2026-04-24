@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   title: { default: "UME — University Marketplace", template: "%s | UME" },
   description: "Buy and sell items safely within your university community. UME is the campus marketplace built for college students.",
   keywords: ["university marketplace", "campus marketplace", "college buy sell", "student marketplace", "UME"],
-  metadataBase: new URL('https://umemarket.com'),
+  metadataBase: new URL('https://ume-life.com'),
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
@@ -87,10 +87,10 @@ export default function RootLayout({
             "@graph": [
               {
                 "@type": "Organization",
-                "@id": "https://umemarket.com/#organization",
+                "@id": "https://ume-life.com/#organization",
                 "name": "UME",
-                "url": "https://umemarket.com",
-                "logo": "https://umemarket.com/icon.png",
+                "url": "https://ume-life.com",
+                "logo": "https://ume-life.com/icon.png",
                 "description": "UME is a university marketplace where college students buy and sell items safely within their campus community.",
                 "foundingDate": "2024",
                 "founders": [
@@ -101,13 +101,13 @@ export default function RootLayout({
               },
               {
                 "@type": "WebSite",
-                "@id": "https://umemarket.com/#website",
-                "url": "https://umemarket.com",
+                "@id": "https://ume-life.com/#website",
+                "url": "https://ume-life.com",
                 "name": "UME — University Marketplace",
-                "publisher": { "@id": "https://umemarket.com/#organization" },
+                "publisher": { "@id": "https://ume-life.com/#organization" },
                 "potentialAction": {
                   "@type": "SearchAction",
-                  "target": "https://umemarket.com/marketplace?q={search_term_string}",
+                  "target": "https://ume-life.com/marketplace?q={search_term_string}",
                   "query-input": "required name=search_term_string"
                 }
               }

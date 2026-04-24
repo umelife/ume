@@ -100,7 +100,7 @@ export default async function ListingDetailPage({
     "name": listing.title,
     "description": listing.description ?? undefined,
     "image": listing.image_urls?.[0] ?? undefined,
-    "url": `https://umemarket.com/item/${listing.id}`,
+    "url": `https://ume-life.com/item/${listing.id}`,
     "offers": {
       "@type": "Offer",
       "price": listing.price ? (listing.price / 100).toFixed(2) : "0",

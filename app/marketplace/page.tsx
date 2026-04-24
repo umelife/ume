@@ -1,5 +1,19 @@
+import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
+
+export const metadata: Metadata = {
+  title: 'Campus Listings — Shop Student Marketplace',
+  description:
+    'Browse student-verified listings for textbooks, tech, dorm decor, clothing, giveaways, and more. Buy and sell safely within your campus community on UME.',
+  alternates: { canonical: '/marketplace' },
+  openGraph: {
+    title: 'Campus Listings — UME Student Marketplace',
+    description:
+      'Browse textbooks, tech, dorm items, clothing, and more from verified students on your campus.',
+    url: '/marketplace',
+  },
+}
 import CategoryBar from '@/components/marketplace/CategoryBar'
 import FiltersRow from '@/components/marketplace/FiltersRow'
 import MobileFilterButton from '@/components/marketplace/MobileFilterButton'

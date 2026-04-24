@@ -2,13 +2,51 @@ import type { Metadata } from 'next'
 import Image from 'next/image'
 
 export const metadata: Metadata = {
-  title: 'About Us - UME',
-  description: 'Learn about UME - the student marketplace built for students, by students',
+  title: 'About UME — The Student Marketplace Built For Students',
+  description:
+    'UME was built by students, for students. Learn how Ruthiik and Bryndis created a verified campus marketplace to make buying and selling on campus safe, affordable, and sustainable.',
+  alternates: { canonical: '/about' },
+  openGraph: {
+    title: 'About UME — The Student Marketplace Built For Students',
+    description:
+      'Learn how two university students built UME to make campus buying and selling safe, affordable, and sustainable.',
+    url: '/about',
+    images: [{ url: '/about-founders.jpg', width: 800, height: 800, alt: 'UME Founders' }],
+  },
 }
 
 export default function AboutPage() {
   return (
     <div className="min-h-screen bg-ume-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify([
+            {
+              '@context': 'https://schema.org',
+              '@type': 'AboutPage',
+              name: 'About UME',
+              description:
+                'UME is a verified student marketplace where college students can buy and sell textbooks, dorm items, tech, clothing, and more exclusively within their campus community.',
+              url: 'https://ume-life.com/about',
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Ruthiik',
+              jobTitle: 'Co-founder',
+              worksFor: { '@type': 'Organization', name: 'UME' },
+            },
+            {
+              '@context': 'https://schema.org',
+              '@type': 'Person',
+              name: 'Bryndis',
+              jobTitle: 'Co-founder',
+              worksFor: { '@type': 'Organization', name: 'UME' },
+            },
+          ]),
+        }}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
 
         {/* What's UME? - Centered Section */}

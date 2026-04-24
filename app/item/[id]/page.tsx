@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import ReportButton from '@/components/listings/ReportButton'
@@ -9,6 +10,48 @@ import DeleteListingButton from '@/components/listings/DeleteListingButton'
 import { formatPrice, getTimeAgo } from '@/lib/utils/helpers'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}): Promise<Metadata> {
+  const { id } = await params
+  const supabase = await createClient()
+
+  const { data: listing } = await supabase
+    .from('listings')
+    .select('title, description, price, category, condition')
+    .eq('id', id)
+    .single()
+
+  if (!listing) return {}
+
+  const priceFormatted = listing.price
+    ? `$${(listing.price / 100).toFixed(2)}`
+    : ''
+  const descSnippet = listing.description?.slice(0, 140) ?? ''
+  const title = `${listing.title} — UME Campus Marketplace`
+  const description = [
+    priceFormatted && `Buy for ${priceFormatted}.`,
+    descSnippet,
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .slice(0, 160)
+
+  return {
+    title,
+    description,
+    alternates: { canonical: `/item/${id}` },
+    openGraph: {
+      title,
+      description,
+      url: `/item/${id}`,
+      type: 'article',
+    },
+  }
+}
 
 export default async function ListingDetailPage({
   params,
@@ -41,8 +84,33 @@ export default async function ListingDetailPage({
 
   const isOwner = currentUser?.id === listing.user_id
 
+  const priceValue = listing.price ? (listing.price / 100).toFixed(2) : undefined
+
   return (
     <div className="min-h-screen bg-ume-bg">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: listing.title,
+            description: listing.description ?? '',
+            category: listing.category ?? '',
+            ...(listing.condition && { itemCondition: `https://schema.org/${listing.condition === 'New' ? 'NewCondition' : 'UsedCondition'}` }),
+            offers: {
+              '@type': 'Offer',
+              priceCurrency: 'USD',
+              price: priceValue,
+              availability: 'https://schema.org/InStock',
+              seller: {
+                '@type': 'Organization',
+                name: 'UME',
+              },
+            },
+          }),
+        }}
+      />
       <ViewListingTracker listingId={listing.id} title={listing.title} category={listing.category} />
       <div className="max-w-7xl mx-auto py-6 md:py-8">
         <div className="grid md:grid-cols-2 md:gap-8 px-4 lg:px-8">

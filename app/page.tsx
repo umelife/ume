@@ -15,7 +15,22 @@
  * Example: http://localhost:3000/?showMobile=1
  */
 
+import type { Metadata } from 'next'
 import Hero from '@/components/homepage/Hero'
+
+export const metadata: Metadata = {
+  title: 'UME — Student Marketplace for Campus Buying & Selling',
+  description:
+    'UME is a verified student marketplace where you can buy and sell textbooks, dorm items, tech, clothing, and more — exclusively within your campus community. .edu email required.',
+  alternates: { canonical: '/' },
+  openGraph: {
+    title: 'UME — Student Marketplace for Campus Buying & Selling',
+    description:
+      'Buy and sell textbooks, dorm items, tech, clothing, and more with verified students on your campus.',
+    url: '/',
+    images: [{ url: '/placeholders/hero-main.png', width: 1200, height: 630, alt: 'UME Student Marketplace' }],
+  },
+}
 import FeatureSlider from '@/components/homepage/FeatureSlider'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
 import MobileHome from '@/components/MobileHome'

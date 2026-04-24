@@ -6,16 +6,79 @@ html, body, #__next {
   height: 100%;
 }
 
-:root {
-  --background: #f3f7f8;
-  --foreground: #171717;
+@layer base {
+  :root {
+    /* ── Canvas ── */
+    --background:          240 27% 97%;   /* ume-bg #f3f7f8  */
+    --foreground:          240 10%  10%;  /* near-black      */
+
+    /* ── Cards / surfaces ── */
+    --card:                0 0% 100%;
+    --card-foreground:     240 10%  10%;
+    --popover:             0 0% 100%;
+    --popover-foreground:  240 10%  10%;
+
+    /* ── Primary = UME Indigo #130170 ── */
+    --primary:             249 97%  22%;
+    --primary-foreground:  0 0% 100%;
+
+    /* ── Secondary = soft indigo tint ── */
+    --secondary:           240 40%  96%;
+    --secondary-foreground: 249 97% 22%;
+
+    /* ── Muted ── */
+    --muted:               220 14%  94%;
+    --muted-foreground:    220 9%   46%;
+
+    /* ── Accent = UME Pink #fa9ebc ── */
+    --accent:              340 90%  80%;
+    --accent-foreground:   249 97%  22%;
+
+    /* ── Destructive ── */
+    --destructive:         0 84%  60%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* ── Borders / inputs ── */
+    --border:              220 13%  89%;
+    --input:               220 13%  89%;
+    --ring:                249 97%  22%;
+
+    /* ── Chart colours ── */
+    --chart-1: 249 97% 22%;
+    --chart-2: 340 90% 80%;
+    --chart-3: 160 60% 45%;
+    --chart-4: 43  96% 56%;
+    --chart-5: 200 80% 60%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background:          240 10%   8%;
+    --foreground:          220 14%  96%;
+    --card:                240 10%  11%;
+    --card-foreground:     220 14%  96%;
+    --popover:             240 10%  11%;
+    --popover-foreground:  220 14%  96%;
+    --primary:             249 97%  65%;
+    --primary-foreground:  0 0% 100%;
+    --secondary:           240 10%  18%;
+    --secondary-foreground: 220 14% 96%;
+    --muted:               240 10%  18%;
+    --muted-foreground:    220 9%   56%;
+    --accent:              340 80%  70%;
+    --accent-foreground:   0 0% 100%;
+    --destructive:         0 62%  50%;
+    --destructive-foreground: 0 0% 100%;
+    --border:              240 10%  20%;
+    --input:               240 10%  20%;
+    --ring:                249 97%  65%;
+  }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@layer base {
+  * { @apply border-border; }
+  body { @apply bg-background text-foreground; }
 }
 
 body {
@@ -73,6 +136,65 @@ body {
   50%       { transform: translateY(7px); }
 }
 .animate-bounce-slow { animation: bounce-slow 2s ease-in-out infinite; }
+
+/* ── Motion Design System ─────────────────────────────── */
+:root {
+  --ease-out-expo:  cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-expo:   cubic-bezier(0.7, 0, 0.84, 0);
+  --ease-spring:    cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes materialize {
+  from { opacity: 0; transform: translateY(12px); filter: blur(4px); }
+  to   { opacity: 1; transform: translateY(0);    filter: blur(0); }
+}
+.animate-materialize {
+  animation: materialize 0.45s var(--ease-out-expo) both;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.4s var(--ease-out-expo) both;
+}
+
+@keyframes slide-in-right {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.28s var(--ease-out-expo);
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-backdrop {
+  animation: fade-in 0.2s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-materialize,
+  .animate-slide-up,
+  .animate-slide-in-right,
+  .animate-fade-backdrop,
+  .animate-hero-0,
+  .animate-hero-1,
+  .animate-hero-2,
+  .animate-hero-3,
+  .animate-hero-4,
+  .animate-hero-5,
+  .animate-hero-6,
+  .animate-hero-7 {
+    animation: none;
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
 
 /* Card shine sweep */
 @keyframes card-shine {

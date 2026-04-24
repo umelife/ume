@@ -2,91 +2,176 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { Badge } from '@/components/ui/badge'
 
-const tabs = [
+interface Tab {
+  label: string
+  href: string
+  comingSoon?: boolean
+  icon: (active: boolean) => React.ReactNode
+}
+
+const tabs: Tab[] = [
+  {
+    label: 'Home',
+    href: '/',
+    icon: (active) => (
+      <svg
+        className={`w-5 h-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+      </svg>
+    ),
+  },
   {
     label: 'Marketplace',
     href: '/marketplace',
-    comingSoon: false,
-    icon: (active: boolean) => (
-      <svg className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+    icon: (active) => (
+      <svg
+        className={`w-5 h-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z" />
       </svg>
     ),
   },
   {
-    label: 'Services',
-    href: '/services',
-    comingSoon: true,
-    icon: (active: boolean) => (
-      <svg className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
+    label: 'Create',
+    href: '/create',
+    icon: (active) => (
+      <svg
+        className={`w-5 h-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="12" r="9" />
+        <path strokeLinecap="round" d="M12 8v8M8 12h8" />
       </svg>
     ),
   },
   {
-    label: 'Communities',
-    href: '/communities',
-    comingSoon: true,
-    icon: (active: boolean) => (
-      <svg className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+    label: 'Messages',
+    href: '/messages',
+    icon: (active) => (
+      <svg
+        className={`w-5 h-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
+        <rect x="2" y="4" width="20" height="16" rx="2" />
+        <path d="m2 7 8.5 5.5a2 2 0 0 0 2 0L22 7" />
       </svg>
     ),
   },
   {
-    label: 'Events',
-    href: '/events',
-    comingSoon: true,
-    icon: (active: boolean) => (
-      <svg className={`w-5 h-5 shrink-0 ${active ? 'text-white' : 'text-gray-400'}`} fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
+    label: 'Profile',
+    href: '/profile',
+    icon: (active) => (
+      <svg
+        className={`w-5 h-5 shrink-0 transition-colors ${active ? 'text-white' : 'text-gray-400'}`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+      >
+        <circle cx="12" cy="8" r="5" />
+        <path d="M20 21a8 8 0 1 0-16 0" />
       </svg>
     ),
   },
 ]
 
-export default function MobileTabBar() {
+interface MobileTabBarProps {
+  unreadMessages?: number
+  userId?: string
+}
+
+export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBarProps) {
   const pathname = usePathname()
 
   if (pathname.startsWith('/safe-handshake')) return null
 
+  const isActive = (href: string) => {
+    if (href === '/') return pathname === '/'
+    if (href === '/profile') return pathname.startsWith('/profile')
+    return pathname.startsWith(href)
+  }
+
   return (
-    <nav className="fixed bottom-5 left-1/2 -translate-x-1/2 z-30">
-      {/* Mobile: icons only → compact pill */}
-      <div className="flex sm:hidden items-center gap-1 bg-white shadow-2xl border border-gray-100 rounded-full px-2 py-2">
+    <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 w-auto">
+      {/* Mobile: icons-only compact pill */}
+      <div className="flex sm:hidden items-center gap-0.5 bg-white shadow-2xl border border-gray-100/80 rounded-full px-1.5 py-1.5">
         {tabs.map((tab) => {
-          const active = pathname.startsWith(tab.href)
+          const active = isActive(tab.href)
+          const showUnread = tab.href === '/messages' && unreadMessages > 0
+
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              className={`relative flex items-center justify-center w-11 h-11 rounded-full transition-all
-                ${active ? 'bg-ume-indigo shadow-md' : 'hover:bg-gray-100'}`}
               aria-label={tab.label}
+              className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200
+                ${active
+                  ? 'bg-ume-indigo shadow-lg shadow-ume-indigo/20'
+                  : 'hover:bg-gray-50 active:bg-gray-100'
+                }`}
             >
               {tab.icon(active)}
-              {tab.comingSoon && (
-                <span className="absolute top-0.5 right-0.5 w-2 h-2 bg-ume-pink rounded-full border border-white" />
+
+              {/* Unread badge */}
+              {showUnread && (
+                <span className="absolute top-1.5 right-1.5 bg-ume-pink text-white text-[9px] font-bold rounded-full min-w-[14px] h-3.5 flex items-center justify-center px-0.5 leading-none border border-white">
+                  {unreadMessages > 9 ? '9+' : unreadMessages}
+                </span>
+              )}
+
+              {/* Coming soon dot */}
+              {tab.comingSoon && !active && (
+                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-ume-pink rounded-full border border-white" />
               )}
             </Link>
           )
         })}
       </div>
 
-      {/* Desktop: icons + labels */}
-      <div className="hidden sm:flex items-center gap-1 bg-white/90 backdrop-blur-md shadow-xl border border-gray-200 rounded-full px-2 py-1.5">
+      {/* Desktop (sm+): icons + labels pill */}
+      <div className="hidden sm:flex items-center gap-0.5 bg-white/90 backdrop-blur-md shadow-xl border border-gray-200 rounded-full px-2 py-1.5">
         {tabs.map((tab) => {
-          const active = pathname.startsWith(tab.href)
+          const active = isActive(tab.href)
+          const showUnread = tab.href === '/messages' && unreadMessages > 0
+
           return (
             <Link
               key={tab.href}
               href={tab.href}
-              className={`relative flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all whitespace-nowrap
-                ${active ? 'bg-ume-indigo text-white shadow-sm' : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'}`}
+              className={`relative flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap
+                ${active
+                  ? 'bg-ume-indigo text-white shadow-md shadow-ume-indigo/25'
+                  : 'text-gray-500 hover:text-gray-800 hover:bg-gray-100'
+                }`}
             >
               {tab.icon(active)}
               <span>{tab.label}</span>
+
+              {/* Unread badge */}
+              {showUnread && (
+                <Badge className="absolute -top-1.5 -right-1 bg-ume-pink hover:bg-ume-pink text-white text-[9px] font-bold px-1 min-w-0 h-4 border border-white">
+                  {unreadMessages > 9 ? '9+' : unreadMessages}
+                </Badge>
+              )}
+
+              {/* Coming soon label */}
               {tab.comingSoon && (
                 <span className="absolute -top-1.5 -right-1 text-[8px] bg-ume-pink text-white px-1 py-px rounded-full font-bold leading-tight">
                   Soon

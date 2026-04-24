@@ -24,6 +24,7 @@ import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
 import { ShopIcon, ServiceIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
 import MobileHome from '@/components/MobileHome'
+import Hero from '@/components/homepage/Hero'
 import Link from 'next/link'
 import supabasePublic from '@/lib/supabase/public'
 import type { Listing } from '@/types/database'
@@ -411,7 +412,7 @@ export default async function Home() {
       {/* ── DESKTOP HOMEPAGE ── */}
       <main className="hidden md:block min-h-screen bg-[#f3f7f8]">
         {/* 1. Hero */}
-        <HeroSection />
+        <Hero />
 
         {/* 2. Trust/Safety Banner */}
         <TrustBanner />

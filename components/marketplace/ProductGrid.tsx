@@ -1,9 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { animate, stagger } from 'animejs'
 import type { Listing } from '@/types/database'
 import { formatPrice } from '@/lib/utils/helpers'
 import useCart from '@/hooks/useCart'
@@ -35,10 +36,36 @@ interface ProductGridProps {
 }
 
 export default function ProductGrid({ listings }: ProductGridProps) {
+  const gridRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const grid = gridRef.current
+    if (!grid) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          observer.disconnect()
+          const cards = grid.querySelectorAll<HTMLElement>('.product-card')
+          animate(cards, {
+            translateY: [28, 0],
+            opacity: [0, 1],
+            delay: stagger(55, { start: 0 }),
+            ease: 'outExpo',
+            duration: 550,
+          })
+        })
+      },
+      { threshold: 0.05 }
+    )
+    observer.observe(grid)
+    return () => observer.disconnect()
+  }, [listings])
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {listings.map((listing, index) => (
-        // Pass index so the first 4 cards get `priority` (above-the-fold LCP images)
         <ProductCard key={listing.id} listing={listing} cardIndex={index} />
       ))}
     </div>
@@ -98,12 +125,10 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
     }
   }
 
-  const delay = Math.min(cardIndex * 50, 300)
-
   return (
     <div
-      className="relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col animate-materialize"
-      style={{ animationDelay: `${delay}ms` }}
+      className="product-card relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
+      style={{ opacity: 0 }}
     >
       {/* Toast notifications */}
       {(quickMsgSent || heartToast) && (

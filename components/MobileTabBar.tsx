@@ -2,6 +2,8 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useEffect, useRef } from 'react'
+import { animate, spring } from 'animejs'
 import { Badge } from '@/components/ui/badge'
 
 interface Tab {
@@ -99,6 +101,8 @@ interface MobileTabBarProps {
 
 export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBarProps) {
   const pathname = usePathname()
+  const pillRef = useRef<HTMLSpanElement>(null)
+  const tabRefs = useRef<(HTMLAnchorElement | null)[]>([])
 
   if (pathname.startsWith('/safe-handshake')) return null
 
@@ -108,11 +112,36 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
     return pathname.startsWith(href)
   }
 
+  const activeIndex = tabs.findIndex(tab => isActive(tab.href))
+
+  // Spring-animate the sliding pill to the active tab position
+  useEffect(() => {
+    const pill = pillRef.current
+    const activeEl = tabRefs.current[activeIndex]
+    if (!pill || !activeEl) return
+
+    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = activeEl
+    animate(pill, {
+      left: offsetLeft,
+      top: offsetTop,
+      width: offsetWidth,
+      height: offsetHeight,
+      ease: spring({ stiffness: 380, damping: 22, mass: 0.8 }),
+      duration: 600,
+    })
+  }, [activeIndex])
+
   return (
     <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 z-30 w-auto">
-      {/* Mobile: icons-only compact pill */}
-      <div className="flex sm:hidden items-center gap-0.5 bg-white shadow-2xl border border-gray-100/80 rounded-full px-1.5 py-1.5">
-        {tabs.map((tab) => {
+      {/* Mobile: icons-only compact pill with spring sliding indicator */}
+      <div className="relative flex sm:hidden items-center gap-0.5 bg-white shadow-2xl border border-gray-100/80 rounded-full px-1.5 py-1.5">
+        {/* Sliding active pill */}
+        <span
+          ref={pillRef}
+          className="absolute rounded-full bg-ume-indigo shadow-lg shadow-ume-indigo/20 pointer-events-none"
+          aria-hidden="true"
+        />
+        {tabs.map((tab, i) => {
           const active = isActive(tab.href)
           const showUnread = tab.href === '/messages' && unreadMessages > 0
 
@@ -120,12 +149,9 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
             <Link
               key={tab.href}
               href={tab.href}
+              ref={el => { tabRefs.current[i] = el }}
               aria-label={tab.label}
-              className={`relative flex items-center justify-center w-12 h-12 rounded-full transition-all duration-200
-                ${active
-                  ? 'bg-ume-indigo shadow-lg shadow-ume-indigo/20'
-                  : 'hover:bg-gray-50 active:bg-gray-100'
-                }`}
+              className="relative flex items-center justify-center w-12 h-12 rounded-full z-10"
             >
               {tab.icon(active)}
 

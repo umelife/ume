@@ -23,8 +23,9 @@
  *  - prefers-reduced-motion respected in globals.css
  */
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { animate, stagger, spring } from 'animejs'
 
 // ─── Cycling words ────────────────────────────────────────────────────────────
 
@@ -120,15 +121,30 @@ const SECTIONS = [
 // ─── Shared cards grid (used in both mobile inline + desktop right col) ───────
 
 function PlatformCards({ compact = false }: { compact?: boolean }) {
+  const gridRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!gridRef.current) return
+    const cards = gridRef.current.querySelectorAll<HTMLElement>('.platform-card')
+    animate(cards, {
+      translateY: [36, 0],
+      scale: [0.88, 1],
+      opacity: [0, 1],
+      delay: stagger(70, { start: 300 }),
+      ease: spring({ stiffness: 280, damping: 18, mass: 0.9 }),
+      duration: 800,
+    })
+  }, [])
+
   return (
-    <div className={`grid grid-cols-2 ${compact ? 'gap-2' : 'gap-3'} w-full`}>
+    <div ref={gridRef} className={`grid grid-cols-2 ${compact ? 'gap-2' : 'gap-3'} w-full`}>
       {SECTIONS.map((section, i) =>
         section.active ? (
           <Link
             key={section.name}
             href={section.href}
-            className={`relative overflow-hidden bg-white rounded-2xl ${compact ? 'p-3' : 'p-4 sm:p-5'} flex flex-col ${compact ? 'gap-2' : 'gap-3'} active:scale-95 transition-all duration-150 shadow-xl shadow-black/20 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-white/30 animate-hero-6`}
-            style={{ animationDelay: `${0.54 + i * 0.12}s` }}
+            className={`platform-card relative overflow-hidden bg-white rounded-2xl ${compact ? 'p-3' : 'p-4 sm:p-5'} flex flex-col ${compact ? 'gap-2' : 'gap-3'} active:scale-95 transition-all duration-150 shadow-xl shadow-black/20 cursor-pointer group focus:outline-none focus:ring-4 focus:ring-white/30`}
+            style={{ opacity: 0 }}
           >
             {/* Shine sweep */}
             <div className="animate-card-shine absolute inset-y-0 w-16 bg-white/30 pointer-events-none" />
@@ -148,8 +164,8 @@ function PlatformCards({ compact = false }: { compact?: boolean }) {
         ) : (
           <div
             key={section.name}
-            className={`${section.cardBg} rounded-2xl ${compact ? 'p-3' : 'p-4 sm:p-5'} flex flex-col ${compact ? 'gap-2' : 'gap-3'} select-none animate-hero-7`}
-            style={{ animationDelay: `${0.54 + i * 0.12}s` }}
+            className={`platform-card ${section.cardBg} rounded-2xl ${compact ? 'p-3' : 'p-4 sm:p-5'} flex flex-col ${compact ? 'gap-2' : 'gap-3'} select-none`}
+            style={{ opacity: 0 }}
           >
             <div className={`${compact ? 'w-8 h-8' : 'w-10 h-10'} rounded-xl ${section.iconBg} flex items-center justify-center ${section.iconColor}`}>
               <div className={compact ? 'w-4 h-4' : 'w-5 h-5'}>{section.icon}</div>

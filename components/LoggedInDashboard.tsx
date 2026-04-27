@@ -1,17 +1,14 @@
-/**
- * LoggedInDashboard
- * Personalised homepage shown to authenticated users.
- * Replaces the marketing hero with a greeting, quick actions,
- * campus feed, saved items, and their own listings.
- */
+'use client'
 
 import Link from 'next/link'
-import Image from 'next/image'
+import { useEffect, useRef } from 'react'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
 import { ShopIcon } from '@/components/homepage/SectionIcons'
+import { animate, stagger, spring } from 'animejs'
 import type { Listing } from '@/types/database'
+
 
 interface Props {
   user: {
@@ -23,6 +20,8 @@ interface Props {
   campusListings: Listing[]
   savedListings: Listing[]
   ownListings: Listing[]
+  discoverListings: Listing[]
+  totalListings: number
 }
 
 function HeartIcon() {
@@ -42,7 +41,21 @@ function TagIcon() {
   )
 }
 
-export default function LoggedInDashboard({ user, campusListings, savedListings, ownListings }: Props) {
+function SparkleIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+      <path d="M12 3v1m0 16v1M4.22 4.22l.7.7m12.16 12.16.7.7M3 12h1m16 0h1M4.22 19.78l.7-.7M18.36 5.64l.7-.7"/>
+      <circle cx="12" cy="12" r="4"/>
+    </svg>
+  )
+}
+
+export default function LoggedInDashboard({
+  user, campusListings, savedListings, ownListings, discoverListings, totalListings
+}: Props) {
+  const headerRef = useRef<HTMLDivElement>(null)
+  const statsRef = useRef<HTMLDivElement>(null)
+
   const hour = new Date().getHours()
   const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
   const firstName = user.display_name?.split(' ')[0] ?? user.username ?? 'there'
@@ -51,51 +64,90 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
   const hasCampus = campusListings.length > 0
   const hasSaved = savedListings.length > 0
   const hasOwn = ownListings.length > 0
-  const isEmpty = !hasCampus && !hasSaved && !hasOwn
+
+  // Animate header elements on mount
+  useEffect(() => {
+    if (!headerRef.current) return
+    const els = headerRef.current.querySelectorAll<HTMLElement>('.dash-in')
+    animate(els, {
+      translateY: [24, 0],
+      opacity: [0, 1],
+      delay: stagger(60, { start: 100 }),
+      ease: spring({ stiffness: 260, damping: 20 }),
+      duration: 700,
+    })
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#f3f7f8]">
 
-      {/* ── Greeting header — aurora gradient ── */}
-      <div className="relative overflow-hidden text-white px-5 sm:px-10 pt-8 pb-12"
-        style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4338ca 80%, #6d28d9 100%)' }}
+      {/* ── Hero header ── */}
+      <div
+        ref={headerRef}
+        className="relative overflow-hidden text-white px-5 sm:px-10 pt-10 pb-14"
+        style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 40%, #4338ca 75%, #7c3aed 100%)' }}
       >
-        {/* Dot grid overlay */}
-        <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
-          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
-        />
-        {/* Soft pink glow */}
-        <div className="absolute -top-20 -right-16 w-72 h-72 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(250,158,188,0.25) 0%, transparent 70%)' }}
-        />
-        {/* Soft lighter glow bottom-left */}
-        <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)' }}
-        />
+        {/* Dot grid */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.07]"
+          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
+        {/* Pink glow top-right */}
+        <div className="absolute -top-24 -right-16 w-80 h-80 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(250,158,188,0.3) 0%, transparent 65%)' }} />
+        {/* Violet glow bottom-left */}
+        <div className="absolute -bottom-20 -left-10 w-64 h-64 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.4) 0%, transparent 70%)' }} />
+
         <div className="relative z-10 max-w-7xl mx-auto">
-          <p className="text-white/60 text-sm font-medium mb-0.5">{greeting},</p>
+          {/* Greeting */}
+          <p className="dash-in text-white/60 text-sm font-medium mb-1" style={{ opacity: 0 }}>{greeting},</p>
           <h1
-            className="text-3xl sm:text-4xl font-black uppercase tracking-tight"
-            style={{ fontFamily: "'Archivo Black', sans-serif" }}
+            className="dash-in text-4xl sm:text-5xl font-black uppercase tracking-tight mb-1"
+            style={{ fontFamily: "'Archivo Black', sans-serif", opacity: 0 }}
           >
-            {firstName} 👋
+            {firstName} <span className="inline-block animate-bounce-slow">👋</span>
           </h1>
-          <p className="text-white/50 text-sm mt-1">{campus}</p>
+
+          {/* Campus badge */}
+          <div className="dash-in flex items-center gap-2 mb-6" style={{ opacity: 0 }}>
+            <span className="flex h-2 w-2 relative">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+            </span>
+            <span className="text-white/70 text-sm font-medium">{campus}</span>
+          </div>
+
+          {/* Stat pills */}
+          <div className="dash-in flex flex-wrap gap-2 mb-7" style={{ opacity: 0 }}>
+            <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3 py-1.5">
+              <span className="text-emerald-400 text-xs font-bold">{totalListings.toLocaleString()}</span>
+              <span className="text-white/60 text-xs">active listings</span>
+            </div>
+            {hasOwn && (
+              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3 py-1.5">
+                <span className="text-ume-pink text-xs font-bold">{ownListings.length}</span>
+                <span className="text-white/60 text-xs">your listings</span>
+              </div>
+            )}
+            {hasSaved && (
+              <div className="flex items-center gap-1.5 bg-white/10 backdrop-blur-sm border border-white/15 rounded-full px-3 py-1.5">
+                <span className="text-pink-300 text-xs font-bold">{savedListings.length}</span>
+                <span className="text-white/60 text-xs">saved</span>
+              </div>
+            )}
+          </div>
 
           {/* Quick actions */}
-          <div className="flex flex-wrap gap-2.5 mt-6">
-            <Link
-              href="/create"
-              className="flex items-center gap-1.5 bg-ume-pink text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-lg shadow-pink-900/30 hover:bg-pink-400 active:scale-95 transition-all duration-150"
+          <div className="dash-in flex flex-wrap gap-2.5" style={{ opacity: 0 }}>
+            <Link href="/create"
+              className="flex items-center gap-1.5 bg-ume-pink text-white text-sm font-bold px-5 py-2.5 rounded-full shadow-lg shadow-pink-900/40 hover:bg-pink-400 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
               </svg>
               List Item
             </Link>
-            <Link
-              href="/messages"
-              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
+            <Link href="/messages"
+              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-sm font-semibold px-5 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -103,21 +155,11 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
               </svg>
               Messages
             </Link>
-            <Link
-              href="/cart"
-              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
+            <Link href="/marketplace"
+              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/25 text-white text-sm font-semibold px-5 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-              </svg>
-              Saved
-            </Link>
-            <Link
-              href="/marketplace"
-              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
-            >
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"/>
+                <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
               </svg>
               Browse
             </Link>
@@ -125,59 +167,37 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
         </div>
       </div>
 
-      {/* ── Empty state ── */}
-      {isEmpty && (
-        <div className="max-w-7xl mx-auto px-5 py-12 text-center">
-          <p className="text-gray-400 text-sm">No listings on your campus yet — be the first to sell something!</p>
-          <Link href="/create" className="inline-block mt-4 bg-ume-indigo text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-indigo-700 transition-colors">
-            + List your first item
-          </Link>
-        </div>
-      )}
+      {/* ── Content sections ── */}
 
-      {/* ── Campus feed ── */}
+      {/* Campus feed */}
       {hasCampus && (
-        <HomeSectionRow
-          title={`${campus}`}
-          icon={<ShopIcon />}
-          viewAllHref="/marketplace"
-          accentColor="bg-ume-indigo"
-        >
-          {campusListings.map(listing => (
-            <HomeListingCard key={listing.id} listing={listing} />
-          ))}
+        <HomeSectionRow title={campus} icon={<ShopIcon />} viewAllHref="/marketplace" accentColor="bg-ume-indigo">
+          {campusListings.map(l => <HomeListingCard key={l.id} listing={l} />)}
         </HomeSectionRow>
       )}
 
-      {/* ── Saved items ── */}
+      {/* Saved items */}
       {hasSaved && (
-        <HomeSectionRow
-          title="Saved Items"
-          icon={<HeartIcon />}
-          viewAllHref="/cart"
-          accentColor="bg-ume-pink"
-        >
-          {savedListings.map(listing => (
-            <HomeListingCard key={listing.id} listing={listing} />
-          ))}
+        <HomeSectionRow title="Saved Items" icon={<HeartIcon />} viewAllHref="/cart" accentColor="bg-ume-pink">
+          {savedListings.map(l => <HomeListingCard key={l.id} listing={l} />)}
         </HomeSectionRow>
       )}
 
-      {/* ── Your listings ── */}
+      {/* Own listings */}
       {hasOwn && (
-        <HomeSectionRow
-          title="Your Listings"
-          icon={<TagIcon />}
-          viewAllHref={`/profile/${user.id}`}
-          accentColor="bg-emerald-600"
-        >
-          {ownListings.map(listing => (
-            <HomeListingCard key={listing.id} listing={listing} />
-          ))}
+        <HomeSectionRow title="Your Listings" icon={<TagIcon />} viewAllHref={`/profile/${user.id}`} accentColor="bg-emerald-600">
+          {ownListings.map(l => <HomeListingCard key={l.id} listing={l} />)}
         </HomeSectionRow>
       )}
 
-      {/* ── Categories ── */}
+      {/* Discover — always shows regardless of campus/saved state */}
+      {discoverListings.length > 0 && (
+        <HomeSectionRow title="Discover on UME" icon={<SparkleIcon />} viewAllHref="/marketplace" accentColor="bg-violet-600">
+          {discoverListings.map(l => <HomeListingCard key={l.id} listing={l} />)}
+        </HomeSectionRow>
+      )}
+
+      {/* Categories */}
       <CategoryGrid />
     </div>
   )

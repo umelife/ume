@@ -400,8 +400,8 @@ export default async function Home() {
     const supabase = await createClient()
     const campus = getCampusFromEmail(user.email)
 
-    const [campusResult, savedResult, ownResult] = await Promise.all([
-      // Campus listings (other sellers on same campus, newest first)
+    const [campusResult, savedResult, ownResult, discoverResult, statsResult] = await Promise.all([
+      // Campus listings (other sellers on same campus)
       campus
         ? supabase
             .from('listings')
@@ -428,6 +428,21 @@ export default async function Home() {
         .not('status', 'in', '(sold)')
         .order('created_at', { ascending: false })
         .limit(6),
+
+      // Discover — recent listings across all campuses (always has content)
+      supabase
+        .from('listings')
+        .select('*, user:users(*)')
+        .neq('user_id', user.id)
+        .not('status', 'in', '(sold,reserved)')
+        .order('created_at', { ascending: false })
+        .limit(12),
+
+      // Platform stats for the header
+      supabase
+        .from('listings')
+        .select('*', { count: 'exact', head: true })
+        .not('status', 'in', '(sold,reserved)'),
     ])
 
     const campusListings = (campusResult.data ?? []) as Listing[]
@@ -435,6 +450,8 @@ export default async function Home() {
       .map(item => item.listing)
       .filter(Boolean) as Listing[]
     const ownListings = (ownResult.data ?? []) as Listing[]
+    const discoverListings = (discoverResult.data ?? []) as Listing[]
+    const totalListings = statsResult.count ?? 0
 
     return (
       <LoggedInDashboard
@@ -447,6 +464,8 @@ export default async function Home() {
         campusListings={campusListings}
         savedListings={savedListings}
         ownListings={ownListings}
+        discoverListings={discoverListings}
+        totalListings={totalListings}
       />
     )
   }

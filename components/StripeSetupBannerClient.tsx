@@ -5,17 +5,24 @@ import { useState } from 'react'
 export default function StripeSetupBannerClient() {
   const [dismissed, setDismissed] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   if (dismissed) return null
 
   const handleSetup = async () => {
     setLoading(true)
+    setError(null)
     try {
       const res = await fetch('/api/stripe/connect/onboard', { method: 'POST' })
       const data = await res.json()
-      if (data.url) window.location.href = data.url
-      else setLoading(false)
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setError(data.error || 'Something went wrong. Try again.')
+        setLoading(false)
+      }
     } catch {
+      setError('Network error. Check your connection and try again.')
       setLoading(false)
     }
   }
@@ -28,7 +35,7 @@ export default function StripeSetupBannerClient() {
             d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
         </svg>
         <p className="text-sm font-medium truncate">
-          Set up Stripe to accept card payments and offer shipping on your listings
+          {error ?? 'Set up Stripe to accept card payments and offer shipping on your listings'}
         </p>
       </div>
       <div className="flex items-center gap-2 flex-shrink-0">

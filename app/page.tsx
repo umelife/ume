@@ -432,6 +432,8 @@ export default async function Home() {
           icon={<ServiceIcon />}
           viewAllHref="/services"
           comingSoon
+          description="Offer tutoring, repairs, rides, photography, and more to your campus community. Launch your side hustle."
+          features={['Tutoring', 'Tech repairs', 'Rides', 'Design', 'Photography', 'Fitness']}
         />
 
         {/* 5. Communities — coming soon */}
@@ -440,6 +442,8 @@ export default async function Home() {
           icon={<CommunityIcon />}
           viewAllHref="/communities"
           comingSoon
+          description="Connect with clubs, study groups, sports teams, and campus orgs — all in one place."
+          features={['Study groups', 'Sports teams', 'Clubs & orgs', 'Greek life', 'Interest groups']}
         />
 
         {/* 6. Events — coming soon */}
@@ -448,6 +452,8 @@ export default async function Home() {
           icon={<EventIcon />}
           viewAllHref="/events"
           comingSoon
+          description="Discover campus events, pop-up markets, game nights, and meetups happening near you."
+          features={['Pop-up markets', 'Game nights', 'Study sessions', 'Campus tours', 'Meetups']}
         />
 
         {/* 7. How It Works */}

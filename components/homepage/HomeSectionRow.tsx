@@ -23,6 +23,8 @@ interface HomeSectionRowProps {
   children?: React.ReactNode
   comingSoon?: boolean
   accentColor?: string
+  description?: string
+  features?: string[]
 }
 
 export default function HomeSectionRow({
@@ -32,6 +34,8 @@ export default function HomeSectionRow({
   children,
   comingSoon = false,
   accentColor = 'bg-ume-indigo',
+  description,
+  features = [],
 }: HomeSectionRowProps) {
   return (
     <section className="w-full py-6 sm:py-8 bg-ume-bg">
@@ -81,39 +85,52 @@ export default function HomeSectionRow({
         <Separator className="mx-4 sm:mx-6 mb-4 bg-[#130170]/8 w-auto" />
 
         {comingSoon ? (
-          /* ── Coming Soon: skeleton strip + prominent teaser card ── */
+          /* ── Coming Soon: full-width rich teaser ── */
           <div className="px-4 sm:px-6" aria-label={`${title} — coming soon`}>
-            {/* Skeleton card strip */}
-            <div
-              className="flex gap-3 overflow-x-hidden pb-3 pointer-events-none select-none"
-              style={{
-                maskImage:
-                  'linear-gradient(to right, black 0%, black 60%, transparent 100%)',
-              }}
-              aria-hidden="true"
-            >
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div key={i} className="flex-shrink-0 w-40 sm:w-48 opacity-50">
-                  <div className="w-full aspect-square rounded-2xl mb-2.5 bg-gradient-to-br from-gray-200 to-gray-100" />
-                  <div className="h-3 bg-gray-200 rounded-full w-3/4 mb-1.5" />
-                  <div className="h-2.5 bg-gray-100 rounded-full w-1/2" />
-                </div>
-              ))}
-            </div>
+            <div className="relative overflow-hidden rounded-2xl border border-gray-100 shadow-sm bg-white px-6 sm:px-10 py-8 sm:py-10 flex flex-col sm:flex-row items-center sm:items-start gap-6">
+              {/* Soft gradient wash */}
+              <div className="absolute inset-0 bg-gradient-to-br from-ume-indigo/[0.03] via-transparent to-ume-pink/[0.04] pointer-events-none" />
 
-            {/* Teaser card */}
-            <div className="flex items-center gap-4 bg-white rounded-2xl border border-gray-100 shadow-sm px-5 py-4 mt-1">
-              <span className="flex h-3 w-3 relative shrink-0">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fa9ebc] opacity-60" />
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-[#fa9ebc]" />
-              </span>
-              <div className="min-w-0">
-                <p className="font-black text-[#130170] text-sm uppercase tracking-tight">
-                  {title} is coming to UME
-                </p>
-                <p className="text-gray-400 text-xs mt-0.5">
-                  We&apos;re building it. Stay tuned.
-                </p>
+              {/* Large icon */}
+              <div className={`relative z-10 w-14 h-14 sm:w-16 sm:h-16 rounded-2xl ${accentColor} flex items-center justify-center text-white shrink-0 shadow-lg`}>
+                <div className="w-7 h-7 sm:w-8 sm:h-8">{icon}</div>
+              </div>
+
+              {/* Text content */}
+              <div className="relative z-10 flex-1 text-center sm:text-left">
+                <div className="flex items-center justify-center sm:justify-start gap-2.5 mb-2">
+                  <h3 className="font-black text-xl sm:text-2xl uppercase tracking-tight text-ume-indigo">
+                    {title}
+                  </h3>
+                  <span className="text-[10px] bg-[#fa9ebc]/15 text-[#fa9ebc] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#fa9ebc]/20">
+                    Coming Soon
+                  </span>
+                </div>
+
+                {description && (
+                  <p className="text-gray-500 text-sm sm:text-base leading-relaxed max-w-lg mb-4">
+                    {description}
+                  </p>
+                )}
+
+                {features.length > 0 && (
+                  <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                    {features.map(f => (
+                      <span key={f} className="text-xs bg-gray-50 border border-gray-200 text-gray-500 px-3 py-1 rounded-full font-medium">
+                        {f}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              {/* In development pulse */}
+              <div className="relative z-10 flex items-center gap-2 text-xs text-gray-400 font-medium shrink-0 self-center">
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fa9ebc] opacity-60" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#fa9ebc]" />
+                </span>
+                In development
               </div>
             </div>
           </div>

@@ -34,6 +34,7 @@ export const metadata: Metadata = {
   description: "Buy and sell items safely within your university community. UME is the campus marketplace built for college students.",
   keywords: ["university marketplace", "campus marketplace", "college buy sell", "student marketplace", "UME"],
   metadataBase: new URL('https://ume-life.com'),
+  alternates: { canonical: '/' },
   manifest: "/manifest.json",
   appleWebApp: {
     capable: true,

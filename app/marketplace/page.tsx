@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 export const metadata: Metadata = {
   title: 'Marketplace',
   description: 'Browse and buy items listed by students on your campus — textbooks, dorm supplies, tech, clothing and more.',
+  alternates: { canonical: '/marketplace' },
   openGraph: {
     title: 'UME Marketplace',
     description: 'Browse campus listings — textbooks, dorm supplies, tech, clothing and more.',

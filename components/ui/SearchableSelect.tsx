@@ -81,9 +81,11 @@ export default function SearchableSelect({
       <button
         type="button"
         onClick={() => { setOpen(o => !o); setSearch('') }}
-        className={`flex items-center gap-2 text-sm text-gray-900 hover:text-ume-indigo transition-colors min-h-[48px] ${fullWidth ? 'w-full justify-between px-4 py-3 border border-gray-300 rounded-full bg-white' : ''}`}
+        className={`flex items-center gap-2 text-sm transition-colors min-h-[48px] ${
+          selected && !fullWidth ? 'text-ume-indigo hover:text-ume-indigo' : 'text-gray-900 hover:text-ume-indigo'
+        } ${fullWidth ? 'w-full justify-between px-4 py-3 border border-gray-300 rounded-full bg-white' : ''}`}
       >
-        <span className={selected ? 'text-ume-indigo font-medium' : ''}>
+        <span className={selected ? 'font-medium' : ''}>
           {selected?.label ?? placeholder}
         </span>
         <svg

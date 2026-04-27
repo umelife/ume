@@ -6,6 +6,7 @@ export interface User {
   university_domain: string;
   college_name?: string;
   college_address?: string;
+  avatar_url?: string;
   created_at: string;
   // seller_rating?: number; // Feature disabled
   total_sales?: number;

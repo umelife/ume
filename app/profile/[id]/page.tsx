@@ -4,7 +4,7 @@ import ProfileSettings from '@/components/profile/ProfileSettings'
 import ProfileListings from '@/components/profile/ProfileListings'
 import StripeOnboardingBanner from '@/components/seller/StripeOnboardingBanner'
 import { notFound } from 'next/navigation'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import AvatarUpload from '@/components/profile/AvatarUpload'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
@@ -74,16 +74,12 @@ export default async function ProfilePage({
                 <div className="flex flex-col sm:flex-row items-center sm:items-end gap-5 sm:gap-6">
 
                   {/* Avatar — overlaps card top edge */}
-                  <div className="-mt-16 sm:-mt-20 flex-shrink-0">
-                    <Avatar className="w-24 h-24 sm:w-28 sm:h-28 ring-4 ring-white shadow-lg">
-                      <AvatarFallback
-                        className="text-4xl sm:text-5xl font-black text-white select-none"
-                        style={{ background: 'linear-gradient(135deg, #130170, #fa9ebc)' }}
-                      >
-                        {(displayName?.[0] ?? '?').toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  </div>
+                  <AvatarUpload
+                    userId={id}
+                    displayName={displayName}
+                    currentAvatarUrl={profileUser.avatar_url}
+                    isOwnProfile={isOwnProfile}
+                  />
 
                   {/* Info */}
                   <div className="flex-1 text-center sm:text-left min-w-0">

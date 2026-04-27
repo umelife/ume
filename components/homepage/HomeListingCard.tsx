@@ -28,7 +28,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
       href={`/item/${listing.id}`}
       className="flex-shrink-0 w-40 sm:w-48 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#130170] focus-visible:ring-offset-2 rounded-2xl"
     >
-      <Card className="border-0 shadow-sm bg-white rounded-2xl overflow-hidden transition-all duration-300 group-hover:scale-[1.03] group-hover:shadow-lg">
+      <Card className="border-0 shadow-md bg-white rounded-2xl overflow-hidden transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-xl group-active:scale-[0.97]">
         {/* Image */}
         <div className="relative w-full aspect-square bg-gray-100">
           {imageUrl ? (
@@ -57,9 +57,12 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
             </div>
           )}
 
+          {/* Image gradient overlay */}
+          <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/40 to-transparent pointer-events-none z-10" />
+
           {/* Price badge — indigo, bottom-left */}
           <Badge
-            className="absolute bottom-2 left-2 bg-[#130170] text-white border-0 shadow-md text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none"
+            className="absolute bottom-2 left-2 bg-[#130170] text-white border-0 shadow-lg text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none z-20"
           >
             {formattedPrice}
           </Badge>

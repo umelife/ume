@@ -127,7 +127,7 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
 
   return (
     <div
-      className="product-card relative bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden flex flex-col"
+      className="product-card relative bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 overflow-hidden flex flex-col cursor-pointer"
       style={{ opacity: 0 }}
     >
       {/* Toast notifications */}
@@ -222,9 +222,12 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
               </div>
             )}
 
+            {/* Bottom gradient for depth */}
+            <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
+
             {/* Condition Badge (if available) */}
             {listing.condition && (
-              <div className="absolute top-2 left-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-medium text-gray-700 shadow-sm">
+              <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-ume-indigo shadow-sm z-20">
                 {listing.condition}
               </div>
             )}
@@ -241,44 +244,30 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
           </div>
 
           {/* Card Content */}
-          <div className="p-4 space-y-2">
-            {/* Title */}
-            <h3 className="text-lg font-bold text-ume-indigo line-clamp-2 group-hover:text-ume-pink transition-colors">
-              {listing.title}
-            </h3>
+          <div className="p-3.5 space-y-1.5">
+            {/* Price + Title row */}
+            <div className="flex items-start justify-between gap-2">
+              <h3 className="text-sm font-bold text-ume-indigo line-clamp-2 group-hover:text-ume-pink transition-colors duration-200 leading-snug flex-1">
+                {listing.title}
+              </h3>
+              <span className="text-sm font-black text-ume-indigo shrink-0 tabular-nums">
+                {formatPrice(listing.price)}
+              </span>
+            </div>
 
-            {/* Description */}
-            {shortDescription && (
-              <p className="text-sm text-gray-600 line-clamp-2">
-                {shortDescription}
-              </p>
-            )}
-
-            {/* Price */}
-            <p className="text-xl font-bold text-ume-indigo">
-              {formatPrice(listing.price)}
-            </p>
-
-            {/* Seller Info (if available) */}
+            {/* Seller row */}
             {listing.user && (
-              <div className="pt-2 border-t border-gray-100">
-                <button
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/profile/${listing.user_id}`) }}
-                  className="flex items-center gap-2 hover:opacity-75 transition-opacity w-full text-left"
-                >
-                  <div className="w-6 h-6 bg-ume-indigo rounded-full flex items-center justify-center text-xs font-medium text-white flex-shrink-0">
-                    {(listing.user.username || listing.user.display_name)?.[0]?.toUpperCase()}
-                  </div>
-                  <span className="text-xs text-ume-indigo font-medium truncate">
-                    @{listing.user.username || listing.user.display_name}
-                  </span>
-                </button>
-                {listing.user.college_name && (
-                  <p className="text-xs text-gray-500 mt-1 ml-8 truncate">
-                    {listing.user.college_name}
-                  </p>
-                )}
-              </div>
+              <button
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); router.push(`/profile/${listing.user_id}`) }}
+                className="flex items-center gap-1.5 hover:opacity-70 transition-opacity w-full text-left"
+              >
+                <div className="w-5 h-5 bg-ume-indigo rounded-full flex items-center justify-center text-[9px] font-bold text-white shrink-0">
+                  {(listing.user.username || listing.user.display_name)?.[0]?.toUpperCase()}
+                </div>
+                <span className="text-[11px] text-gray-500 truncate">
+                  @{listing.user.username || listing.user.display_name}
+                </span>
+              </button>
             )}
           </div>
         </div>
@@ -286,29 +275,29 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
 
       {/* Quick Message Button — non-owners only */}
       {!isOwnListing && (
-        <div className="p-4 pt-0">
+        <div className="px-3.5 pb-3.5">
           <button
             onClick={handleQuickMessage}
             disabled={quickMsgLoading}
-            className={`w-full px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+            className={`w-full px-4 py-2 rounded-xl text-xs font-semibold active:scale-95 transition-all duration-150 ${
               quickMsgSent
-                ? 'bg-green-600 text-white cursor-default'
-                : 'bg-ume-indigo text-white hover:bg-indigo-800'
+                ? 'bg-green-500 text-white cursor-default'
+                : 'bg-ume-indigo text-white hover:bg-indigo-700 shadow-sm shadow-ume-indigo/30'
             } ${quickMsgLoading ? 'opacity-60 cursor-not-allowed' : ''}`}
           >
-            {quickMsgLoading ? 'Sending...' : quickMsgSent ? 'Message sent!' : 'Quick Message'}
+            {quickMsgLoading ? 'Sending…' : quickMsgSent ? '✓ Message sent' : 'Quick Message'}
           </button>
         </div>
       )}
 
       {/* Edit / Delete — own listings only */}
       {isOwnListing && (
-        <div className="p-4 pt-0 flex gap-2">
+        <div className="px-3.5 pb-3.5 flex gap-2">
           <Link
             href={`/edit/${listing.id}`}
-            className="flex-1 text-center px-4 py-2 bg-ume-indigo text-white rounded-full text-sm font-medium hover:bg-indigo-800 transition-colors"
+            className="flex-1 text-center px-4 py-2 bg-ume-indigo text-white rounded-xl text-xs font-semibold hover:bg-indigo-700 active:scale-95 transition-all duration-150 shadow-sm shadow-ume-indigo/30"
           >
-            Edit
+            Edit Listing
           </Link>
           <DeleteListingButton listingId={listing.id} />
         </div>

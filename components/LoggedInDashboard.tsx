@@ -56,9 +56,23 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
   return (
     <div className="min-h-screen bg-[#f3f7f8]">
 
-      {/* ── Greeting header ── */}
-      <div className="bg-ume-indigo text-white px-5 sm:px-10 pt-8 pb-10">
-        <div className="max-w-7xl mx-auto">
+      {/* ── Greeting header — aurora gradient ── */}
+      <div className="relative overflow-hidden text-white px-5 sm:px-10 pt-8 pb-12"
+        style={{ background: 'linear-gradient(135deg, #1e1b4b 0%, #312e81 45%, #4338ca 80%, #6d28d9 100%)' }}
+      >
+        {/* Dot grid overlay */}
+        <div className="absolute inset-0 pointer-events-none opacity-[0.06]"
+          style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+        />
+        {/* Soft pink glow */}
+        <div className="absolute -top-20 -right-16 w-72 h-72 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(250,158,188,0.25) 0%, transparent 70%)' }}
+        />
+        {/* Soft lighter glow bottom-left */}
+        <div className="absolute -bottom-16 -left-8 w-56 h-56 rounded-full pointer-events-none"
+          style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.3) 0%, transparent 70%)' }}
+        />
+        <div className="relative z-10 max-w-7xl mx-auto">
           <p className="text-white/60 text-sm font-medium mb-0.5">{greeting},</p>
           <h1
             className="text-3xl sm:text-4xl font-black uppercase tracking-tight"
@@ -72,7 +86,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
           <div className="flex flex-wrap gap-2.5 mt-6">
             <Link
               href="/create"
-              className="flex items-center gap-1.5 bg-ume-pink text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-md shadow-pink-900/20 hover:bg-pink-400 transition-colors"
+              className="flex items-center gap-1.5 bg-ume-pink text-white text-sm font-semibold px-4 py-2.5 rounded-full shadow-lg shadow-pink-900/30 hover:bg-pink-400 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                 <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
@@ -81,7 +95,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
             </Link>
             <Link
               href="/messages"
-              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors"
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <rect x="2" y="4" width="20" height="16" rx="2"/>
@@ -91,7 +105,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
             </Link>
             <Link
               href="/cart"
-              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors"
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
@@ -100,7 +114,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
             </Link>
             <Link
               href="/marketplace"
-              className="flex items-center gap-1.5 bg-white/15 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2.5 rounded-full transition-colors"
+              className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2.5 rounded-full backdrop-blur-sm border border-white/20 active:scale-95 transition-all duration-150"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 21v-7.5a.75.75 0 01.75-.75h3a.75.75 0 01.75.75V21m-4.5 0H2.36m11.14 0H18m0 0h3.64m-1.39 0V9.349m-16.5 11.65V9.35m0 0a3.001 3.001 0 003.75-.615A2.993 2.993 0 009.75 9.75c.896 0 1.7-.393 2.25-1.016a2.993 2.993 0 002.25 1.016c.896 0 1.7-.393 2.25-1.016a3.001 3.001 0 003.75.614m-16.5 0a3.004 3.004 0 01-.621-4.72L4.318 3.44A1.5 1.5 0 015.378 3h13.243a1.5 1.5 0 011.06.44l1.19 1.189a3 3 0 01-.621 4.72m-13.5 8.65h3.75a.75.75 0 00.75-.75V13.5a.75.75 0 00-.75-.75H6.75a.75.75 0 00-.75.75v3.75c0 .415.336.75.75.75z"/>

@@ -38,6 +38,7 @@ interface MarketplacePageProps {
     maxPrice?: string
     sort?: string
     campus?: string
+    q?: string
   }>
 }
 
@@ -110,10 +111,12 @@ const fetchListingsCached = unstable_cache(
     maxPrice?: string
     sort?: string
     campus?: string
+    q?: string
   }): Promise<{ listings: Listing[]; hasMore: boolean }> => {
     const categorySlug = params.category
     const condition = params.condition
     const campus = params.campus
+    const q = params.q
     const minPrice = params.minPrice ? parseFloat(params.minPrice) : null
     const maxPrice = params.maxPrice ? parseFloat(params.maxPrice) : null
     const sort = params.sort || 'relevance'
@@ -128,6 +131,7 @@ const fetchListingsCached = unstable_cache(
     if (campus) query = query.eq('seller_campus_id', campus)
     if (minPrice !== null) query = query.gte('price', minPrice)
     if (maxPrice !== null) query = query.lte('price', maxPrice)
+    if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
 
     switch (sort) {
       case 'price-asc': query = query.order('price', { ascending: true }); break
@@ -228,6 +232,7 @@ async function fetchListings(searchParams: {
     maxPrice: searchParams.maxPrice,
     sort: searchParams.sort,
     campus: searchParams.campus,
+    q: searchParams.q,
   })
 }
 
@@ -239,8 +244,10 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
   ])
 
   const categoryDisplay = getCategoryDisplay(params.category)
-  const pageTitle = params.category ? `SHOP ${categoryDisplay.toUpperCase()}` : 'SHOP ALL'
-  const pageSubtitle = getCategorySubtitle(categoryDisplay)
+  const pageTitle = params.q
+    ? `RESULTS FOR "${params.q.toUpperCase()}"`
+    : params.category ? `SHOP ${categoryDisplay.toUpperCase()}` : 'SHOP ALL'
+  const pageSubtitle = params.q ? `${listings.length} matching listing${listings.length === 1 ? '' : 's'}` : getCategorySubtitle(categoryDisplay)
 
   const filters: ListingFilters = {
     category: params.category,
@@ -249,6 +256,7 @@ export default async function MarketplacePage({ searchParams }: MarketplacePageP
     minPrice: params.minPrice ? parseFloat(params.minPrice) : null,
     maxPrice: params.maxPrice ? parseFloat(params.maxPrice) : null,
     sort: params.sort,
+    q: params.q,
   }
 
   const activeFilterCount = [

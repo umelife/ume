@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import ProductGrid from './ProductGrid'
 import { fetchMoreListings, type ListingFilters } from '@/app/marketplace/actions'
 import type { Listing } from '@/types/database'
@@ -19,12 +19,17 @@ export default function MarketplaceListings({
   const [listings, setListings] = useState<Listing[]>(initialListings)
   const [hasMore, setHasMore] = useState(initialHasMore)
   const [isPending, startTransition] = useTransition()
+  const buttonRef = useRef<HTMLButtonElement>(null)
 
   const handleShowMore = () => {
     startTransition(async () => {
       const { listings: more, hasMore: moreAvailable } = await fetchMoreListings(filters, listings.length)
       setListings(prev => [...prev, ...more])
       setHasMore(moreAvailable)
+      // Scroll the load-more button (and new content above it) into view
+      requestAnimationFrame(() => {
+        buttonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      })
     })
   }
 
@@ -44,9 +49,25 @@ export default function MarketplaceListings({
     <div>
       <ProductGrid listings={listings} />
 
+      {/* Skeleton placeholders while loading more */}
+      {isPending && (
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+          {[0, 1, 2, 3].map(i => (
+            <div key={i} className="rounded-2xl bg-white shadow-sm overflow-hidden animate-pulse">
+              <div className="w-full pb-[100%] bg-gray-200" />
+              <div className="p-3.5 space-y-2">
+                <div className="h-3 bg-gray-200 rounded-full w-3/4" />
+                <div className="h-3 bg-gray-200 rounded-full w-1/2" />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
       {hasMore && (
         <div className="mt-8 flex justify-center">
           <button
+            ref={buttonRef}
             onClick={handleShowMore}
             disabled={isPending}
             className="w-full sm:w-auto px-8 py-4 bg-white border-2 border-ume-indigo text-ume-indigo font-semibold rounded-full hover:bg-ume-indigo hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 min-h-[52px]"

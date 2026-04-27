@@ -25,6 +25,7 @@ export interface ListingFilters {
   minPrice?: number | null
   maxPrice?: number | null
   sort?: string
+  q?: string
 }
 
 export async function fetchMoreListings(
@@ -32,7 +33,7 @@ export async function fetchMoreListings(
   offset: number
 ): Promise<{ listings: any[]; hasMore: boolean }> {
   const supabase = await createClient()
-  const { category, condition, campus, minPrice, maxPrice, sort = 'relevance' } = filters
+  const { category, condition, campus, minPrice, maxPrice, sort = 'relevance', q } = filters
 
   let query = supabase
     .from('listings')
@@ -44,6 +45,7 @@ export async function fetchMoreListings(
   if (campus) query = query.eq('seller_campus_id', campus)
   if (minPrice != null) query = query.gte('price', minPrice)
   if (maxPrice != null) query = query.lte('price', maxPrice)
+  if (q) query = query.or(`title.ilike.%${q}%,description.ilike.%${q}%`)
 
   switch (sort) {
     case 'price-asc': query = query.order('price', { ascending: true }); break

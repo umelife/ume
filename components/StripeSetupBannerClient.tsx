@@ -1,11 +1,23 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+
+const DISMISS_KEY = 'umeStripeBannerDismissed'
 
 export default function StripeSetupBannerClient() {
-  const [dismissed, setDismissed] = useState(false)
+  const [dismissed, setDismissed] = useState(true) // start dismissed; reveal after localStorage check
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return
+    if (localStorage.getItem(DISMISS_KEY) !== '1') setDismissed(false)
+  }, [])
+
+  function handleDismiss() {
+    setDismissed(true)
+    try { localStorage.setItem(DISMISS_KEY, '1') } catch {}
+  }
 
   if (dismissed) return null
 
@@ -47,7 +59,7 @@ export default function StripeSetupBannerClient() {
           {loading ? 'Setting up...' : 'Set up now →'}
         </button>
         <button
-          onClick={() => setDismissed(true)}
+          onClick={handleDismiss}
           className="text-white/80 hover:text-white p-0.5"
           aria-label="Dismiss"
         >

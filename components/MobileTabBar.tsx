@@ -145,10 +145,14 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
           const active = isActive(tab.href)
           const showUnread = tab.href === '/messages' && unreadMessages > 0
 
+          const href = tab.href === '/profile'
+            ? (userId ? `/profile/${userId}` : '/login')
+            : tab.href
+
           return (
             <Link
               key={tab.href}
-              href={tab.href}
+              href={href}
               ref={el => { tabRefs.current[i] = el }}
               aria-label={tab.label}
               className="relative flex items-center justify-center w-12 h-12 rounded-full z-10"
@@ -176,11 +180,14 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
         {tabs.map((tab) => {
           const active = isActive(tab.href)
           const showUnread = tab.href === '/messages' && unreadMessages > 0
+          const desktopHref = tab.href === '/profile'
+            ? (userId ? `/profile/${userId}` : '/login')
+            : tab.href
 
           return (
             <Link
               key={tab.href}
-              href={tab.href}
+              href={desktopHref}
               className={`relative flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold transition-all duration-200 whitespace-nowrap
                 ${active
                   ? 'bg-ume-indigo text-white shadow-md shadow-ume-indigo/25'

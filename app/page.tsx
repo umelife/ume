@@ -25,8 +25,12 @@ import HomeListingCard from '@/components/homepage/HomeListingCard'
 import { ShopIcon, ServiceIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
 import MobileHome from '@/components/MobileHome'
 import Hero from '@/components/homepage/Hero'
+import LoggedInDashboard from '@/components/LoggedInDashboard'
 import Link from 'next/link'
 import supabasePublic from '@/lib/supabase/public'
+import { createClient } from '@/lib/supabase/server'
+import { getUser } from '@/lib/auth/actions'
+import { getCampusFromEmail } from '@/data/safe-points'
 import type { Listing } from '@/types/database'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -34,8 +38,8 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
 import RemotionHeroPlayer from '@/components/remotion/RemotionHeroPlayer'
 
-// ─── ISR: revalidate this page every 60 seconds ──────────────────────────────
-export const revalidate = 60
+// Logged-in page is fully personalised — no ISR cache
+// Logged-out page keeps the 60s ISR via getRecentListings unstable_cache
 
 // ─── Cached listing fetch ────────────────────────────────────────────────────
 
@@ -389,6 +393,65 @@ function CTASection() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default async function Home() {
+  // Check auth first — logged-in users get a personalised dashboard
+  const { user } = await getUser()
+
+  if (user) {
+    const supabase = await createClient()
+    const campus = getCampusFromEmail(user.email)
+
+    const [campusResult, savedResult, ownResult] = await Promise.all([
+      // Campus listings (other sellers on same campus, newest first)
+      campus
+        ? supabase
+            .from('listings')
+            .select('*, user:users(*)')
+            .eq('seller_campus_id', campus.id)
+            .neq('user_id', user.id)
+            .not('status', 'in', '(sold,reserved)')
+            .order('created_at', { ascending: false })
+            .limit(10)
+        : Promise.resolve({ data: [] }),
+
+      // Saved / liked items
+      supabase
+        .from('cart_items')
+        .select('listing:listings(*, user:users(*))')
+        .eq('user_id', user.id)
+        .limit(6),
+
+      // Own active listings
+      supabase
+        .from('listings')
+        .select('*, user:users(*)')
+        .eq('user_id', user.id)
+        .not('status', 'in', '(sold)')
+        .order('created_at', { ascending: false })
+        .limit(6),
+    ])
+
+    const campusListings = (campusResult.data ?? []) as Listing[]
+    const savedListings = ((savedResult.data ?? []) as any[])
+      .map(item => item.listing)
+      .filter(Boolean) as Listing[]
+    const ownListings = (ownResult.data ?? []) as Listing[]
+
+    return (
+      <LoggedInDashboard
+        user={{
+          id: user.id,
+          display_name: user.display_name,
+          username: user.username,
+          college_name: user.college_name,
+        }}
+        campusListings={campusListings}
+        savedListings={savedListings}
+        ownListings={ownListings}
+      />
+    )
+  }
+
+  // ── Logged-out: marketing landing page ──────────────────────────────────────
   const recentListings = await getRecentListings()
 
   const marketplaceRow =

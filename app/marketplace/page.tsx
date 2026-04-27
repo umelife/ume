@@ -161,6 +161,7 @@ async function fetchListings(searchParams: {
   maxPrice?: string
   sort?: string
   campus?: string
+  q?: string
 }): Promise<{ listings: Listing[]; hasMore: boolean }> {
   const radius = searchParams.radius ? parseFloat(searchParams.radius) : null
   const userLat = searchParams.userLat ? parseFloat(searchParams.userLat) : null

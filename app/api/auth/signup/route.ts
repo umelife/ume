@@ -7,33 +7,32 @@ export const runtime = 'nodejs'
 
 export async function POST(request: Request) {
   try {
-    const { email, password, username, collegeName, collegeAddress } = await request.json()
+    const {
+      email, password, username,
+      accountType = 'student',
+      collegeName, collegeAddress,
+      displayName, orgName, city, state,
+    } = await request.json()
 
-    // Validate username
+    const isStudent = accountType === 'student'
+
     if (!username) {
-      return NextResponse.json(
-        { error: 'Username is required' },
-        { status: 400 }
-      )
+      return NextResponse.json({ error: 'Username is required' }, { status: 400 })
     }
 
-    // Validate college fields
-    if (!collegeName || !collegeName.trim()) {
-      return NextResponse.json(
-        { error: 'College name is required' },
-        { status: 400 }
-      )
+    if (isStudent) {
+      if (!collegeName?.trim()) {
+        return NextResponse.json({ error: 'College name is required' }, { status: 400 })
+      }
+      if (!collegeAddress?.trim()) {
+        return NextResponse.json({ error: 'College address is required' }, { status: 400 })
+      }
+    } else {
+      if (!displayName?.trim()) {
+        return NextResponse.json({ error: 'Display name is required' }, { status: 400 })
+      }
     }
 
-    if (!collegeAddress || !collegeAddress.trim()) {
-      return NextResponse.json(
-        { error: 'College address is required' },
-        { status: 400 }
-      )
-    }
-
-    // No format validation - only check uniqueness
-    // Check username availability
     const usernameCheck = await checkUsernameAvailability(username)
     if (!usernameCheck.available) {
       return NextResponse.json(
@@ -42,40 +41,50 @@ export async function POST(request: Request) {
       )
     }
 
-    // Validate US location via Vercel's geolocation header.
-    // The header is injected by Vercel's edge network in production;
-    // it is absent in local dev so we allow null to pass through.
-    const country = request.headers.get('x-vercel-ip-country')
-    if (country && country !== 'US') {
-      return NextResponse.json(
-        { error: 'UME is currently only available to students in the United States' },
-        { status: 403 }
-      )
-    }
-
-    // Validate .edu email
-    if (!isEduEmail(email)) {
-      return NextResponse.json(
-        { error: 'Only .edu email addresses are allowed' },
-        { status: 400 }
-      )
+    // Geo-block students only (orgs/personal can be anywhere)
+    if (isStudent) {
+      const country = request.headers.get('x-vercel-ip-country')
+      if (country && country !== 'US') {
+        return NextResponse.json(
+          { error: 'UME is currently only available to students in the United States' },
+          { status: 403 }
+        )
+      }
+      if (!isEduEmail(email)) {
+        return NextResponse.json(
+          { error: 'Student accounts require a .edu email address' },
+          { status: 400 }
+        )
+      }
     }
 
     const supabase = await createClient()
 
-    // Sign up user
-    // The username and college metadata is used by the database trigger to create the profile
+    const metadata = isStudent
+      ? {
+          username,
+          display_name: username,
+          college_name: collegeName.trim(),
+          college_address: collegeAddress.trim(),
+          account_type: 'student',
+          student_verified: false,
+        }
+      : {
+          username,
+          display_name: displayName.trim(),
+          org_name: orgName?.trim() || null,
+          city: city?.trim() || null,
+          state: state?.trim() || null,
+          account_type: accountType,
+          student_verified: null,
+        }
+
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/login`,
-        data: {
-          username: username,
-          college_name: collegeName.trim(),
-          college_address: collegeAddress.trim(),
-          student_verified: false,
-        },
+        data: metadata,
       },
     })
 

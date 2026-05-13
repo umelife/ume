@@ -1,6 +1,8 @@
 import { getAllReports } from '@/lib/reports/actions'
 import ReportCard from '@/components/admin/ReportCard'
+import OrderRefundCard from '@/components/admin/OrderRefundCard'
 import { verifyAdmin } from '@/lib/admin/verify'
+import { createServiceClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
@@ -38,6 +40,16 @@ export default async function AdminPage() {
   const result = await getAllReports()
   const reports = result.reports || []
 
+  // Fetch recent paid orders for refund management
+  const db = await createServiceClient()
+  const { data: ordersData } = await db
+    .from('orders')
+    .select('*, buyer:users!orders_buyer_id_fkey(email, display_name), listing:listings!orders_listing_id_fkey(title)')
+    .in('status', ['paid', 'refunded'])
+    .order('created_at', { ascending: false })
+    .limit(30)
+  const orders = ordersData ?? []
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -73,10 +85,27 @@ export default async function AdminPage() {
             <div className="bg-white rounded-lg shadow-md p-8 text-center">
               <p className="text-black">No reports to review</p>
             </div>
-          )} 
+          )}
           {reports.map((report: any) => (
             <ReportCard key={report.id} report={report} />
           ))}
+        </div>
+
+        {/* ── Orders & Refunds ── */}
+        <div className="mt-10">
+          <h2 className="text-xl font-bold text-black mb-1">Orders &amp; Refunds</h2>
+          <p className="text-sm text-gray-500 mb-4">Recent paid orders — issue refunds directly from here.</p>
+          {orders.length === 0 ? (
+            <div className="bg-white rounded-xl border border-gray-100 p-8 text-center">
+              <p className="text-gray-500 text-sm">No paid orders yet.</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {orders.map((order: any) => (
+                <OrderRefundCard key={order.id} order={order} />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

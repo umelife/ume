@@ -20,7 +20,10 @@ interface PasswordRequirements {
   hasSpecialChar: boolean
 }
 
+type AccountType = 'student' | 'personal' | 'organization'
+
 export default function SignupPage() {
+  const [accountType, setAccountType] = useState<AccountType>('student')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -34,7 +37,13 @@ export default function SignupPage() {
   const [usernameAvailable, setUsernameAvailable] = useState(false)
   const [collegeName, setCollegeName] = useState('')
   const [collegeAddress, setCollegeAddress] = useState('')
+  const [displayName, setDisplayName] = useState('')
+  const [orgName, setOrgName] = useState('')
+  const [city, setCity] = useState('')
+  const [state, setState] = useState('')
   const router = useRouter()
+
+  const isStudent = accountType === 'student'
 
   // Validate password requirements
   const validatePassword = (pwd: string): PasswordRequirements => {
@@ -94,17 +103,23 @@ export default function SignupPage() {
     const formData = new FormData(e.currentTarget)
     const email = formData.get('email') as string
 
-    // Validate college fields
-    if (!collegeName.trim()) {
-      setError('College name is required')
-      setLoading(false)
-      return
-    }
-
-    if (!collegeAddress.trim()) {
-      setError('College address is required')
-      setLoading(false)
-      return
+    if (isStudent) {
+      if (!collegeName.trim()) {
+        setError('College name is required')
+        setLoading(false)
+        return
+      }
+      if (!collegeAddress.trim()) {
+        setError('College address is required')
+        setLoading(false)
+        return
+      }
+    } else {
+      if (!displayName.trim()) {
+        setError('Display name is required')
+        setLoading(false)
+        return
+      }
     }
 
     try {
@@ -115,8 +130,13 @@ export default function SignupPage() {
           email,
           password,
           username,
-          collegeName: collegeName.trim(),
-          collegeAddress: collegeAddress.trim()
+          accountType,
+          collegeName: isStudent ? collegeName.trim() : undefined,
+          collegeAddress: isStudent ? collegeAddress.trim() : undefined,
+          displayName: !isStudent ? displayName.trim() : undefined,
+          orgName: accountType === 'organization' ? orgName.trim() : undefined,
+          city: city.trim() || undefined,
+          state: state.trim() || undefined,
         }),
       })
 
@@ -128,10 +148,7 @@ export default function SignupPage() {
         return
       }
 
-      trackEvent('signup_success', {
-        email: email,
-        username: username,
-      })
+      trackEvent('signup_success', { email, username, accountType })
 
       setUserEmail(email)
       setSuccess(true)
@@ -239,6 +256,61 @@ export default function SignupPage() {
           <CardContent className="px-8 pb-10">
             <form onSubmit={handleSubmit} className="space-y-5">
 
+              {/* Account type toggle */}
+              <div className="space-y-2">
+                <Label className="text-sm font-medium text-gray-700">I am signing up as</Label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setAccountType('student')}
+                    className={`px-4 py-2.5 rounded-lg text-sm font-semibold border transition-all ${
+                      isStudent
+                        ? 'bg-[#130170] text-white border-[#130170]'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-[#130170]'
+                    }`}
+                  >
+                    🎓 A Student
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setAccountType(accountType === 'student' ? 'personal' : accountType)}
+                    className={`px-4 py-2.5 rounded-lg text-sm font-semibold border transition-all ${
+                      !isStudent
+                        ? 'bg-[#130170] text-white border-[#130170]'
+                        : 'bg-white text-gray-600 border-gray-300 hover:border-[#130170]'
+                    }`}
+                  >
+                    👤 Personal / Org
+                  </button>
+                </div>
+                {!isStudent && (
+                  <div className="grid grid-cols-2 gap-2 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => setAccountType('personal')}
+                      className={`px-3 py-2 rounded-lg text-xs font-semibold border transition-all ${
+                        accountType === 'personal'
+                          ? 'bg-[#fa9ebc] text-white border-[#fa9ebc]'
+                          : 'bg-white text-gray-500 border-gray-200 hover:border-[#fa9ebc]'
+                      }`}
+                    >
+                      Personal
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAccountType('organization')}
+                      className={`px-3 py-2 rounded-lg text-xs font-semibold border transition-all ${
+                        accountType === 'organization'
+                          ? 'bg-[#fa9ebc] text-white border-[#fa9ebc]'
+                          : 'bg-white text-gray-500 border-gray-200 hover:border-[#fa9ebc]'
+                      }`}
+                    >
+                      Organization
+                    </button>
+                  </div>
+                )}
+              </div>
+
               {error && (
                 <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3">
                   <p className="text-sm text-red-700">{error}</p>
@@ -258,43 +330,94 @@ export default function SignupPage() {
               {/* Email */}
               <div className="space-y-1.5">
                 <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-                  Organization Email Address
+                  {isStudent ? 'University Email Address' : 'Email Address'}
                 </Label>
                 <Input
                   id="email"
                   name="email"
                   type="email"
                   required
-                  placeholder="you@university.edu"
+                  placeholder={isStudent ? 'you@university.edu' : 'you@example.com'}
                   className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
                 />
               </div>
 
-              {/* College Name */}
-              <div className="space-y-1.5">
-                <Label htmlFor="collegeName" className="text-sm font-medium text-gray-700">
-                  College Name
-                </Label>
-                <Input
-                  id="collegeName"
-                  name="collegeName"
-                  type="text"
-                  required
-                  value={collegeName}
-                  onChange={(e) => setCollegeName(e.target.value)}
-                  placeholder="e.g., University of the Cumberlands"
-                  className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
-                />
-              </div>
+              {/* Student-only fields */}
+              {isStudent && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="collegeName" className="text-sm font-medium text-gray-700">College Name</Label>
+                    <Input
+                      id="collegeName"
+                      type="text"
+                      required
+                      value={collegeName}
+                      onChange={(e) => setCollegeName(e.target.value)}
+                      placeholder="e.g., University of the Cumberlands"
+                      className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <AddressInput value={collegeAddress} onChange={setCollegeAddress} required />
+                  </div>
+                </>
+              )}
 
-              {/* College Address */}
-              <div className="space-y-1.5">
-                <AddressInput
-                  value={collegeAddress}
-                  onChange={setCollegeAddress}
-                  required
-                />
-              </div>
+              {/* Non-student fields */}
+              {!isStudent && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label htmlFor="displayName" className="text-sm font-medium text-gray-700">Display Name</Label>
+                    <Input
+                      id="displayName"
+                      type="text"
+                      required
+                      value={displayName}
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      placeholder={accountType === 'organization' ? 'Your organization name' : 'Your full name'}
+                      className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                    />
+                  </div>
+                  {accountType === 'organization' && (
+                    <div className="space-y-1.5">
+                      <Label htmlFor="orgName" className="text-sm font-medium text-gray-700">Organization Name</Label>
+                      <Input
+                        id="orgName"
+                        type="text"
+                        value={orgName}
+                        onChange={(e) => setOrgName(e.target.value)}
+                        placeholder="e.g., Campus Coffee Co."
+                        className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                      />
+                    </div>
+                  )}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label htmlFor="city" className="text-sm font-medium text-gray-700">City</Label>
+                      <Input
+                        id="city"
+                        type="text"
+                        value={city}
+                        onChange={(e) => setCity(e.target.value)}
+                        placeholder="Nashville"
+                        className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label htmlFor="state" className="text-sm font-medium text-gray-700">State</Label>
+                      <Input
+                        id="state"
+                        type="text"
+                        maxLength={2}
+                        value={state}
+                        onChange={(e) => setState(e.target.value.toUpperCase())}
+                        placeholder="TN"
+                        className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
               <Separator />
 
@@ -397,8 +520,8 @@ export default function SignupPage() {
                   !passwordsMatch ||
                   !confirmPassword ||
                   !usernameAvailable ||
-                  !collegeName.trim() ||
-                  !collegeAddress.trim()
+                  (isStudent && (!collegeName.trim() || !collegeAddress.trim())) ||
+                  (!isStudent && !displayName.trim())
                 }
                 className="w-full h-11 rounded-lg text-sm font-semibold text-white mt-2"
                 style={{ backgroundColor: '#130170' }}

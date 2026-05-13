@@ -25,6 +25,8 @@ import HomeListingCard from '@/components/homepage/HomeListingCard'
 import { ShopIcon, ServiceIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
 import MobileHome from '@/components/MobileHome'
 import Hero from '@/components/homepage/Hero'
+import Reviews from '@/components/homepage/Reviews'
+import FAQ from '@/components/homepage/FAQ'
 import LoggedInDashboard from '@/components/LoggedInDashboard'
 import Link from 'next/link'
 import supabasePublic from '@/lib/supabase/public'
@@ -547,7 +549,13 @@ export default async function Home() {
         {/* 9. Category Grid */}
         <CategoryGrid />
 
-        {/* 10. CTA */}
+        {/* 10. Reviews */}
+        <Reviews />
+
+        {/* 11. FAQ */}
+        <FAQ />
+
+        {/* 12. CTA */}
         <CTASection />
       </main>
     </>

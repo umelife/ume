@@ -28,13 +28,21 @@ export default function NewsletterSignup() {
 
     setStatus('loading')
 
-    // TODO: Replace with actual newsletter signup API call
-    // For now, just simulate success
-    setTimeout(() => {
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to subscribe')
       setStatus('success')
-      setMessage('Thanks for signing up!')
+      setMessage('You\'re in! We\'ll keep you posted.')
       setEmail('')
-    }, 1000)
+    } catch (err: any) {
+      setStatus('error')
+      setMessage(err.message || 'Something went wrong. Try again.')
+    }
   }
 
   return (

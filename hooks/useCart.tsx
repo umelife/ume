@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState, useCallback } from 'react'
+import { saveListing, unsaveListing, getSavedListingIds } from '@/app/saved-listings/actions'
 
 const STORAGE_KEY = 'reclaim_cart'
 
@@ -57,11 +58,18 @@ export default function useCart() {
   const [cart, setCart] = useState<string[]>([])
   const [loadingIds, setLoadingIds] = useState<Record<string, boolean>>({})
 
-  // Initialize cart from localStorage
+  // Initialize cart from localStorage, then merge in DB saves for logged-in users
   useEffect(() => {
     const initialCart = readCartFromStorage()
     setCart(initialCart)
-    console.debug('useCart: initialized with', initialCart)
+
+    // Merge DB-saved listings so hearts persist across devices
+    getSavedListingIds().then(dbIds => {
+      if (!dbIds.length) return
+      const merged = Array.from(new Set([...readCartFromStorage(), ...dbIds]))
+      writeCartToStorage(merged)
+      setCart(merged)
+    }).catch(() => {/* not logged in or DB unavailable — localStorage is fine */})
   }, [])
 
   // Listen for storage changes from other tabs
@@ -113,6 +121,7 @@ export default function useCart() {
       writeCartToStorage(newCart)
       setCart(newCart)
       broadcastCartUpdate()
+      saveListing(id).catch(() => {/* fire-and-forget; localStorage already updated */})
       console.debug(`useCart.addToCart: added ${id}`, newCart)
     } catch (e) {
       console.error('Failed to add to cart', e)
@@ -142,6 +151,7 @@ export default function useCart() {
       writeCartToStorage(newCart)
       setCart(newCart)
       broadcastCartUpdate()
+      unsaveListing(id).catch(() => {/* fire-and-forget */})
       console.debug(`useCart.removeFromCart: removed ${id}`, newCart)
     } catch (e) {
       console.error('Failed to remove from cart', e)

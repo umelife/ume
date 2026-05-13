@@ -19,7 +19,20 @@ export async function middleware(request: NextRequest) {
   const response = await updateSession(request)
 
   // Check authentication for protected routes
-  const protectedPaths = ['/marketplace', '/create', '/profile', '/admin', '/messages', '/edit', '/safe-handshake']
+  // Only truly private pages — anything a logged-out user (or Googlebot) should never see.
+  // Content pages (marketplace, item detail, profile, communities, events) must stay PUBLIC
+  // so Google can index them. Interactive actions (create, message, checkout) stay private.
+  const protectedPaths = [
+    '/create',           // create listing
+    '/edit',             // edit listing
+    '/messages',         // chat inbox
+    '/admin',            // admin panel
+    '/safe-handshake',   // GPS meetup flow
+    '/communities/create',
+    '/events/create',
+    '/orders',           // order history
+    '/cart',             // liked list (auth-only actions)
+  ]
   const isProtectedPath = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
   )
@@ -56,10 +69,18 @@ export async function middleware(request: NextRequest) {
     }
 
     // Redirect new users who haven't completed student verification.
-    // Existing users have student_verified = undefined (grandfathered), so
-    // only explicitly false triggers the redirect.
-    if (user.user_metadata?.student_verified === false) {
+    // Only student accounts go through this flow.
+    if (user.user_metadata?.student_verified === false &&
+        (user.user_metadata?.account_type ?? 'student') === 'student') {
       return NextResponse.redirect(new URL('/verify-student', request.url))
+    }
+
+    // Block non-students from student-only areas
+    const accountType = user.user_metadata?.account_type ?? 'student'
+    const studentOnlyPaths = ['/marketplace', '/create', '/cart', '/orders']
+    if (accountType !== 'student' &&
+        studentOnlyPaths.some(p => request.nextUrl.pathname.startsWith(p))) {
+      return NextResponse.redirect(new URL('/communities', request.url))
     }
 
     // Annual reauthentication check — only if timestamp is set (won't affect

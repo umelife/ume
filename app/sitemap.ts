@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import { COLLEGES } from '@/data/colleges'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const supabase = await createClient()
@@ -21,9 +22,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: 'https://ume-life.com', lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: 'https://ume-life.com/marketplace', lastModified: new Date(), changeFrequency: 'hourly', priority: 0.9 },
+    { url: 'https://ume-life.com/communities', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
+    { url: 'https://ume-life.com/events', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: 'https://ume-life.com/about', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: 'https://ume-life.com/safety', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
     { url: 'https://ume-life.com/contact', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
     ...listingUrls,
+    ...COLLEGES.map(c => ({
+      url: `https://ume-life.com/campus/${c.slug}`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly' as const,
+      priority: 0.8,
+    })),
   ]
 }

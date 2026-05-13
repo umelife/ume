@@ -1,3 +1,6 @@
+export type AccountType = 'student' | 'organization' | 'personal'
+export type SubscriptionStatus = 'none' | 'active' | 'past_due' | 'cancelled'
+
 export interface User {
   id: string;
   email: string;
@@ -7,12 +10,114 @@ export interface User {
   college_name?: string;
   college_address?: string;
   avatar_url?: string;
+  account_type?: AccountType;
+  org_name?: string;
+  city?: string;
+  state?: string;
+  subscription_status?: SubscriptionStatus;
+  stripe_subscription_id?: string;
   created_at: string;
   // seller_rating?: number; // Feature disabled
   total_sales?: number;
   verified_seller?: boolean;
   stripe_account_id?: string;
   stripe_onboarding_completed?: boolean;
+}
+
+// ── Communities ───────────────────────────────────────────────────────────────
+
+export interface Community {
+  id: string
+  creator_id: string
+  name: string
+  slug: string
+  description: string
+  cover_image_url?: string
+  category: string
+  city?: string
+  state?: string
+  campus?: string
+  is_private: boolean
+  member_count: number
+  rules: string[]
+  status: 'active' | 'archived'
+  created_at: string
+  creator?: User
+  is_member?: boolean  // hydrated client-side
+  member_role?: 'owner' | 'moderator' | 'member'
+}
+
+export interface CommunityMember {
+  community_id: string
+  user_id: string
+  role: 'owner' | 'moderator' | 'member'
+  joined_at: string
+  user?: User
+}
+
+export interface CommunityPost {
+  id: string
+  community_id: string
+  author_id: string
+  type: 'text' | 'image' | 'link'
+  title: string
+  body?: string
+  image_urls: string[]
+  link_url?: string
+  upvote_count: number
+  comment_count: number
+  created_at: string
+  author?: User
+  has_voted?: boolean  // hydrated client-side
+}
+
+export interface PostComment {
+  id: string
+  post_id: string
+  author_id: string
+  parent_id?: string
+  body: string
+  created_at: string
+  author?: User
+  replies?: PostComment[]
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+
+export type EventLocationType = 'in_person' | 'virtual' | 'hybrid'
+export type EventStatus = 'scheduled' | 'cancelled' | 'completed'
+
+export interface UMEEvent {
+  id: string
+  community_id: string
+  creator_id: string
+  title: string
+  description?: string
+  cover_image_url?: string
+  starts_at: string
+  ends_at?: string
+  location_type: EventLocationType
+  location_address?: string
+  city?: string
+  state?: string
+  max_attendees?: number
+  rsvp_count: number
+  status: EventStatus
+  stripe_payment_intent_id?: string
+  is_promoted: boolean
+  promoted_until?: string
+  created_at: string
+  community?: Community
+  creator?: User
+  rsvp_status?: 'going' | 'interested' | null  // hydrated client-side
+}
+
+export interface EventRsvp {
+  event_id: string
+  user_id: string
+  status: 'going' | 'interested'
+  created_at: string
+  user?: User
 }
 
 export type ListingCondition = 'New' | 'Like New' | 'Used' | 'Refurbished';

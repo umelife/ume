@@ -105,7 +105,7 @@ export async function sendEmail(options: EmailOptions) {
   // Build payload for logging
   const senderEmail = process.env.BREVO_SENDER_EMAIL || 'no-reply@ume-life.com'
   const senderName = process.env.BREVO_SENDER_NAME || 'UME Marketplace'
-  const replyToEmail = options.replyTo || process.env.SUPPORT_EMAIL || 'umelife.official@gmail.com'
+  const replyToEmail = options.replyTo || process.env.SUPPORT_EMAIL || 'ruthiiksatti@ume-life.com'
   const recipients = Array.isArray(options.to) ? options.to : [options.to]
 
   const payload = {

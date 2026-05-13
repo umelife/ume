@@ -37,7 +37,7 @@ export async function fetchMoreListings(
 
   let query = supabase
     .from('listings')
-    .select('*, user:users(*)')
+    .select('*, user:users!listings_user_id_fkey(*)')
     .not('status', 'in', '(sold,reserved)')
 
   if (category) query = query.eq('category', categorySlugToDb(category))

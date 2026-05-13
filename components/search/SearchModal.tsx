@@ -62,7 +62,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
 
         const { data, error } = await supabase
           .from('listings')
-          .select('*, user:users(*)')
+          .select('*, user:users!listings_user_id_fkey(*)')
           .or(`title.ilike.%${query}%,description.ilike.%${query}%,category.ilike.%${query}%`)
           .order('created_at', { ascending: false })
           .limit(20)

@@ -49,7 +49,7 @@ const getRecentListings = unstable_cache(
   async (): Promise<Listing[]> => {
     const { data } = await supabasePublic
       .from('listings')
-      .select('*, user:users(*)')
+      .select('*, user:users!listings_user_id_fkey(*)')
       .not('status', 'in', '("sold","reserved")')
       .order('created_at', { ascending: false })
       .limit(10)
@@ -407,7 +407,7 @@ export default async function Home() {
       campus
         ? supabase
             .from('listings')
-            .select('*, user:users(*)')
+            .select('*, user:users!listings_user_id_fkey(*)')
             .eq('seller_campus_id', campus.id)
             .neq('user_id', user.id)
             .not('status', 'in', '(sold,reserved)')
@@ -417,15 +417,15 @@ export default async function Home() {
 
       // Saved / liked items
       supabase
-        .from('cart_items')
-        .select('listing:listings(*, user:users(*))')
+        .from('saved_listings')
+        .select('listing:listings!saved_listings_listing_id_fkey(*, user:users!listings_user_id_fkey(*))')
         .eq('user_id', user.id)
         .limit(6),
 
       // Own active listings
       supabase
         .from('listings')
-        .select('*, user:users(*)')
+        .select('*, user:users!listings_user_id_fkey(*)')
         .eq('user_id', user.id)
         .not('status', 'in', '(sold)')
         .order('created_at', { ascending: false })
@@ -434,7 +434,7 @@ export default async function Home() {
       // Discover — recent listings across all campuses (always has content)
       supabase
         .from('listings')
-        .select('*, user:users(*)')
+        .select('*, user:users!listings_user_id_fkey(*)')
         .neq('user_id', user.id)
         .not('status', 'in', '(sold,reserved)')
         .order('created_at', { ascending: false })

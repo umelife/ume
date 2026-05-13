@@ -124,7 +124,7 @@ const fetchListingsCached = unstable_cache(
 
     let query = supabasePublic
       .from('listings')
-      .select('*, user:users(*)')
+      .select('*, user:users!listings_user_id_fkey(*)')
       .not('status', 'in', '(sold,reserved)')
 
     if (categorySlug) query = query.eq('category', categorySlugToDb(categorySlug))
@@ -201,7 +201,7 @@ async function fetchListings(searchParams: {
       if (listingIds.length > 0) {
         const { data: listingsWithUsers } = await supabase
           .from('listings')
-          .select('*, user:users(*)')
+          .select('*, user:users!listings_user_id_fkey(*)')
           .in('id', listingIds)
           .not('status', 'in', '(sold,reserved)')
 

@@ -10,18 +10,22 @@ import FeatureSlider from '@/components/homepage/FeatureSlider'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
-import { ShopIcon, ServiceIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
+import CommunityCard from '@/components/communities/CommunityCard'
+import EventCard from '@/components/events/EventCard'
+import { ShopIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
-import type { Listing } from '@/types/database'
+import type { Listing, Community, UMEEvent } from '@/types/database'
 
 interface MobileHomeProps {
   recentListings: Listing[]
+  recentCommunities: Community[]
+  upcomingEvents: UMEEvent[]
 }
 
-export default function MobileHome({ recentListings }: MobileHomeProps) {
+export default function MobileHome({ recentListings, recentCommunities, upcomingEvents }: MobileHomeProps) {
   return (
     <div className="bg-ume-bg min-h-screen">
       <main className="min-h-screen pb-24">
@@ -62,29 +66,43 @@ export default function MobileHome({ recentListings }: MobileHomeProps) {
 
         <Separator className="mx-4 my-0 opacity-40" />
 
-        {/* Services — coming soon */}
-        <HomeSectionRow
-          title="Services"
-          icon={<ServiceIcon />}
-          viewAllHref="/services"
-          comingSoon
-        />
-
-        {/* Communities — coming soon */}
+        {/* Communities */}
         <HomeSectionRow
           title="Communities"
           icon={<CommunityIcon />}
           viewAllHref="/communities"
-          comingSoon
-        />
+        >
+          {recentCommunities.length > 0 ? (
+            recentCommunities.map((c) => (
+              <div key={c.id} className="w-44 shrink-0">
+                <CommunityCard community={c} />
+              </div>
+            ))
+          ) : (
+            <Link href="/communities" className="block py-4 px-2 text-sm text-ume-indigo font-semibold">
+              Be the first to start a community →
+            </Link>
+          )}
+        </HomeSectionRow>
 
-        {/* Events — coming soon */}
+        {/* Events */}
         <HomeSectionRow
           title="Events"
           icon={<EventIcon />}
           viewAllHref="/events"
-          comingSoon
-        />
+        >
+          {upcomingEvents.length > 0 ? (
+            upcomingEvents.map((e) => (
+              <div key={e.id} className="w-56 shrink-0">
+                <EventCard event={e} />
+              </div>
+            ))
+          ) : (
+            <Link href="/events" className="block py-4 px-2 text-sm text-ume-indigo font-semibold">
+              No upcoming events yet — explore communities →
+            </Link>
+          )}
+        </HomeSectionRow>
 
         {/* Feature Slider */}
         <FeatureSlider autoPlayInterval={4000} />

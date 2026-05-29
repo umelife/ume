@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge'
 interface Tab {
   label: string
   href: string
-  comingSoon?: boolean
   icon: (active: boolean) => React.ReactNode
 }
 
@@ -181,11 +180,6 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
                   {unreadMessages > 9 ? '9+' : unreadMessages}
                 </span>
               )}
-
-              {/* Coming soon dot */}
-              {tab.comingSoon && !active && (
-                <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-ume-pink rounded-full border border-white" />
-              )}
             </Link>
           )
         })}
@@ -218,13 +212,6 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
                 <Badge className="absolute -top-1.5 -right-1 bg-ume-pink hover:bg-ume-pink text-white text-[9px] font-bold px-1 min-w-0 h-4 border border-white">
                   {unreadMessages > 9 ? '9+' : unreadMessages}
                 </Badge>
-              )}
-
-              {/* Coming soon label */}
-              {tab.comingSoon && (
-                <span className="absolute -top-1.5 -right-1 text-[8px] bg-ume-pink text-white px-1 py-px rounded-full font-bold leading-tight">
-                  Soon
-                </span>
               )}
             </Link>
           )

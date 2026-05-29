@@ -53,9 +53,6 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
               <Link href="/marketplace">Marketplace</Link>
             </Button>
             <Button variant="ghost" size="sm" asChild className="text-ume-indigo/80 hover:text-ume-indigo hover:bg-ume-indigo/5 font-medium">
-              <Link href="/services">Services</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild className="text-ume-indigo/80 hover:text-ume-indigo hover:bg-ume-indigo/5 font-medium">
               <Link href="/communities">Communities</Link>
             </Button>
             <Button variant="ghost" size="sm" asChild className="text-ume-indigo/80 hover:text-ume-indigo hover:bg-ume-indigo/5 font-medium">

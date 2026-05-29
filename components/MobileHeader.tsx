@@ -132,19 +132,6 @@ export default function MobileHeader({
 
                   <SheetClose asChild>
                     <Link
-                      href="/services"
-                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-ume-indigo hover:bg-ume-indigo/5 transition-colors"
-                    >
-                      <svg className="w-4 h-4 shrink-0 text-ume-indigo/60" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.74-.626 1.208-.766M11.42 15.17l-4.655 5.653a2.548 2.548 0 11-3.586-3.586l6.837-5.63m5.108-.233c.55-.164 1.163-.188 1.743-.14a4.5 4.5 0 004.486-6.336l-3.276 3.277a3.004 3.004 0 01-2.25-2.25l3.276-3.276a4.5 4.5 0 00-6.336 4.486c.091 1.076-.071 2.264-.904 2.95l-.102.085m-1.745 1.437L5.909 7.5H4.5L2.25 3.75l1.5-1.5L7.5 4.5v1.409l4.26 4.26m-1.745 1.437l1.745-1.437m6.615 8.206L15.75 15.75M4.867 19.125h.008v.008h-.008v-.008z" />
-                      </svg>
-                      Services
-                      <span className="ml-auto text-[10px] font-bold text-ume-pink bg-ume-pink/10 px-1.5 py-0.5 rounded-full">Soon</span>
-                    </Link>
-                  </SheetClose>
-
-                  <SheetClose asChild>
-                    <Link
                       href="/communities"
                       className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-ume-indigo hover:bg-ume-indigo/5 transition-colors"
                     >
@@ -152,7 +139,21 @@ export default function MobileHeader({
                         <path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
                       </svg>
                       Communities
-                      <span className="ml-auto text-[10px] font-bold text-ume-pink bg-ume-pink/10 px-1.5 py-0.5 rounded-full">Soon</span>
+                    </Link>
+                  </SheetClose>
+
+                  <SheetClose asChild>
+                    <Link
+                      href="/events"
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-ume-indigo hover:bg-ume-indigo/5 transition-colors"
+                    >
+                      <svg className="w-4 h-4 shrink-0 text-ume-indigo/60" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                        <line x1="16" y1="2" x2="16" y2="6" />
+                        <line x1="8" y1="2" x2="8" y2="6" />
+                        <line x1="3" y1="10" x2="21" y2="10" />
+                      </svg>
+                      Events
                     </Link>
                   </SheetClose>
 

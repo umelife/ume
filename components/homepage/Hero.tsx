@@ -31,7 +31,6 @@ import { animate, stagger, spring } from 'animejs'
 
 const WORDS = [
   { label: 'MARKETPLACE', color: '#fa9ebc' },
-  { label: 'SERVICES',    color: '#34d399' },
   { label: 'COMMUNITIES', color: '#fbbf24' },
   { label: 'EVENTS',      color: '#60a5fa' },
 ]
@@ -59,27 +58,9 @@ const SECTIONS = [
     ),
   },
   {
-    name: 'Services',
-    href: '/services',
-    active: false,
-    description: 'Student freelancers',
-    cardBg: 'bg-emerald-950/70 border border-emerald-400/20',
-    iconBg: 'bg-emerald-500/20',
-    iconColor: 'text-emerald-400',
-    nameColor: 'text-emerald-200',
-    soonBg: 'bg-emerald-400/15',
-    soonColor: 'text-emerald-300',
-    icon: (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <circle cx="12" cy="8" r="6"/>
-        <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
-      </svg>
-    ),
-  },
-  {
     name: 'Communities',
     href: '/communities',
-    active: false,
+    active: true,
     description: 'Join campus groups',
     cardBg: 'bg-amber-950/60 border border-amber-400/20',
     iconBg: 'bg-amber-500/20',
@@ -99,7 +80,7 @@ const SECTIONS = [
   {
     name: 'Events',
     href: '/events',
-    active: false,
+    active: true,
     description: "What's happening",
     cardBg: 'bg-sky-950/70 border border-sky-400/20',
     iconBg: 'bg-sky-500/20',

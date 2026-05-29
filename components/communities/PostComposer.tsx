@@ -11,7 +11,7 @@ interface Props {
 
 export default function PostComposer({ communityId, communitySlug }: Props) {
   const [open, setOpen] = useState(false)
-  const [tab, setTab] = useState<'text' | 'image' | 'link'>('text')
+  const [tab, setTab] = useState<'text' | 'link'>('text')
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [linkUrl, setLinkUrl] = useState('')
@@ -59,7 +59,7 @@ export default function PostComposer({ communityId, communitySlug }: Props) {
     <div className="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
       {/* Tab bar */}
       <div className="flex border-b border-gray-100">
-        {(['text', 'image', 'link'] as const).map((t) => (
+        {(['text', 'link'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
@@ -70,7 +70,6 @@ export default function PostComposer({ communityId, communitySlug }: Props) {
             }`}
           >
             {t === 'text' && 'Text'}
-            {t === 'image' && '📷 Image'}
             {t === 'link' && '🔗 Link'}
           </button>
         ))}
@@ -99,12 +98,6 @@ export default function PostComposer({ communityId, communitySlug }: Props) {
             rows={4}
             className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-ume-indigo resize-none"
           />
-        )}
-
-        {tab === 'image' && (
-          <p className="text-xs text-gray-400 py-4 text-center border border-dashed border-gray-200 rounded-xl">
-            Image upload coming soon — use a link for now.
-          </p>
         )}
 
         {tab === 'link' && (

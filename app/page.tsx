@@ -9,12 +9,11 @@
  *  1. Hero — headline, subheadline, two CTA buttons, indigo gradient bg
  *  2. Trust/Safety Banner — indigo strip with key trust points
  *  3. Recent Marketplace — horizontal scroll of real listings
- *  4. Services — coming soon placeholder
- *  5. Communities — coming soon placeholder
- *  6. Events — coming soon placeholder
- *  7. How It Works — 3 steps in a horizontal row
- *  8. Category Grid — browse by category
- *  9. CTA — join UME
+ *  4. Communities — horizontal scroll of real communities
+ *  5. Events — horizontal scroll of real upcoming events
+ *  6. How It Works — 3 steps in a horizontal row
+ *  7. Category Grid — browse by category
+ *  8. CTA — join UME
  */
 
 import { unstable_cache } from 'next/cache'
@@ -22,7 +21,9 @@ import FeatureSlider from '@/components/homepage/FeatureSlider'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
-import { ShopIcon, ServiceIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
+import CommunityCard from '@/components/communities/CommunityCard'
+import EventCard from '@/components/events/EventCard'
+import { ShopIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
 import MobileHome from '@/components/MobileHome'
 import Hero from '@/components/homepage/Hero'
 import Reviews from '@/components/homepage/Reviews'
@@ -33,7 +34,7 @@ import supabasePublic from '@/lib/supabase/public'
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import { getCampusFromEmail } from '@/data/safe-points'
-import type { Listing } from '@/types/database'
+import type { Listing, Community, UMEEvent } from '@/types/database'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -57,6 +58,35 @@ const getRecentListings = unstable_cache(
   },
   ['homepage-recent-listings'],
   { revalidate: 60, tags: ['listings'] }
+)
+
+const getRecentCommunities = unstable_cache(
+  async (): Promise<Community[]> => {
+    const { data } = await supabasePublic
+      .from('communities')
+      .select('*, creator:users!creator_id(id, username, display_name, avatar_url)')
+      .eq('status', 'active')
+      .order('member_count', { ascending: false })
+      .limit(8)
+    return (data as Community[]) ?? []
+  },
+  ['homepage-recent-communities'],
+  { revalidate: 300, tags: ['communities'] }
+)
+
+const getUpcomingEvents = unstable_cache(
+  async (): Promise<UMEEvent[]> => {
+    const { data } = await supabasePublic
+      .from('events')
+      .select('*, community:communities(name, slug, cover_image_url)')
+      .eq('status', 'scheduled')
+      .gte('starts_at', new Date().toISOString())
+      .order('starts_at', { ascending: true })
+      .limit(8)
+    return (data as UMEEvent[]) ?? []
+  },
+  ['homepage-upcoming-events'],
+  { revalidate: 300, tags: ['events'] }
 )
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -473,7 +503,11 @@ export default async function Home() {
   }
 
   // ── Logged-out: marketing landing page ──────────────────────────────────────
-  const recentListings = await getRecentListings()
+  const [recentListings, recentCommunities, upcomingEvents] = await Promise.all([
+    getRecentListings(),
+    getRecentCommunities(),
+    getUpcomingEvents(),
+  ])
 
   const marketplaceRow =
     recentListings.length > 0
@@ -486,11 +520,47 @@ export default async function Home() {
           </p>
         )
 
+  const communitiesRow =
+    recentCommunities.length > 0
+      ? recentCommunities.map((c) => (
+          <div key={c.id} className="w-44 sm:w-52 shrink-0">
+            <CommunityCard community={c} />
+          </div>
+        ))
+      : (
+          <Link
+            href="/communities"
+            className="block py-4 text-sm text-ume-indigo font-semibold hover:underline"
+          >
+            Be the first to start a community →
+          </Link>
+        )
+
+  const eventsRow =
+    upcomingEvents.length > 0
+      ? upcomingEvents.map((e) => (
+          <div key={e.id} className="w-56 sm:w-64 shrink-0">
+            <EventCard event={e} />
+          </div>
+        ))
+      : (
+          <Link
+            href="/events"
+            className="block py-4 text-sm text-ume-indigo font-semibold hover:underline"
+          >
+            No upcoming events yet — explore communities →
+          </Link>
+        )
+
   return (
     <>
       {/* ── MOBILE HOMEPAGE ── */}
       <div className="md:hidden">
-        <MobileHome recentListings={recentListings} />
+        <MobileHome
+          recentListings={recentListings}
+          recentCommunities={recentCommunities}
+          upcomingEvents={upcomingEvents}
+        />
       </div>
 
       {/* ── DESKTOP HOMEPAGE ── */}
@@ -510,35 +580,23 @@ export default async function Home() {
           {marketplaceRow}
         </HomeSectionRow>
 
-        {/* 4. Services — coming soon */}
-        <HomeSectionRow
-          title="Services"
-          icon={<ServiceIcon />}
-          viewAllHref="/services"
-          comingSoon
-          description="Offer tutoring, repairs, rides, photography, and more to your campus community. Launch your side hustle."
-          features={['Tutoring', 'Tech repairs', 'Rides', 'Design', 'Photography', 'Fitness']}
-        />
-
-        {/* 5. Communities — coming soon */}
+        {/* 4. Communities */}
         <HomeSectionRow
           title="Communities"
           icon={<CommunityIcon />}
           viewAllHref="/communities"
-          comingSoon
-          description="Connect with clubs, study groups, sports teams, and campus orgs — all in one place."
-          features={['Study groups', 'Sports teams', 'Clubs & orgs', 'Greek life', 'Interest groups']}
-        />
+        >
+          {communitiesRow}
+        </HomeSectionRow>
 
-        {/* 6. Events — coming soon */}
+        {/* 5. Events */}
         <HomeSectionRow
           title="Events"
           icon={<EventIcon />}
           viewAllHref="/events"
-          comingSoon
-          description="Discover campus events, pop-up markets, game nights, and meetups happening near you."
-          features={['Pop-up markets', 'Game nights', 'Study sessions', 'Campus tours', 'Meetups']}
-        />
+        >
+          {eventsRow}
+        </HomeSectionRow>
 
         {/* 7. How It Works */}
         <HowItWorksSection />

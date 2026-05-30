@@ -44,10 +44,18 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
   const heroRef = useRef<HTMLDivElement>(null)
   const [query, setQuery] = useState('')
 
-  const hour = new Date().getHours()
-  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  // Time-based greeting must be computed client-side only: new Date().getHours()
+  // returns the server's UTC hour during SSR but the browser's local hour on
+  // hydration, which mismatches and crashes the page (React #418). Start with a
+  // stable greeting that matches on both sides, then refine after mount.
+  const [greeting, setGreeting] = useState('Welcome back')
   const firstName = user.display_name?.split(' ')[0] ?? user.username ?? 'there'
   const campus = user.college_name ?? 'Your campus'
+
+  useEffect(() => {
+    const hour = new Date().getHours()
+    setGreeting(hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening')
+  }, [])
 
   useEffect(() => {
     if (!heroRef.current) return

@@ -36,20 +36,7 @@ and not exists (
   where m.community_id = c.id and m.user_id = c.creator_id
 );
 
--- 3) Welcome events (fall move-in window) -----------------------------------
-insert into events (community_id, creator_id, title, description, starts_at, location_type, location_address, city, state, status)
-select c.id, c.creator_id, e.title, e.description, e.starts_at, 'in_person', e.location_address, 'Williamsburg', 'KY', 'scheduled'
-from (values
-  ('uc-campus-hub',        'Fall Welcome Week Kickoff', 'Start the semester with UME. Meet other Patriots, grab free swag, and find your people.', timestamptz '2026-08-24 18:00:00-04', 'Student Union'),
-  ('uc-textbook-exchange', 'Textbook Swap & Sell',      'Bring the books you are done with and pick up next semesters for cheap. Cash and Venmo welcome.', timestamptz '2026-08-25 17:00:00-04', 'Hagan Library'),
-  ('uc-patriots-gaming',   'Patriots Game Night',       'Casual game night — bring a controller or just show up. Snacks provided.', timestamptz '2026-08-28 19:00:00-04', 'Boswell Center')
-) as e(slug, title, description, starts_at, location_address)
-join communities c on c.slug = e.slug
-where not exists (
-  select 1 from events x where x.title = e.title and x.community_id = c.id
-);
-
--- 4) Sync member_count to actual memberships -------------------------------
+-- 3) Sync member_count to actual memberships -------------------------------
 -- (a DB trigger increments member_count on membership insert, so re-derive it
 -- from the source of truth to avoid double-counting.)
 update communities c

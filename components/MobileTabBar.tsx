@@ -123,7 +123,7 @@ export default function MobileTabBar({ unreadMessages = 0, userId }: MobileTabBa
   const isActive = (href: string) => {
     if (href === '/') return pathname === '/'
     if (href === '/profile') return pathname.startsWith('/profile')
-    if (href === '/communities') return pathname.startsWith('/communities') || pathname.startsWith('/events')
+    if (href === '/communities') return pathname.startsWith('/communities')
     return pathname.startsWith(href)
   }
 

@@ -11,21 +11,19 @@ import CategoryGrid from '@/components/homepage/CategoryGrid'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
 import CommunityCard from '@/components/communities/CommunityCard'
-import EventCard from '@/components/events/EventCard'
-import { ShopIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
+import { ShopIcon, CommunityIcon } from '@/components/homepage/SectionIcons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Separator } from '@/components/ui/separator'
 import Link from 'next/link'
-import type { Listing, Community, UMEEvent } from '@/types/database'
+import type { Listing, Community } from '@/types/database'
 
 interface MobileHomeProps {
   recentListings: Listing[]
   recentCommunities: Community[]
-  upcomingEvents: UMEEvent[]
 }
 
-export default function MobileHome({ recentListings, recentCommunities, upcomingEvents }: MobileHomeProps) {
+export default function MobileHome({ recentListings, recentCommunities }: MobileHomeProps) {
   return (
     <div className="bg-ume-bg min-h-screen">
       <main className="min-h-screen pb-24">
@@ -85,24 +83,6 @@ export default function MobileHome({ recentListings, recentCommunities, upcoming
           )}
         </HomeSectionRow>
 
-        {/* Events */}
-        <HomeSectionRow
-          title="Events"
-          icon={<EventIcon />}
-          viewAllHref="/events"
-        >
-          {upcomingEvents.length > 0 ? (
-            upcomingEvents.map((e) => (
-              <div key={e.id} className="w-56 shrink-0">
-                <EventCard event={e} />
-              </div>
-            ))
-          ) : (
-            <Link href="/events" className="block py-4 px-2 text-sm text-ume-indigo font-semibold">
-              No upcoming events yet — explore communities →
-            </Link>
-          )}
-        </HomeSectionRow>
 
         {/* Feature Slider */}
         <FeatureSlider autoPlayInterval={4000} />

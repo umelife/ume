@@ -110,7 +110,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\next-env.d.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_next_env_d_ts",
-      "community": 127,
+      "community": 130,
       "norm_label": "next-env.d.ts"
     },
     {
@@ -119,7 +119,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\next.config.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_next_config_ts",
-      "community": 128,
+      "community": 131,
       "norm_label": "next.config.ts"
     },
     {
@@ -128,7 +128,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\playwright.config.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_playwright_config_ts",
-      "community": 129,
+      "community": 132,
       "norm_label": "playwright.config.ts"
     },
     {
@@ -137,7 +137,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\postcss.config.mjs",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_postcss_config_mjs",
-      "community": 130,
+      "community": 133,
       "norm_label": "postcss.config.mjs"
     },
     {
@@ -146,7 +146,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\tailwind.config.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_tailwind_config_ts",
-      "community": 131,
+      "community": 134,
       "norm_label": "tailwind.config.ts"
     },
     {
@@ -155,7 +155,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\layout.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_layout_tsx",
-      "community": 132,
+      "community": 135,
       "norm_label": "layout.tsx"
     },
     {
@@ -164,7 +164,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_page_tsx",
-      "community": 133,
+      "community": 136,
       "norm_label": "page.tsx"
     },
     {
@@ -227,7 +227,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\admin\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_admin_page_tsx",
-      "community": 134,
+      "community": 137,
       "norm_label": "page.tsx"
     },
     {
@@ -236,7 +236,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\admin\\analytics\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_admin_analytics_page_tsx",
-      "community": 135,
+      "community": 138,
       "norm_label": "page.tsx"
     },
     {
@@ -704,7 +704,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_cart_page_tsx",
-      "community": 7,
+      "community": 6,
       "norm_label": "page.tsx"
     },
     {
@@ -713,7 +713,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L24",
       "id": "page_getcurrentuser",
-      "community": 7,
+      "community": 6,
       "norm_label": "getcurrentuser()"
     },
     {
@@ -722,7 +722,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L155",
       "id": "page_fetchlistings",
-      "community": 7,
+      "community": 6,
       "norm_label": "fetchlistings()"
     },
     {
@@ -731,7 +731,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L65",
       "id": "page_handlecartupdate",
-      "community": 7,
+      "community": 6,
       "norm_label": "handlecartupdate()"
     },
     {
@@ -740,7 +740,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L75",
       "id": "page_calculatetotal",
-      "community": 7,
+      "community": 6,
       "norm_label": "calculatetotal()"
     },
     {
@@ -749,7 +749,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L80",
       "id": "page_handlecontactseller",
-      "community": 7,
+      "community": 6,
       "norm_label": "handlecontactseller()"
     },
     {
@@ -902,7 +902,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_page_tsx",
-      "community": 136,
+      "community": 139,
       "norm_label": "page.tsx"
     },
     {
@@ -965,7 +965,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_slug_page_tsx",
-      "community": 137,
+      "community": 140,
       "norm_label": "page.tsx"
     },
     {
@@ -974,8 +974,17 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\events\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_slug_events_page_tsx",
-      "community": 138,
+      "community": 66,
       "norm_label": "page.tsx"
+    },
+    {
+      "label": "CommunityEventsPage()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\events\\page.tsx",
+      "source_location": "L4",
+      "id": "page_communityeventspage",
+      "community": 66,
+      "norm_label": "communityeventspage()"
     },
     {
       "label": "CommentComposer.tsx",
@@ -983,7 +992,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\posts\\[id]\\CommentComposer.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_slug_posts_id_commentcomposer_tsx",
-      "community": 66,
+      "community": 67,
       "norm_label": "commentcomposer.tsx"
     },
     {
@@ -992,7 +1001,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\posts\\[id]\\CommentComposer.tsx",
       "source_location": "L7",
       "id": "commentcomposer_commentcomposer",
-      "community": 66,
+      "community": 67,
       "norm_label": "commentcomposer()"
     },
     {
@@ -1028,7 +1037,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\posts\\[id]\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_slug_posts_id_page_tsx",
-      "community": 139,
+      "community": 141,
       "norm_label": "page.tsx"
     },
     {
@@ -1037,7 +1046,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\posts\\[id]\\PostVoteButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_slug_posts_id_postvotebutton_tsx",
-      "community": 67,
+      "community": 68,
       "norm_label": "postvotebutton.tsx"
     },
     {
@@ -1046,7 +1055,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\posts\\[id]\\PostVoteButton.tsx",
       "source_location": "L6",
       "id": "postvotebutton_postvotebutton",
-      "community": 67,
+      "community": 68,
       "norm_label": "postvotebutton()"
     },
     {
@@ -1118,7 +1127,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\settings\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_communities_slug_settings_page_tsx",
-      "community": 140,
+      "community": 142,
       "norm_label": "page.tsx"
     },
     {
@@ -1172,7 +1181,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\create\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_create_page_tsx",
-      "community": 141,
+      "community": 143,
       "norm_label": "page.tsx"
     },
     {
@@ -1244,8 +1253,17 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_events_page_tsx",
-      "community": 142,
+      "community": 69,
       "norm_label": "page.tsx"
+    },
+    {
+      "label": "EventsPage()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\page.tsx",
+      "source_location": "L5",
+      "id": "page_eventspage",
+      "community": 69,
+      "norm_label": "eventspage()"
     },
     {
       "label": "CreateEventForm.tsx",
@@ -1253,7 +1271,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\create\\CreateEventForm.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_events_create_createeventform_tsx",
-      "community": 68,
+      "community": 70,
       "norm_label": "createeventform.tsx"
     },
     {
@@ -1262,7 +1280,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\create\\CreateEventForm.tsx",
       "source_location": "L30",
       "id": "createeventform_submit",
-      "community": 68,
+      "community": 70,
       "norm_label": "submit()"
     },
     {
@@ -1278,7 +1296,7 @@
       "label": "CreateEventPage()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\create\\page.tsx",
-      "source_location": "L9",
+      "source_location": "L4",
       "id": "page_createeventpage",
       "community": 0,
       "norm_label": "createeventpage()"
@@ -1289,7 +1307,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\CancelEventButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_events_id_canceleventbutton_tsx",
-      "community": 69,
+      "community": 71,
       "norm_label": "canceleventbutton.tsx"
     },
     {
@@ -1298,7 +1316,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\CancelEventButton.tsx",
       "source_location": "L7",
       "id": "canceleventbutton_canceleventbutton",
-      "community": 69,
+      "community": 71,
       "norm_label": "canceleventbutton()"
     },
     {
@@ -1307,7 +1325,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\EventRsvpButtons.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_events_id_eventrsvpbuttons_tsx",
-      "community": 70,
+      "community": 72,
       "norm_label": "eventrsvpbuttons.tsx"
     },
     {
@@ -1316,7 +1334,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\EventRsvpButtons.tsx",
       "source_location": "L18",
       "id": "eventrsvpbuttons_handle",
-      "community": 70,
+      "community": 72,
       "norm_label": "handle()"
     },
     {
@@ -1325,8 +1343,17 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_events_id_page_tsx",
-      "community": 143,
+      "community": 73,
       "norm_label": "page.tsx"
+    },
+    {
+      "label": "EventDetailPage()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\page.tsx",
+      "source_location": "L4",
+      "id": "page_eventdetailpage",
+      "community": 73,
+      "norm_label": "eventdetailpage()"
     },
     {
       "label": "page-with-widget.tsx",
@@ -1352,7 +1379,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\login\\layout.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_login_layout_tsx",
-      "community": 71,
+      "community": 74,
       "norm_label": "layout.tsx"
     },
     {
@@ -1361,7 +1388,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\login\\layout.tsx",
       "source_location": "L7",
       "id": "layout_loginlayout",
-      "community": 71,
+      "community": 74,
       "norm_label": "loginlayout()"
     },
     {
@@ -1442,7 +1469,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_marketplace_page_tsx",
-      "community": 7,
+      "community": 6,
       "norm_label": "page.tsx"
     },
     {
@@ -1451,7 +1478,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L57",
       "id": "page_getcategorydisplay",
-      "community": 7,
+      "community": 6,
       "norm_label": "getcategorydisplay()"
     },
     {
@@ -1460,7 +1487,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L63",
       "id": "page_categoryslugtodb",
-      "community": 7,
+      "community": 6,
       "norm_label": "categoryslugtodb()"
     },
     {
@@ -1730,7 +1757,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\privacy\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_privacy_page_tsx",
-      "community": 72,
+      "community": 75,
       "norm_label": "page.tsx"
     },
     {
@@ -1739,7 +1766,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\privacy\\page.tsx",
       "source_location": "L9",
       "id": "page_privacypage",
-      "community": 72,
+      "community": 75,
       "norm_label": "privacypage()"
     },
     {
@@ -1883,7 +1910,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\safety\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_safety_page_tsx",
-      "community": 73,
+      "community": 76,
       "norm_label": "page.tsx"
     },
     {
@@ -1892,7 +1919,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\safety\\page.tsx",
       "source_location": "L1",
       "id": "page_safetytipspage",
-      "community": 73,
+      "community": 76,
       "norm_label": "safetytipspage()"
     },
     {
@@ -1937,7 +1964,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\search\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_search_page_tsx",
-      "community": 74,
+      "community": 77,
       "norm_label": "page.tsx"
     },
     {
@@ -1946,7 +1973,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\search\\page.tsx",
       "source_location": "L27",
       "id": "page_fetchresults",
-      "community": 74,
+      "community": 77,
       "norm_label": "fetchresults()"
     },
     {
@@ -1955,7 +1982,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\services\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_services_page_tsx",
-      "community": 75,
+      "community": 78,
       "norm_label": "page.tsx"
     },
     {
@@ -1964,7 +1991,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\services\\page.tsx",
       "source_location": "L5",
       "id": "page_servicespage",
-      "community": 75,
+      "community": 78,
       "norm_label": "servicespage()"
     },
     {
@@ -1973,7 +2000,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\layout.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_signup_layout_tsx",
-      "community": 76,
+      "community": 79,
       "norm_label": "layout.tsx"
     },
     {
@@ -1982,7 +2009,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\layout.tsx",
       "source_location": "L7",
       "id": "layout_signuplayout",
-      "community": 76,
+      "community": 79,
       "norm_label": "signuplayout()"
     },
     {
@@ -2027,7 +2054,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\terms\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_terms_page_tsx",
-      "community": 77,
+      "community": 80,
       "norm_label": "page.tsx"
     },
     {
@@ -2036,7 +2063,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\terms\\page.tsx",
       "source_location": "L9",
       "id": "page_termsofservicepage",
-      "community": 77,
+      "community": 80,
       "norm_label": "termsofservicepage()"
     },
     {
@@ -2045,7 +2072,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\test-icons\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_test_icons_page_tsx",
-      "community": 78,
+      "community": 81,
       "norm_label": "page.tsx"
     },
     {
@@ -2054,7 +2081,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\test-icons\\page.tsx",
       "source_location": "L5",
       "id": "page_testiconspage",
-      "community": 78,
+      "community": 81,
       "norm_label": "testiconspage()"
     },
     {
@@ -2135,7 +2162,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\MobileFooter.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_mobilefooter_tsx",
-      "community": 79,
+      "community": 82,
       "norm_label": "mobilefooter.tsx"
     },
     {
@@ -2144,7 +2171,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\MobileFooter.tsx",
       "source_location": "L3",
       "id": "mobilefooter_mobilefooter",
-      "community": 79,
+      "community": 82,
       "norm_label": "mobilefooter()"
     },
     {
@@ -2189,7 +2216,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\MobileTabBar.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_mobiletabbar_tsx",
-      "community": 80,
+      "community": 83,
       "norm_label": "mobiletabbar.tsx"
     },
     {
@@ -2198,7 +2225,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\MobileTabBar.tsx",
       "source_location": "L123",
       "id": "mobiletabbar_isactive",
-      "community": 80,
+      "community": 83,
       "norm_label": "isactive()"
     },
     {
@@ -2243,7 +2270,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\StripeSetupBannerClient.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_stripesetupbannerclient_tsx",
-      "community": 81,
+      "community": 84,
       "norm_label": "stripesetupbannerclient.tsx"
     },
     {
@@ -2252,7 +2279,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\StripeSetupBannerClient.tsx",
       "source_location": "L7",
       "id": "stripesetupbannerclient_stripesetupbannerclient",
-      "community": 81,
+      "community": 84,
       "norm_label": "stripesetupbannerclient()"
     },
     {
@@ -2261,7 +2288,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\UnreadCountBadge.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_unreadcountbadge_tsx",
-      "community": 82,
+      "community": 85,
       "norm_label": "unreadcountbadge.tsx"
     },
     {
@@ -2270,7 +2297,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\UnreadCountBadge.tsx",
       "source_location": "L12",
       "id": "unreadcountbadge_unreadcountbadge",
-      "community": 82,
+      "community": 85,
       "norm_label": "unreadcountbadge()"
     },
     {
@@ -2279,7 +2306,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\WhatsNewModal.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_whatsnewmodal_tsx",
-      "community": 83,
+      "community": 86,
       "norm_label": "whatsnewmodal.tsx"
     },
     {
@@ -2288,7 +2315,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\WhatsNewModal.tsx",
       "source_location": "L8",
       "id": "whatsnewmodal_whatsnewmodal",
-      "community": 83,
+      "community": 86,
       "norm_label": "whatsnewmodal()"
     },
     {
@@ -2297,7 +2324,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\admin\\OrderRefundCard.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_admin_orderrefundcard_tsx",
-      "community": 84,
+      "community": 87,
       "norm_label": "orderrefundcard.tsx"
     },
     {
@@ -2306,7 +2333,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\admin\\OrderRefundCard.tsx",
       "source_location": "L11",
       "id": "orderrefundcard_orderrefundcard",
-      "community": 84,
+      "community": 87,
       "norm_label": "orderrefundcard()"
     },
     {
@@ -2315,7 +2342,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\admin\\ReportCard.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_admin_reportcard_tsx",
-      "community": 6,
+      "community": 7,
       "norm_label": "reportcard.tsx"
     },
     {
@@ -2324,7 +2351,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\admin\\ReportCard.tsx",
       "source_location": "L31",
       "id": "reportcard_handleupdatestatus",
-      "community": 6,
+      "community": 7,
       "norm_label": "handleupdatestatus()"
     },
     {
@@ -2333,7 +2360,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\analytics\\MixpanelProvider.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_analytics_mixpanelprovider_tsx",
-      "community": 85,
+      "community": 88,
       "norm_label": "mixpanelprovider.tsx"
     },
     {
@@ -2342,7 +2369,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\analytics\\MixpanelProvider.tsx",
       "source_location": "L6",
       "id": "mixpanelprovider_mixpanelprovider",
-      "community": 85,
+      "community": 88,
       "norm_label": "mixpanelprovider()"
     },
     {
@@ -2351,7 +2378,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\analytics\\ViewListingTracker.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_analytics_viewlistingtracker_tsx",
-      "community": 86,
+      "community": 89,
       "norm_label": "viewlistingtracker.tsx"
     },
     {
@@ -2360,7 +2387,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\analytics\\ViewListingTracker.tsx",
       "source_location": "L6",
       "id": "viewlistingtracker_viewlistingtracker",
-      "community": 86,
+      "community": 89,
       "norm_label": "viewlistingtracker()"
     },
     {
@@ -2450,7 +2477,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\cart\\AddToCartButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_cart_addtocartbutton_tsx",
-      "community": 87,
+      "community": 90,
       "norm_label": "addtocartbutton.tsx"
     },
     {
@@ -2459,7 +2486,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\cart\\AddToCartButton.tsx",
       "source_location": "L13",
       "id": "addtocartbutton_addtocartbutton",
-      "community": 87,
+      "community": 90,
       "norm_label": "addtocartbutton()"
     },
     {
@@ -2531,7 +2558,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\chat\\MessageBubble.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_chat_messagebubble_tsx",
-      "community": 88,
+      "community": 91,
       "norm_label": "messagebubble.tsx"
     },
     {
@@ -2540,7 +2567,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\chat\\MessageBubble.tsx",
       "source_location": "L33",
       "id": "messagebubble_messagebubble",
-      "community": 88,
+      "community": 91,
       "norm_label": "messagebubble()"
     },
     {
@@ -2549,7 +2576,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\communities\\CommunityCard.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_communities_communitycard_tsx",
-      "community": 30,
+      "community": 35,
       "norm_label": "communitycard.tsx"
     },
     {
@@ -2558,7 +2585,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\communities\\CommunityCard.tsx",
       "source_location": "L6",
       "id": "communitycard_communitycard",
-      "community": 30,
+      "community": 35,
       "norm_label": "communitycard()"
     },
     {
@@ -2621,7 +2648,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\communities\\StateFilter.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_communities_statefilter_tsx",
-      "community": 89,
+      "community": 92,
       "norm_label": "statefilter.tsx"
     },
     {
@@ -2630,7 +2657,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\communities\\StateFilter.tsx",
       "source_location": "L13",
       "id": "statefilter_statefilter",
-      "community": 89,
+      "community": 92,
       "norm_label": "statefilter()"
     },
     {
@@ -2639,7 +2666,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\events\\EventCard.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_events_eventcard_tsx",
-      "community": 90,
+      "community": 93,
       "norm_label": "eventcard.tsx"
     },
     {
@@ -2648,7 +2675,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\events\\EventCard.tsx",
       "source_location": "L6",
       "id": "eventcard_eventcard",
-      "community": 90,
+      "community": 93,
       "norm_label": "eventcard()"
     },
     {
@@ -2702,7 +2729,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\FeatureSlider.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_homepage_featureslider_tsx",
-      "community": 31,
+      "community": 30,
       "norm_label": "featureslider.tsx"
     },
     {
@@ -2711,7 +2738,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\FeatureSlider.tsx",
       "source_location": "L80",
       "id": "featureslider_checkmobile",
-      "community": 31,
+      "community": 30,
       "norm_label": "checkmobile()"
     },
     {
@@ -2720,7 +2747,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\FeatureSlider.tsx",
       "source_location": "L113",
       "id": "featureslider_getcardposition",
-      "community": 31,
+      "community": 30,
       "norm_label": "getcardposition()"
     },
     {
@@ -2729,7 +2756,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\FeatureSlider.tsx",
       "source_location": "L122",
       "id": "featureslider_getcardstyles",
-      "community": 31,
+      "community": 30,
       "norm_label": "getcardstyles()"
     },
     {
@@ -2747,7 +2774,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\HomeListingCard.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_homepage_homelistingcard_tsx",
-      "community": 91,
+      "community": 94,
       "norm_label": "homelistingcard.tsx"
     },
     {
@@ -2756,7 +2783,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\HomeListingCard.tsx",
       "source_location": "L14",
       "id": "homelistingcard_homelistingcard",
-      "community": 91,
+      "community": 94,
       "norm_label": "homelistingcard()"
     },
     {
@@ -2774,7 +2801,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\NewsletterSignup.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_homepage_newslettersignup_tsx",
-      "community": 92,
+      "community": 95,
       "norm_label": "newslettersignup.tsx"
     },
     {
@@ -2783,7 +2810,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\NewsletterSignup.tsx",
       "source_location": "L20",
       "id": "newslettersignup_handlesubmit",
-      "community": 92,
+      "community": 95,
       "norm_label": "handlesubmit()"
     },
     {
@@ -2801,7 +2828,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\RotatingText.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_homepage_rotatingtext_tsx",
-      "community": 93,
+      "community": 96,
       "norm_label": "rotatingtext.tsx"
     },
     {
@@ -2810,7 +2837,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\RotatingText.tsx",
       "source_location": "L11",
       "id": "rotatingtext_rotatingtext",
-      "community": 93,
+      "community": 96,
       "norm_label": "rotatingtext()"
     },
     {
@@ -2864,7 +2891,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\SimpleFooter.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_homepage_simplefooter_tsx",
-      "community": 94,
+      "community": 97,
       "norm_label": "simplefooter.tsx"
     },
     {
@@ -2873,7 +2900,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\homepage\\SimpleFooter.tsx",
       "source_location": "L12",
       "id": "simplefooter_simplefooter",
-      "community": 94,
+      "community": 97,
       "norm_label": "simplefooter()"
     },
     {
@@ -2882,7 +2909,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_buybutton_tsx",
-      "community": 7,
+      "community": 6,
       "norm_label": "buybutton.tsx"
     },
     {
@@ -2891,7 +2918,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L33",
       "id": "buybutton_generateprefillmessage",
-      "community": 7,
+      "community": 6,
       "norm_label": "generateprefillmessage()"
     },
     {
@@ -2900,7 +2927,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L38",
       "id": "buybutton_handlecontactseller",
-      "community": 7,
+      "community": 6,
       "norm_label": "handlecontactseller()"
     },
     {
@@ -2909,7 +2936,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L85",
       "id": "buybutton_handleaddtocart",
-      "community": 7,
+      "community": 6,
       "norm_label": "handleaddtocart()"
     },
     {
@@ -2918,7 +2945,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuySection.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_buysection_tsx",
-      "community": 7,
+      "community": 6,
       "norm_label": "buysection.tsx"
     },
     {
@@ -2927,7 +2954,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuySection.tsx",
       "source_location": "L50",
       "id": "buysection_handlestripeinperson",
-      "community": 7,
+      "community": 6,
       "norm_label": "handlestripeinperson()"
     },
     {
@@ -2936,7 +2963,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuySection.tsx",
       "source_location": "L69",
       "id": "buysection_openchat",
-      "community": 7,
+      "community": 6,
       "norm_label": "openchat()"
     },
     {
@@ -2945,7 +2972,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\CartToggleButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_carttogglebutton_tsx",
-      "community": 15,
+      "community": 13,
       "norm_label": "carttogglebutton.tsx"
     },
     {
@@ -2954,7 +2981,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\CartToggleButton.tsx",
       "source_location": "L11",
       "id": "carttogglebutton_carttogglebutton",
-      "community": 15,
+      "community": 13,
       "norm_label": "carttogglebutton()"
     },
     {
@@ -2963,7 +2990,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ContactSellerButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_contactsellerbutton_tsx",
-      "community": 7,
+      "community": 6,
       "norm_label": "contactsellerbutton.tsx"
     },
     {
@@ -2972,7 +2999,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ContactSellerButton.tsx",
       "source_location": "L21",
       "id": "contactsellerbutton_generateprefillmessage",
-      "community": 7,
+      "community": 6,
       "norm_label": "generateprefillmessage()"
     },
     {
@@ -2981,7 +3008,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ContactSellerButton.tsx",
       "source_location": "L26",
       "id": "contactsellerbutton_handlecontactseller",
-      "community": 7,
+      "community": 6,
       "norm_label": "handlecontactseller()"
     },
     {
@@ -3026,7 +3053,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\DeleteListingButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_deletelistingbutton_tsx",
-      "community": 95,
+      "community": 98,
       "norm_label": "deletelistingbutton.tsx"
     },
     {
@@ -3035,7 +3062,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\DeleteListingButton.tsx",
       "source_location": "L6",
       "id": "deletelistingbutton_deletelistingbutton",
-      "community": 95,
+      "community": 98,
       "norm_label": "deletelistingbutton()"
     },
     {
@@ -3062,7 +3089,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_enhancedsearchfilter_tsx",
-      "community": 13,
+      "community": 14,
       "norm_label": "enhancedsearchfilter.tsx"
     },
     {
@@ -3071,7 +3098,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L69",
       "id": "enhancedsearchfilter_handlesearchchange",
-      "community": 13,
+      "community": 14,
       "norm_label": "handlesearchchange()"
     },
     {
@@ -3080,7 +3107,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L74",
       "id": "enhancedsearchfilter_handlecategorychange",
-      "community": 13,
+      "community": 14,
       "norm_label": "handlecategorychange()"
     },
     {
@@ -3089,7 +3116,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L79",
       "id": "enhancedsearchfilter_handleconditiontoggle",
-      "community": 13,
+      "community": 14,
       "norm_label": "handleconditiontoggle()"
     },
     {
@@ -3098,7 +3125,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L88",
       "id": "enhancedsearchfilter_handlearrayfiltertoggle",
-      "community": 13,
+      "community": 14,
       "norm_label": "handlearrayfiltertoggle()"
     },
     {
@@ -3107,7 +3134,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L100",
       "id": "enhancedsearchfilter_handlepricechange",
-      "community": 13,
+      "community": 14,
       "norm_label": "handlepricechange()"
     },
     {
@@ -3116,7 +3143,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\EnhancedSearchFilter.tsx",
       "source_location": "L110",
       "id": "enhancedsearchfilter_handleclearall",
-      "community": 13,
+      "community": 14,
       "norm_label": "handleclearall()"
     },
     {
@@ -3134,7 +3161,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageCarousel.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_imagecarousel_tsx",
-      "community": 32,
+      "community": 31,
       "norm_label": "imagecarousel.tsx"
     },
     {
@@ -3143,7 +3170,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageCarousel.tsx",
       "source_location": "L26",
       "id": "imagecarousel_gotoprevious",
-      "community": 32,
+      "community": 31,
       "norm_label": "gotoprevious()"
     },
     {
@@ -3152,7 +3179,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageCarousel.tsx",
       "source_location": "L32",
       "id": "imagecarousel_gotonext",
-      "community": 32,
+      "community": 31,
       "norm_label": "gotonext()"
     },
     {
@@ -3161,7 +3188,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageCarousel.tsx",
       "source_location": "L38",
       "id": "imagecarousel_gotoimage",
-      "community": 32,
+      "community": 31,
       "norm_label": "gotoimage()"
     },
     {
@@ -3170,7 +3197,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\imageuploader.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_imageuploader_tsx",
-      "community": 96,
+      "community": 99,
       "norm_label": "imageuploader.tsx"
     },
     {
@@ -3179,7 +3206,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\imageuploader.tsx",
       "source_location": "L10",
       "id": "imageuploader_imageuploader",
-      "community": 96,
+      "community": 99,
       "norm_label": "imageuploader()"
     },
     {
@@ -3188,7 +3215,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageUploaderClean.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_imageuploaderclean_tsx",
-      "community": 33,
+      "community": 32,
       "norm_label": "imageuploaderclean.tsx"
     },
     {
@@ -3197,7 +3224,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageUploaderClean.tsx",
       "source_location": "L12",
       "id": "imageuploaderclean_compressimage",
-      "community": 33,
+      "community": 32,
       "norm_label": "compressimage()"
     },
     {
@@ -3206,7 +3233,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageUploaderClean.tsx",
       "source_location": "L78",
       "id": "imageuploaderclean_handlefiles",
-      "community": 33,
+      "community": 32,
       "norm_label": "handlefiles()"
     },
     {
@@ -3215,7 +3242,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ImageUploaderClean.tsx",
       "source_location": "L146",
       "id": "imageuploaderclean_removeurl",
-      "community": 33,
+      "community": 32,
       "norm_label": "removeurl()"
     },
     {
@@ -3242,7 +3269,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ListingImages.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_listingimages_tsx",
-      "community": 97,
+      "community": 100,
       "norm_label": "listingimages.tsx"
     },
     {
@@ -3251,7 +3278,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ListingImages.tsx",
       "source_location": "L20",
       "id": "listingimages_fetchimages",
-      "community": 97,
+      "community": 100,
       "norm_label": "fetchimages()"
     },
     {
@@ -3260,7 +3287,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ReportButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_reportbutton_tsx",
-      "community": 6,
+      "community": 7,
       "norm_label": "reportbutton.tsx"
     },
     {
@@ -3269,7 +3296,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ReportButton.tsx",
       "source_location": "L12",
       "id": "reportbutton_handlereport",
-      "community": 6,
+      "community": 7,
       "norm_label": "handlereport()"
     },
     {
@@ -3377,7 +3404,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\CategoryBar.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_categorybar_tsx",
-      "community": 98,
+      "community": 101,
       "norm_label": "categorybar.tsx"
     },
     {
@@ -3386,7 +3413,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\CategoryBar.tsx",
       "source_location": "L31",
       "id": "categorybar_categorybar",
-      "community": 98,
+      "community": 101,
       "norm_label": "categorybar()"
     },
     {
@@ -3404,7 +3431,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\CategorySelector.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_categoryselector_tsx",
-      "community": 99,
+      "community": 102,
       "norm_label": "categoryselector.tsx"
     },
     {
@@ -3413,7 +3440,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\CategorySelector.tsx",
       "source_location": "L11",
       "id": "categoryselector_categoryselector",
-      "community": 99,
+      "community": 102,
       "norm_label": "categoryselector()"
     },
     {
@@ -3431,7 +3458,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\DeleteSuccessModal.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_deletesuccessmodal_tsx",
-      "community": 100,
+      "community": 103,
       "norm_label": "deletesuccessmodal.tsx"
     },
     {
@@ -3440,7 +3467,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\DeleteSuccessModal.tsx",
       "source_location": "L6",
       "id": "deletesuccessmodal_deletesuccessmodal",
-      "community": 100,
+      "community": 103,
       "norm_label": "deletesuccessmodal()"
     },
     {
@@ -3449,7 +3476,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\FiltersRow.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_filtersrow_tsx",
-      "community": 101,
+      "community": 104,
       "norm_label": "filtersrow.tsx"
     },
     {
@@ -3458,7 +3485,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\FiltersRow.tsx",
       "source_location": "L39",
       "id": "filtersrow_chevron",
-      "community": 101,
+      "community": 104,
       "norm_label": "chevron()"
     },
     {
@@ -3539,7 +3566,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\MarketplaceListings.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_marketplacelistings_tsx",
-      "community": 102,
+      "community": 105,
       "norm_label": "marketplacelistings.tsx"
     },
     {
@@ -3548,7 +3575,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\MarketplaceListings.tsx",
       "source_location": "L24",
       "id": "marketplacelistings_handleshowmore",
-      "community": 102,
+      "community": 105,
       "norm_label": "handleshowmore()"
     },
     {
@@ -3557,7 +3584,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\MobileFilterButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_mobilefilterbutton_tsx",
-      "community": 103,
+      "community": 106,
       "norm_label": "mobilefilterbutton.tsx"
     },
     {
@@ -3566,7 +3593,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\MobileFilterButton.tsx",
       "source_location": "L10",
       "id": "mobilefilterbutton_mobilefilterbutton",
-      "community": 103,
+      "community": 106,
       "norm_label": "mobilefilterbutton()"
     },
     {
@@ -3611,7 +3638,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\MobileFiltersWrapper.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_marketplace_mobilefilterswrapper_tsx",
-      "community": 104,
+      "community": 107,
       "norm_label": "mobilefilterswrapper.tsx"
     },
     {
@@ -3620,7 +3647,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\MobileFiltersWrapper.tsx",
       "source_location": "L26",
       "id": "mobilefilterswrapper_mobilefilterswrapper",
-      "community": 104,
+      "community": 107,
       "norm_label": "mobilefilterswrapper()"
     },
     {
@@ -3656,7 +3683,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\orders\\GenerateLabelButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_orders_generatelabelbutton_tsx",
-      "community": 105,
+      "community": 108,
       "norm_label": "generatelabelbutton.tsx"
     },
     {
@@ -3665,7 +3692,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\orders\\GenerateLabelButton.tsx",
       "source_location": "L14",
       "id": "generatelabelbutton_handlegenerate",
-      "community": 105,
+      "community": 108,
       "norm_label": "handlegenerate()"
     },
     {
@@ -3674,7 +3701,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\orders\\RefundButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_orders_refundbutton_tsx",
-      "community": 106,
+      "community": 109,
       "norm_label": "refundbutton.tsx"
     },
     {
@@ -3683,7 +3710,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\orders\\RefundButton.tsx",
       "source_location": "L61",
       "id": "refundbutton_handlerefund",
-      "community": 106,
+      "community": 109,
       "norm_label": "handlerefund()"
     },
     {
@@ -3692,7 +3719,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\payments\\EventPaywall.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_payments_eventpaywall_tsx",
-      "community": 107,
+      "community": 110,
       "norm_label": "eventpaywall.tsx"
     },
     {
@@ -3701,7 +3728,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\payments\\EventPaywall.tsx",
       "source_location": "L17",
       "id": "eventpaywall_eventpaywall",
-      "community": 107,
+      "community": 110,
       "norm_label": "eventpaywall()"
     },
     {
@@ -3737,7 +3764,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileListings.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_profile_profilelistings_tsx",
-      "community": 108,
+      "community": 111,
       "norm_label": "profilelistings.tsx"
     },
     {
@@ -3746,7 +3773,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileListings.tsx",
       "source_location": "L28",
       "id": "profilelistings_chevrondown",
-      "community": 108,
+      "community": 111,
       "norm_label": "chevrondown()"
     },
     {
@@ -3890,7 +3917,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\remotion\\RemotionHeroPlayer.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_remotion_remotionheroplayer_tsx",
-      "community": 109,
+      "community": 112,
       "norm_label": "remotionheroplayer.tsx"
     },
     {
@@ -3899,7 +3926,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\remotion\\RemotionHeroPlayer.tsx",
       "source_location": "L19",
       "id": "remotionheroplayer_remotionheroplayer",
-      "community": 109,
+      "community": 112,
       "norm_label": "remotionheroplayer()"
     },
     {
@@ -3926,7 +3953,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\remotion\\UmeHeroComposition.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_remotion_umeherocomposition_tsx",
-      "community": 34,
+      "community": 33,
       "norm_label": "umeherocomposition.tsx"
     },
     {
@@ -3935,7 +3962,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\remotion\\UmeHeroComposition.tsx",
       "source_location": "L29",
       "id": "umeherocomposition_usefade",
-      "community": 34,
+      "community": 33,
       "norm_label": "usefade()"
     },
     {
@@ -3944,7 +3971,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\remotion\\UmeHeroComposition.tsx",
       "source_location": "L34",
       "id": "umeherocomposition_useslideup",
-      "community": 34,
+      "community": 33,
       "norm_label": "useslideup()"
     },
     {
@@ -3953,7 +3980,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\remotion\\UmeHeroComposition.tsx",
       "source_location": "L43",
       "id": "umeherocomposition_usescale",
-      "community": 34,
+      "community": 33,
       "norm_label": "usescale()"
     },
     {
@@ -3962,7 +3989,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\QRDisplay.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_safe_handshake_qrdisplay_tsx",
-      "community": 110,
+      "community": 113,
       "norm_label": "qrdisplay.tsx"
     },
     {
@@ -3971,7 +3998,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\QRDisplay.tsx",
       "source_location": "L20",
       "id": "qrdisplay_handlecopy",
-      "community": 110,
+      "community": 113,
       "norm_label": "handlecopy()"
     },
     {
@@ -4007,7 +4034,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\SafeHandshakeMap.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_safe_handshake_safehandshakemap_tsx",
-      "community": 111,
+      "community": 114,
       "norm_label": "safehandshakemap.tsx"
     },
     {
@@ -4016,7 +4043,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\SafeHandshakeMap.tsx",
       "source_location": "L27",
       "id": "safehandshakemap_safehandshakemap",
-      "community": 111,
+      "community": 114,
       "norm_label": "safehandshakemap()"
     },
     {
@@ -4025,7 +4052,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\StepBar.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_safe_handshake_stepbar_tsx",
-      "community": 112,
+      "community": 115,
       "norm_label": "stepbar.tsx"
     },
     {
@@ -4034,7 +4061,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\StepBar.tsx",
       "source_location": "L20",
       "id": "stepbar_stepbar",
-      "community": 112,
+      "community": 115,
       "norm_label": "stepbar()"
     },
     {
@@ -4043,7 +4070,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\HeaderInlineSearch.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_search_headerinlinesearch_tsx",
-      "community": 113,
+      "community": 116,
       "norm_label": "headerinlinesearch.tsx"
     },
     {
@@ -4052,7 +4079,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\HeaderInlineSearch.tsx",
       "source_location": "L88",
       "id": "headerinlinesearch_handleclickoutside",
-      "community": 113,
+      "community": 116,
       "norm_label": "handleclickoutside()"
     },
     {
@@ -4115,7 +4142,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\SearchResultItem.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_search_searchresultitem_tsx",
-      "community": 114,
+      "community": 117,
       "norm_label": "searchresultitem.tsx"
     },
     {
@@ -4124,7 +4151,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\SearchResultItem.tsx",
       "source_location": "L17",
       "id": "searchresultitem_searchresultitem",
-      "community": 114,
+      "community": 117,
       "norm_label": "searchresultitem()"
     },
     {
@@ -4133,7 +4160,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\seller\\StripeOnboardingBanner.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_seller_stripeonboardingbanner_tsx",
-      "community": 115,
+      "community": 118,
       "norm_label": "stripeonboardingbanner.tsx"
     },
     {
@@ -4142,7 +4169,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\seller\\StripeOnboardingBanner.tsx",
       "source_location": "L56",
       "id": "stripeonboardingbanner_handlestartonboarding",
-      "community": 115,
+      "community": 118,
       "norm_label": "handlestartonboarding()"
     },
     {
@@ -4160,7 +4187,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\badge.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_ui_badge_tsx",
-      "community": 116,
+      "community": 119,
       "norm_label": "badge.tsx"
     },
     {
@@ -4169,7 +4196,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\badge.tsx",
       "source_location": "L30",
       "id": "badge_badge",
-      "community": 116,
+      "community": 119,
       "norm_label": "badge()"
     },
     {
@@ -4232,7 +4259,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_ui_installprompt_tsx",
-      "community": 14,
+      "community": 15,
       "norm_label": "installprompt.tsx"
     },
     {
@@ -4241,7 +4268,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L18",
       "id": "installprompt_isios",
-      "community": 14,
+      "community": 15,
       "norm_label": "isios()"
     },
     {
@@ -4250,7 +4277,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L23",
       "id": "installprompt_isstandalone",
-      "community": 14,
+      "community": 15,
       "norm_label": "isstandalone()"
     },
     {
@@ -4259,7 +4286,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L29",
       "id": "installprompt_wasdismissedrecently",
-      "community": 14,
+      "community": 15,
       "norm_label": "wasdismissedrecently()"
     },
     {
@@ -4268,7 +4295,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L59",
       "id": "installprompt_handler",
-      "community": 14,
+      "community": 15,
       "norm_label": "handler()"
     },
     {
@@ -4277,7 +4304,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L69",
       "id": "installprompt_handleinstall",
-      "community": 14,
+      "community": 15,
       "norm_label": "handleinstall()"
     },
     {
@@ -4286,7 +4313,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\InstallPrompt.tsx",
       "source_location": "L79",
       "id": "installprompt_dismiss",
-      "community": 14,
+      "community": 15,
       "norm_label": "dismiss()"
     },
     {
@@ -4313,7 +4340,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\SearchableSelect.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_ui_searchableselect_tsx",
-      "community": 35,
+      "community": 34,
       "norm_label": "searchableselect.tsx"
     },
     {
@@ -4322,7 +4349,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\SearchableSelect.tsx",
       "source_location": "L41",
       "id": "searchableselect_handleoutside",
-      "community": 35,
+      "community": 34,
       "norm_label": "handleoutside()"
     },
     {
@@ -4331,7 +4358,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\SearchableSelect.tsx",
       "source_location": "L62",
       "id": "searchableselect_handleselect",
-      "community": 35,
+      "community": 34,
       "norm_label": "handleselect()"
     },
     {
@@ -4340,7 +4367,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\SearchableSelect.tsx",
       "source_location": "L68",
       "id": "searchableselect_handlekeydown",
-      "community": 35,
+      "community": 34,
       "norm_label": "handlekeydown()"
     },
     {
@@ -4367,7 +4394,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\skeleton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_ui_skeleton_tsx",
-      "community": 117,
+      "community": 120,
       "norm_label": "skeleton.tsx"
     },
     {
@@ -4376,7 +4403,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\skeleton.tsx",
       "source_location": "L3",
       "id": "skeleton_skeleton",
-      "community": 117,
+      "community": 120,
       "norm_label": "skeleton()"
     },
     {
@@ -4385,7 +4412,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\Spinner.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_ui_spinner_tsx",
-      "community": 118,
+      "community": 121,
       "norm_label": "spinner.tsx"
     },
     {
@@ -4394,7 +4421,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\Spinner.tsx",
       "source_location": "L13",
       "id": "spinner_spinner",
-      "community": 118,
+      "community": 121,
       "norm_label": "spinner()"
     },
     {
@@ -4412,7 +4439,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\Toast.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_ui_toast_tsx",
-      "community": 119,
+      "community": 122,
       "norm_label": "toast.tsx"
     },
     {
@@ -4421,7 +4448,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\ui\\Toast.tsx",
       "source_location": "L23",
       "id": "toast_toast",
-      "community": 119,
+      "community": 122,
       "norm_label": "toast()"
     },
     {
@@ -4466,7 +4493,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\data\\community-categories.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_data_community_categories_ts",
-      "community": 30,
+      "community": 35,
       "norm_label": "community-categories.ts"
     },
     {
@@ -4475,7 +4502,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\data\\community-categories.ts",
       "source_location": "L23",
       "id": "community_categories_getcommunitycategory",
-      "community": 30,
+      "community": 35,
       "norm_label": "getcommunitycategory()"
     },
     {
@@ -4574,7 +4601,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useCart.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_hooks_usecart_tsx",
-      "community": 15,
+      "community": 13,
       "norm_label": "usecart.tsx"
     },
     {
@@ -4583,7 +4610,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useCart.tsx",
       "source_location": "L11",
       "id": "usecart_broadcastcartupdate",
-      "community": 15,
+      "community": 13,
       "norm_label": "broadcastcartupdate()"
     },
     {
@@ -4592,7 +4619,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useCart.tsx",
       "source_location": "L16",
       "id": "usecart_readcartfromstorage",
-      "community": 15,
+      "community": 13,
       "norm_label": "readcartfromstorage()"
     },
     {
@@ -4601,7 +4628,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useCart.tsx",
       "source_location": "L41",
       "id": "usecart_writecarttostorage",
-      "community": 15,
+      "community": 13,
       "norm_label": "writecarttostorage()"
     },
     {
@@ -4610,7 +4637,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useCart.tsx",
       "source_location": "L57",
       "id": "usecart_usecart",
-      "community": 15,
+      "community": 13,
       "norm_label": "usecart()"
     },
     {
@@ -4646,7 +4673,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useSwipe.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_hooks_useswipe_ts",
-      "community": 120,
+      "community": 123,
       "norm_label": "useswipe.ts"
     },
     {
@@ -4655,7 +4682,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\hooks\\useSwipe.ts",
       "source_location": "L9",
       "id": "useswipe_useswipe",
-      "community": 120,
+      "community": 123,
       "norm_label": "useswipe()"
     },
     {
@@ -4700,7 +4727,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\utils.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_utils_ts",
-      "community": 121,
+      "community": 124,
       "norm_label": "utils.ts"
     },
     {
@@ -4709,7 +4736,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\utils.ts",
       "source_location": "L8",
       "id": "utils_cn",
-      "community": 121,
+      "community": 124,
       "norm_label": "cn()"
     },
     {
@@ -4925,7 +4952,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\chat\\actions.ts",
       "source_location": "L5",
       "id": "actions_sendmessage",
-      "community": 3,
+      "community": 0,
       "norm_label": "sendmessage()"
     },
     {
@@ -4970,7 +4997,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\chat\\actions.ts",
       "source_location": "L183",
       "id": "actions_deletemessage",
-      "community": 3,
+      "community": 0,
       "norm_label": "deletemessage()"
     },
     {
@@ -5015,7 +5042,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\chat\\conversations.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_chat_conversations_ts",
-      "community": 7,
+      "community": 6,
       "norm_label": "conversations.ts"
     },
     {
@@ -5024,7 +5051,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\chat\\conversations.ts",
       "source_location": "L19",
       "id": "conversations_getorcreateconversation",
-      "community": 7,
+      "community": 6,
       "norm_label": "getorcreateconversation()"
     },
     {
@@ -5114,7 +5141,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\constants\\categories.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_constants_categories_ts",
-      "community": 122,
+      "community": 125,
       "norm_label": "categories.ts"
     },
     {
@@ -5123,7 +5150,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\constants\\categories.ts",
       "source_location": "L28",
       "id": "categories_getcategorysubtitle",
-      "community": 122,
+      "community": 125,
       "norm_label": "getcategorysubtitle()"
     },
     {
@@ -5150,7 +5177,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_email_sendemail_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "sendemail.ts"
     },
     {
@@ -5159,7 +5186,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L54",
       "id": "sendemail_getemailtestlogpath",
-      "community": 6,
+      "community": 7,
       "norm_label": "getemailtestlogpath()"
     },
     {
@@ -5168,7 +5195,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L61",
       "id": "sendemail_reademailtestlog",
-      "community": 6,
+      "community": 7,
       "norm_label": "reademailtestlog()"
     },
     {
@@ -5177,7 +5204,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L76",
       "id": "sendemail_clearemailtestlog",
-      "community": 6,
+      "community": 7,
       "norm_label": "clearemailtestlog()"
     },
     {
@@ -5186,7 +5213,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L89",
       "id": "sendemail_logemailtotestfile",
-      "community": 6,
+      "community": 7,
       "norm_label": "logemailtotestfile()"
     },
     {
@@ -5195,7 +5222,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L104",
       "id": "sendemail_sendemail",
-      "community": 6,
+      "community": 7,
       "norm_label": "sendemail()"
     },
     {
@@ -5204,7 +5231,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L188",
       "id": "sendemail_sendbuyerconfirmation",
-      "community": 6,
+      "community": 7,
       "norm_label": "sendbuyerconfirmation()"
     },
     {
@@ -5213,7 +5240,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L313",
       "id": "sendemail_sendsellernotification",
-      "community": 6,
+      "community": 7,
       "norm_label": "sendsellernotification()"
     },
     {
@@ -5222,7 +5249,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L485",
       "id": "sendemail_sendshippednotification",
-      "community": 6,
+      "community": 7,
       "norm_label": "sendshippednotification()"
     },
     {
@@ -5231,7 +5258,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L568",
       "id": "sendemail_gettrackingurl",
-      "community": 6,
+      "community": 7,
       "norm_label": "gettrackingurl()"
     },
     {
@@ -5240,7 +5267,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\email\\sendEmail.ts",
       "source_location": "L589",
       "id": "sendemail_sendreportnotification",
-      "community": 6,
+      "community": 7,
       "norm_label": "sendreportnotification()"
     },
     {
@@ -5249,7 +5276,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\hooks\\useConversations.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_hooks_useconversations_ts",
-      "community": 123,
+      "community": 126,
       "norm_label": "useconversations.ts"
     },
     {
@@ -5258,7 +5285,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\hooks\\useConversations.ts",
       "source_location": "L43",
       "id": "useconversations_useconversations",
-      "community": 123,
+      "community": 126,
       "norm_label": "useconversations()"
     },
     {
@@ -5267,7 +5294,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\hooks\\useMessages.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_hooks_usemessages_ts",
-      "community": 124,
+      "community": 127,
       "norm_label": "usemessages.ts"
     },
     {
@@ -5276,7 +5303,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\hooks\\useMessages.ts",
       "source_location": "L75",
       "id": "usemessages_usemessages",
-      "community": 124,
+      "community": 127,
       "norm_label": "usemessages()"
     },
     {
@@ -5609,7 +5636,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\reports\\actions.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_reports_actions_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "actions.ts"
     },
     {
@@ -5618,7 +5645,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\reports\\actions.ts",
       "source_location": "L6",
       "id": "actions_reportlisting",
-      "community": 6,
+      "community": 7,
       "norm_label": "reportlisting()"
     },
     {
@@ -5627,7 +5654,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\reports\\actions.ts",
       "source_location": "L51",
       "id": "actions_getallreports",
-      "community": 6,
+      "community": 7,
       "norm_label": "getallreports()"
     },
     {
@@ -5636,7 +5663,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\reports\\actions.ts",
       "source_location": "L66",
       "id": "actions_updatereportstatus",
-      "community": 6,
+      "community": 7,
       "norm_label": "updatereportstatus()"
     },
     {
@@ -5654,7 +5681,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\supabase\\client.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_supabase_client_ts",
-      "community": 125,
+      "community": 128,
       "norm_label": "client.ts"
     },
     {
@@ -5663,7 +5690,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\supabase\\client.ts",
       "source_location": "L4",
       "id": "client_createclient",
-      "community": 125,
+      "community": 128,
       "norm_label": "createclient()"
     },
     {
@@ -5699,7 +5726,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\supabase\\server.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_supabase_server_ts",
-      "community": 1,
+      "community": 4,
       "norm_label": "server.ts"
     },
     {
@@ -5807,7 +5834,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\utils\\index.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_utils_index_ts",
-      "community": 126,
+      "community": 129,
       "norm_label": "index.ts"
     },
     {
@@ -5816,7 +5843,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\utils\\index.ts",
       "source_location": "L8",
       "id": "index_cn",
-      "community": 126,
+      "community": 129,
       "norm_label": "cn()"
     },
     {
@@ -6131,7 +6158,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\scripts\\test-email.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_scripts_test_email_ts",
-      "community": 6,
+      "community": 7,
       "norm_label": "test-email.ts"
     },
     {
@@ -6140,7 +6167,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\scripts\\test-email.ts",
       "source_location": "L19",
       "id": "test_email_testemail",
-      "community": 6,
+      "community": 7,
       "norm_label": "testemail()"
     },
     {
@@ -9968,8 +9995,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
       "source_location": "L30",
       "weight": 1.0,
-      "_src": "sharetocommunitybutton_openmodal",
-      "_tgt": "actions_getsharetargetcommunities",
+      "_src": "actions_getsharetargetcommunities",
+      "_tgt": "sharetocommunitybutton_openmodal",
       "source": "actions_getsharetargetcommunities",
       "target": "sharetocommunitybutton_openmodal"
     },
@@ -10199,6 +10226,18 @@
       "_tgt": "communityjoinbutton_communityjoinbutton",
       "source": "c_users_ruthi_desktop_ume_app_communities_slug_communityjoinbutton_tsx",
       "target": "communityjoinbutton_communityjoinbutton",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\[slug]\\events\\page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_app_communities_slug_events_page_tsx",
+      "_tgt": "page_communityeventspage",
+      "source": "c_users_ruthi_desktop_ume_app_communities_slug_events_page_tsx",
+      "target": "page_communityeventspage",
       "confidence_score": 1.0
     },
     {
@@ -10660,6 +10699,18 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\page.tsx",
+      "source_location": "L5",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_app_events_page_tsx",
+      "_tgt": "page_eventspage",
+      "source": "c_users_ruthi_desktop_ume_app_events_page_tsx",
+      "target": "page_eventspage",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\create\\CreateEventForm.tsx",
       "source_location": "L30",
       "weight": 1.0,
@@ -10673,7 +10724,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\create\\page.tsx",
-      "source_location": "L9",
+      "source_location": "L4",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_events_create_page_tsx",
       "_tgt": "page_createeventpage",
@@ -10715,6 +10766,18 @@
       "_tgt": "eventrsvpbuttons_handle",
       "source": "c_users_ruthi_desktop_ume_app_events_id_eventrsvpbuttons_tsx",
       "target": "eventrsvpbuttons_handle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\[id]\\page.tsx",
+      "source_location": "L4",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_app_events_id_page_tsx",
+      "_tgt": "page_eventdetailpage",
+      "source": "c_users_ruthi_desktop_ume_app_events_id_page_tsx",
+      "target": "page_eventdetailpage",
       "confidence_score": 1.0
     },
     {

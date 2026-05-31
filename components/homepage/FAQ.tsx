@@ -32,16 +32,12 @@ const faqs = [
     a: 'Communities are student-run groups on UME for any interest — study groups, sports teams, Greek life, gaming, fitness, and more. You can post, vote, comment, and join communities from any campus across the US.',
   },
   {
-    q: 'Can I find events near me on UME?',
-    a: 'Yes. UME has a live Events section where students and organizations can post campus meetups, study sessions, parties, and more. You can filter by state or search by keyword to find events near you — even during summer.',
-  },
-  {
     q: 'What if I have a problem with a buyer or seller?',
     a: 'You can report any listing or user directly from the app. Our moderation team reviews every report. For payment disputes on Stripe transactions, UME offers buyer protection — if a seller does not ship within 3 days of payment, you can request a full refund.',
   },
   {
     q: 'How is UME different from Facebook Marketplace or Craigslist?',
-    a: 'Facebook Marketplace and Craigslist are open to anyone. UME is only for verified students. That means safer meetups, more relevant listings, and a community of people who go to the same school as you. We also built campus-specific features — Safe-Handshake meetups, .edu-only communities, and semester-timed events — that general marketplaces will never build.',
+    a: 'Facebook Marketplace and Craigslist are open to anyone. UME is only for verified students. That means safer meetups, more relevant listings, and a community of people who go to the same school as you. We also built campus-specific features — Safe-Handshake meetups and .edu-only communities — that general marketplaces will never build.',
   },
 ]
 

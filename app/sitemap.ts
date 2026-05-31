@@ -23,7 +23,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: 'https://ume-life.com', lastModified: new Date(), changeFrequency: 'daily', priority: 1 },
     { url: 'https://ume-life.com/marketplace', lastModified: new Date(), changeFrequency: 'hourly', priority: 0.9 },
     { url: 'https://ume-life.com/communities', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
-    { url: 'https://ume-life.com/events', lastModified: new Date(), changeFrequency: 'daily', priority: 0.8 },
     { url: 'https://ume-life.com/about', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: 'https://ume-life.com/safety', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.4 },
     { url: 'https://ume-life.com/contact', lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },

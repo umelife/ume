@@ -10,10 +10,9 @@
  *  2. Trust/Safety Banner — indigo strip with key trust points
  *  3. Recent Marketplace — horizontal scroll of real listings
  *  4. Communities — horizontal scroll of real communities
- *  5. Events — horizontal scroll of real upcoming events
- *  6. How It Works — 3 steps in a horizontal row
- *  7. Category Grid — browse by category
- *  8. CTA — join UME
+ *  5. How It Works — 3 steps in a horizontal row
+ *  6. Category Grid — browse by category
+ *  7. CTA — join UME
  */
 
 import { unstable_cache } from 'next/cache'
@@ -22,8 +21,7 @@ import CategoryGrid from '@/components/homepage/CategoryGrid'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
 import CommunityCard from '@/components/communities/CommunityCard'
-import EventCard from '@/components/events/EventCard'
-import { ShopIcon, CommunityIcon, EventIcon } from '@/components/homepage/SectionIcons'
+import { ShopIcon, CommunityIcon } from '@/components/homepage/SectionIcons'
 import MobileHome from '@/components/MobileHome'
 import Hero from '@/components/homepage/Hero'
 import Reviews from '@/components/homepage/Reviews'
@@ -34,7 +32,7 @@ import supabasePublic from '@/lib/supabase/public'
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import { getCampusFromEmail } from '@/data/safe-points'
-import type { Listing, Community, UMEEvent } from '@/types/database'
+import type { Listing, Community } from '@/types/database'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
@@ -72,21 +70,6 @@ const getRecentCommunities = unstable_cache(
   },
   ['homepage-recent-communities'],
   { revalidate: 300, tags: ['communities'] }
-)
-
-const getUpcomingEvents = unstable_cache(
-  async (): Promise<UMEEvent[]> => {
-    const { data } = await supabasePublic
-      .from('events')
-      .select('*, community:communities(name, slug, cover_image_url)')
-      .eq('status', 'scheduled')
-      .gte('starts_at', new Date().toISOString())
-      .order('starts_at', { ascending: true })
-      .limit(8)
-    return (data as UMEEvent[]) ?? []
-  },
-  ['homepage-upcoming-events'],
-  { revalidate: 300, tags: ['events'] }
 )
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
@@ -503,10 +486,9 @@ export default async function Home() {
   }
 
   // ── Logged-out: marketing landing page ──────────────────────────────────────
-  const [recentListings, recentCommunities, upcomingEvents] = await Promise.all([
+  const [recentListings, recentCommunities] = await Promise.all([
     getRecentListings(),
     getRecentCommunities(),
-    getUpcomingEvents(),
   ])
 
   const marketplaceRow =
@@ -536,22 +518,6 @@ export default async function Home() {
           </Link>
         )
 
-  const eventsRow =
-    upcomingEvents.length > 0
-      ? upcomingEvents.map((e) => (
-          <div key={e.id} className="w-56 sm:w-64 shrink-0">
-            <EventCard event={e} />
-          </div>
-        ))
-      : (
-          <Link
-            href="/events"
-            className="block py-4 text-sm text-ume-indigo font-semibold hover:underline"
-          >
-            No upcoming events yet — explore communities →
-          </Link>
-        )
-
   return (
     <>
       {/* ── MOBILE HOMEPAGE ── */}
@@ -559,7 +525,6 @@ export default async function Home() {
         <MobileHome
           recentListings={recentListings}
           recentCommunities={recentCommunities}
-          upcomingEvents={upcomingEvents}
         />
       </div>
 
@@ -589,16 +554,7 @@ export default async function Home() {
           {communitiesRow}
         </HomeSectionRow>
 
-        {/* 5. Events */}
-        <HomeSectionRow
-          title="Events"
-          icon={<EventIcon />}
-          viewAllHref="/events"
-        >
-          {eventsRow}
-        </HomeSectionRow>
-
-        {/* 7. How It Works */}
+        {/* 5. How It Works */}
         <HowItWorksSection />
 
         {/* 8. Feature Slider */}

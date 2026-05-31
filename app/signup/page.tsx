@@ -23,7 +23,10 @@ interface PasswordRequirements {
 type AccountType = 'student' | 'personal' | 'organization'
 
 export default function SignupPage() {
-  const [accountType, setAccountType] = useState<AccountType>('student')
+  // UME is student-only: every signup is a verified .edu student account.
+  // The personal/organization plumbing is left dormant (and reversible) but
+  // is no longer offered at signup.
+  const accountType: AccountType = 'student'
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
@@ -255,61 +258,6 @@ export default function SignupPage() {
 
           <CardContent className="px-8 pb-10">
             <form onSubmit={handleSubmit} className="space-y-5">
-
-              {/* Account type toggle */}
-              <div className="space-y-2">
-                <Label className="text-sm font-medium text-gray-700">I am signing up as</Label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setAccountType('student')}
-                    className={`px-4 py-2.5 rounded-lg text-sm font-semibold border transition-all ${
-                      isStudent
-                        ? 'bg-[#130170] text-white border-[#130170]'
-                        : 'bg-white text-gray-600 border-gray-300 hover:border-[#130170]'
-                    }`}
-                  >
-                    🎓 A Student
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAccountType(accountType === 'student' ? 'personal' : accountType)}
-                    className={`px-4 py-2.5 rounded-lg text-sm font-semibold border transition-all ${
-                      !isStudent
-                        ? 'bg-[#130170] text-white border-[#130170]'
-                        : 'bg-white text-gray-600 border-gray-300 hover:border-[#130170]'
-                    }`}
-                  >
-                    👤 Personal / Org
-                  </button>
-                </div>
-                {!isStudent && (
-                  <div className="grid grid-cols-2 gap-2 mt-1">
-                    <button
-                      type="button"
-                      onClick={() => setAccountType('personal')}
-                      className={`px-3 py-2 rounded-lg text-xs font-semibold border transition-all ${
-                        accountType === 'personal'
-                          ? 'bg-[#fa9ebc] text-white border-[#fa9ebc]'
-                          : 'bg-white text-gray-500 border-gray-200 hover:border-[#fa9ebc]'
-                      }`}
-                    >
-                      Personal
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setAccountType('organization')}
-                      className={`px-3 py-2 rounded-lg text-xs font-semibold border transition-all ${
-                        accountType === 'organization'
-                          ? 'bg-[#fa9ebc] text-white border-[#fa9ebc]'
-                          : 'bg-white text-gray-500 border-gray-200 hover:border-[#fa9ebc]'
-                      }`}
-                    >
-                      Organization
-                    </button>
-                  </div>
-                )}
-              </div>
 
               {error && (
                 <div className="rounded-lg border border-red-300 bg-red-50 px-4 py-3">

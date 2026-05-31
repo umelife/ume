@@ -704,7 +704,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_cart_page_tsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "page.tsx"
     },
     {
@@ -713,7 +713,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L24",
       "id": "page_getcurrentuser",
-      "community": 5,
+      "community": 7,
       "norm_label": "getcurrentuser()"
     },
     {
@@ -722,7 +722,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L155",
       "id": "page_fetchlistings",
-      "community": 5,
+      "community": 7,
       "norm_label": "fetchlistings()"
     },
     {
@@ -731,7 +731,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L65",
       "id": "page_handlecartupdate",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlecartupdate()"
     },
     {
@@ -740,7 +740,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L75",
       "id": "page_calculatetotal",
-      "community": 5,
+      "community": 7,
       "norm_label": "calculatetotal()"
     },
     {
@@ -749,7 +749,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\cart\\page.tsx",
       "source_location": "L80",
       "id": "page_handlecontactseller",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlecontactseller()"
     },
     {
@@ -765,7 +765,7 @@
       "label": "requireOwnerOrMod()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L9",
+      "source_location": "L10",
       "id": "actions_requireownerormod",
       "community": 0,
       "norm_label": "requireownerormod()"
@@ -774,7 +774,7 @@
       "label": "toSlug()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "id": "actions_toslug",
       "community": 0,
       "norm_label": "toslug()"
@@ -783,7 +783,7 @@
       "label": "createCommunity()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L40",
+      "source_location": "L41",
       "id": "actions_createcommunity",
       "community": 0,
       "norm_label": "createcommunity()"
@@ -792,7 +792,7 @@
       "label": "joinCommunity()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L102",
+      "source_location": "L103",
       "id": "actions_joincommunity",
       "community": 0,
       "norm_label": "joincommunity()"
@@ -801,7 +801,7 @@
       "label": "leaveCommunity()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L118",
+      "source_location": "L119",
       "id": "actions_leavecommunity",
       "community": 0,
       "norm_label": "leavecommunity()"
@@ -810,16 +810,34 @@
       "label": "createPost()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L135",
+      "source_location": "L136",
       "id": "actions_createpost",
       "community": 0,
       "norm_label": "createpost()"
     },
     {
+      "label": "getShareTargetCommunities()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L175",
+      "id": "actions_getsharetargetcommunities",
+      "community": 0,
+      "norm_label": "getsharetargetcommunities()"
+    },
+    {
+      "label": "shareListingToCommunity()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L212",
+      "id": "actions_sharelistingtocommunity",
+      "community": 0,
+      "norm_label": "sharelistingtocommunity()"
+    },
+    {
       "label": "votePost()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L168",
+      "source_location": "L251",
       "id": "actions_votepost",
       "community": 0,
       "norm_label": "votepost()"
@@ -828,7 +846,7 @@
       "label": "createComment()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L182",
+      "source_location": "L265",
       "id": "actions_createcomment",
       "community": 0,
       "norm_label": "createcomment()"
@@ -837,7 +855,7 @@
       "label": "deletePost()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L210",
+      "source_location": "L293",
       "id": "actions_deletepost",
       "community": 0,
       "norm_label": "deletepost()"
@@ -846,7 +864,7 @@
       "label": "updateRules()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L244",
+      "source_location": "L327",
       "id": "actions_updaterules",
       "community": 0,
       "norm_label": "updaterules()"
@@ -855,7 +873,7 @@
       "label": "kickMember()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L263",
+      "source_location": "L346",
       "id": "actions_kickmember",
       "community": 0,
       "norm_label": "kickmember()"
@@ -864,7 +882,7 @@
       "label": "promoteMember()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L293",
+      "source_location": "L376",
       "id": "actions_promotemember",
       "community": 0,
       "norm_label": "promotemember()"
@@ -873,7 +891,7 @@
       "label": "deleteCommunity()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L314",
+      "source_location": "L397",
       "id": "actions_deletecommunity",
       "community": 0,
       "norm_label": "deletecommunity()"
@@ -1109,16 +1127,16 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\contact\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_contact_page_tsx",
-      "community": 7,
+      "community": 5,
       "norm_label": "page.tsx"
     },
     {
       "label": "handleSubmit()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L76",
+      "source_location": "L79",
       "id": "page_handlesubmit",
-      "community": 7,
+      "community": 5,
       "norm_label": "handlesubmit()"
     },
     {
@@ -1127,7 +1145,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\contact\\page.tsx",
       "source_location": "L85",
       "id": "page_handlechange",
-      "community": 7,
+      "community": 5,
       "norm_label": "handlechange()"
     },
     {
@@ -1352,7 +1370,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\login\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_login_page_tsx",
-      "community": 7,
+      "community": 5,
       "norm_label": "page.tsx"
     },
     {
@@ -1424,7 +1442,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_marketplace_page_tsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "page.tsx"
     },
     {
@@ -1433,7 +1451,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L57",
       "id": "page_getcategorydisplay",
-      "community": 5,
+      "community": 7,
       "norm_label": "getcategorydisplay()"
     },
     {
@@ -1442,7 +1460,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\marketplace\\page.tsx",
       "source_location": "L63",
       "id": "page_categoryslugtodb",
-      "community": 5,
+      "community": 7,
       "norm_label": "categoryslugtodb()"
     },
     {
@@ -1739,7 +1757,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\reauth\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_reauth_page_tsx",
-      "community": 7,
+      "community": 5,
       "norm_label": "page.tsx"
     },
     {
@@ -1973,34 +1991,34 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_app_signup_page_tsx",
-      "community": 7,
+      "community": 5,
       "norm_label": "page.tsx"
     },
     {
       "label": "validatePassword()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L49",
+      "source_location": "L52",
       "id": "page_validatepassword",
-      "community": 7,
+      "community": 5,
       "norm_label": "validatepassword()"
     },
     {
       "label": "handlePasswordChange()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L62",
+      "source_location": "L65",
       "id": "page_handlepasswordchange",
-      "community": 7,
+      "community": 5,
       "norm_label": "handlepasswordchange()"
     },
     {
       "label": "handleConfirmPasswordChange()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L70",
+      "source_location": "L73",
       "id": "page_handleconfirmpasswordchange",
-      "community": 7,
+      "community": 5,
       "norm_label": "handleconfirmpasswordchange()"
     },
     {
@@ -2106,7 +2124,7 @@
       "label": "handleSearch()",
       "file_type": "code",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\LoggedInDashboard.tsx",
-      "source_location": "L64",
+      "source_location": "L72",
       "id": "loggedindashboard_handlesearch",
       "community": 45,
       "norm_label": "handlesearch()"
@@ -2864,7 +2882,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_buybutton_tsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "buybutton.tsx"
     },
     {
@@ -2873,7 +2891,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L33",
       "id": "buybutton_generateprefillmessage",
-      "community": 5,
+      "community": 7,
       "norm_label": "generateprefillmessage()"
     },
     {
@@ -2882,7 +2900,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L38",
       "id": "buybutton_handlecontactseller",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlecontactseller()"
     },
     {
@@ -2891,7 +2909,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuyButton.tsx",
       "source_location": "L85",
       "id": "buybutton_handleaddtocart",
-      "community": 5,
+      "community": 7,
       "norm_label": "handleaddtocart()"
     },
     {
@@ -2900,7 +2918,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuySection.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_buysection_tsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "buysection.tsx"
     },
     {
@@ -2909,7 +2927,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuySection.tsx",
       "source_location": "L50",
       "id": "buysection_handlestripeinperson",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlestripeinperson()"
     },
     {
@@ -2918,7 +2936,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\BuySection.tsx",
       "source_location": "L69",
       "id": "buysection_openchat",
-      "community": 5,
+      "community": 7,
       "norm_label": "openchat()"
     },
     {
@@ -2945,7 +2963,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ContactSellerButton.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_listings_contactsellerbutton_tsx",
-      "community": 5,
+      "community": 7,
       "norm_label": "contactsellerbutton.tsx"
     },
     {
@@ -2954,7 +2972,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ContactSellerButton.tsx",
       "source_location": "L21",
       "id": "contactsellerbutton_generateprefillmessage",
-      "community": 5,
+      "community": 7,
       "norm_label": "generateprefillmessage()"
     },
     {
@@ -2963,7 +2981,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ContactSellerButton.tsx",
       "source_location": "L26",
       "id": "contactsellerbutton_handlecontactseller",
-      "community": 5,
+      "community": 7,
       "norm_label": "handlecontactseller()"
     },
     {
@@ -3280,6 +3298,33 @@
       "id": "searchfilter_handlecategorychange",
       "community": 50,
       "norm_label": "handlecategorychange()"
+    },
+    {
+      "label": "ShareToCommunityButton.tsx",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
+      "source_location": "L1",
+      "id": "c_users_ruthi_desktop_ume_components_listings_sharetocommunitybutton_tsx",
+      "community": 51,
+      "norm_label": "sharetocommunitybutton.tsx"
+    },
+    {
+      "label": "openModal()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
+      "source_location": "L23",
+      "id": "sharetocommunitybutton_openmodal",
+      "community": 51,
+      "norm_label": "openmodal()"
+    },
+    {
+      "label": "share()",
+      "file_type": "code",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
+      "source_location": "L37",
+      "id": "sharetocommunitybutton_share",
+      "community": 51,
+      "norm_label": "share()"
     },
     {
       "label": "ShippingCheckoutFlow.tsx",
@@ -3665,7 +3710,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\AvatarUpload.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_profile_avatarupload_tsx",
-      "community": 51,
+      "community": 52,
       "norm_label": "avatarupload.tsx"
     },
     {
@@ -3674,7 +3719,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\AvatarUpload.tsx",
       "source_location": "L16",
       "id": "avatarupload_compresstojpeg",
-      "community": 51,
+      "community": 52,
       "norm_label": "compresstojpeg()"
     },
     {
@@ -3683,7 +3728,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\AvatarUpload.tsx",
       "source_location": "L43",
       "id": "avatarupload_handlefilechange",
-      "community": 51,
+      "community": 52,
       "norm_label": "handlefilechange()"
     },
     {
@@ -3710,7 +3755,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileSettings.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_profile_profilesettings_tsx",
-      "community": 7,
+      "community": 5,
       "norm_label": "profilesettings.tsx"
     },
     {
@@ -3719,7 +3764,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileSettings.tsx",
       "source_location": "L35",
       "id": "profilesettings_handleupdateusername",
-      "community": 7,
+      "community": 5,
       "norm_label": "handleupdateusername()"
     },
     {
@@ -3728,7 +3773,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileSettings.tsx",
       "source_location": "L77",
       "id": "profilesettings_handleupdatecollege",
-      "community": 7,
+      "community": 5,
       "norm_label": "handleupdatecollege()"
     },
     {
@@ -3737,7 +3782,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileSettings.tsx",
       "source_location": "L122",
       "id": "profilesettings_handleupdatepassword",
-      "community": 7,
+      "community": 5,
       "norm_label": "handleupdatepassword()"
     },
     {
@@ -3746,7 +3791,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\profile\\ProfileSettings.tsx",
       "source_location": "L160",
       "id": "profilesettings_handlelogout",
-      "community": 7,
+      "community": 5,
       "norm_label": "handlelogout()"
     },
     {
@@ -3935,7 +3980,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\QRScanner.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_safe_handshake_qrscanner_tsx",
-      "community": 52,
+      "community": 53,
       "norm_label": "qrscanner.tsx"
     },
     {
@@ -3944,7 +3989,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\QRScanner.tsx",
       "source_location": "L17",
       "id": "qrscanner_startscanner",
-      "community": 52,
+      "community": 53,
       "norm_label": "startscanner()"
     },
     {
@@ -3953,7 +3998,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\safe-handshake\\QRScanner.tsx",
       "source_location": "L41",
       "id": "qrscanner_stopscanner",
-      "community": 52,
+      "community": 53,
       "norm_label": "stopscanner()"
     },
     {
@@ -4016,7 +4061,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\HeaderSearch.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_search_headersearch_tsx",
-      "community": 53,
+      "community": 54,
       "norm_label": "headersearch.tsx"
     },
     {
@@ -4025,7 +4070,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\HeaderSearch.tsx",
       "source_location": "L48",
       "id": "headersearch_handlekeydown",
-      "community": 53,
+      "community": 54,
       "norm_label": "handlekeydown()"
     },
     {
@@ -4034,7 +4079,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\HeaderSearch.tsx",
       "source_location": "L59",
       "id": "headersearch_handleclickoutside",
-      "community": 53,
+      "community": 54,
       "norm_label": "handleclickoutside()"
     },
     {
@@ -4043,7 +4088,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\SearchModal.tsx",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_components_search_searchmodal_tsx",
-      "community": 54,
+      "community": 55,
       "norm_label": "searchmodal.tsx"
     },
     {
@@ -4052,7 +4097,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\SearchModal.tsx",
       "source_location": "L33",
       "id": "searchmodal_handleescape",
-      "community": 54,
+      "community": 55,
       "norm_label": "handleescape()"
     },
     {
@@ -4061,7 +4106,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\search\\SearchModal.tsx",
       "source_location": "L88",
       "id": "searchmodal_handlelistingclick",
-      "community": 54,
+      "community": 55,
       "norm_label": "handlelistingclick()"
     },
     {
@@ -4439,7 +4484,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\data\\safe-points.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_data_safe_points_ts",
-      "community": 55,
+      "community": 0,
       "norm_label": "safe-points.ts"
     },
     {
@@ -4448,7 +4493,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\data\\safe-points.ts",
       "source_location": "L80",
       "id": "safe_points_getcampusfromemail",
-      "community": 55,
+      "community": 0,
       "norm_label": "getcampusfromemail()"
     },
     {
@@ -4457,7 +4502,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\data\\safe-points.ts",
       "source_location": "L93",
       "id": "safe_points_getsafepointsforcampus",
-      "community": 55,
+      "community": 0,
       "norm_label": "getsafepointsforcampus()"
     },
     {
@@ -4700,7 +4745,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_auth_actions_ts",
-      "community": 7,
+      "community": 5,
       "norm_label": "actions.ts"
     },
     {
@@ -4709,7 +4754,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L7",
       "id": "actions_prettylogerror",
-      "community": 7,
+      "community": 5,
       "norm_label": "prettylogerror()"
     },
     {
@@ -4718,7 +4763,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L30",
       "id": "actions_checkusernameavailability",
-      "community": 7,
+      "community": 5,
       "norm_label": "checkusernameavailability()"
     },
     {
@@ -4727,7 +4772,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L59",
       "id": "actions_signin",
-      "community": 7,
+      "community": 5,
       "norm_label": "signin()"
     },
     {
@@ -4736,7 +4781,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L117",
       "id": "actions_signout",
-      "community": 7,
+      "community": 5,
       "norm_label": "signout()"
     },
     {
@@ -4754,7 +4799,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L218",
       "id": "actions_requestpasswordreset",
-      "community": 7,
+      "community": 5,
       "norm_label": "requestpasswordreset()"
     },
     {
@@ -4763,7 +4808,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L245",
       "id": "actions_updatepassword",
-      "community": 7,
+      "community": 5,
       "norm_label": "updatepassword()"
     },
     {
@@ -4772,7 +4817,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\auth\\actions.ts",
       "source_location": "L296",
       "id": "actions_reauthenticate",
-      "community": 0,
+      "community": 5,
       "norm_label": "reauthenticate()"
     },
     {
@@ -4970,7 +5015,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\chat\\conversations.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_chat_conversations_ts",
-      "community": 5,
+      "community": 7,
       "norm_label": "conversations.ts"
     },
     {
@@ -4979,7 +5024,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\chat\\conversations.ts",
       "source_location": "L19",
       "id": "conversations_getorcreateconversation",
-      "community": 5,
+      "community": 7,
       "norm_label": "getorcreateconversation()"
     },
     {
@@ -5654,7 +5699,7 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\lib\\supabase\\server.ts",
       "source_location": "L1",
       "id": "c_users_ruthi_desktop_ume_lib_supabase_server_ts",
-      "community": 4,
+      "community": 1,
       "norm_label": "server.ts"
     },
     {
@@ -9071,8 +9116,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
       "source_location": "L123",
       "weight": 1.0,
-      "_src": "actions_leavecommunity",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "actions_leavecommunity",
       "source": "route_delete",
       "target": "actions_leavecommunity"
     },
@@ -9083,8 +9128,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
       "source_location": "L174",
       "weight": 1.0,
-      "_src": "actions_votepost",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "actions_votepost",
       "source": "route_delete",
       "target": "actions_votepost"
     },
@@ -9095,8 +9140,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
       "source_location": "L237",
       "weight": 1.0,
-      "_src": "actions_deletepost",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "actions_deletepost",
       "source": "route_delete",
       "target": "actions_deletepost"
     },
@@ -9107,8 +9152,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
       "source_location": "L282",
       "weight": 1.0,
-      "_src": "actions_kickmember",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "actions_kickmember",
       "source": "route_delete",
       "target": "actions_kickmember"
     },
@@ -9119,8 +9164,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\events\\actions.ts",
       "source_location": "L109",
       "weight": 1.0,
-      "_src": "actions_cancelrsvp",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "actions_cancelrsvp",
       "source": "route_delete",
       "target": "actions_cancelrsvp"
     },
@@ -9131,8 +9176,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\saved-listings\\actions.ts",
       "source_location": "L23",
       "weight": 1.0,
-      "_src": "actions_unsavelisting",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "actions_unsavelisting",
       "source": "route_delete",
       "target": "actions_unsavelisting"
     },
@@ -9143,8 +9188,8 @@
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\marketplace\\LocationRadiusSlider.tsx",
       "source_location": "L105",
       "weight": 1.0,
-      "_src": "locationradiusslider_clearlocation",
-      "_tgt": "route_delete",
+      "_src": "route_delete",
+      "_tgt": "locationradiusslider_clearlocation",
       "source": "route_delete",
       "target": "locationradiusslider_clearlocation"
     },
@@ -9536,7 +9581,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L9",
+      "source_location": "L10",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_requireownerormod",
@@ -9548,7 +9593,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L31",
+      "source_location": "L32",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_toslug",
@@ -9560,7 +9605,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L40",
+      "source_location": "L41",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_createcommunity",
@@ -9572,7 +9617,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L102",
+      "source_location": "L103",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_joincommunity",
@@ -9584,7 +9629,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L118",
+      "source_location": "L119",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_leavecommunity",
@@ -9596,7 +9641,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L135",
+      "source_location": "L136",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_createpost",
@@ -9608,7 +9653,31 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L168",
+      "source_location": "L175",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
+      "_tgt": "actions_getsharetargetcommunities",
+      "source": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
+      "target": "actions_getsharetargetcommunities",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L212",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
+      "_tgt": "actions_sharelistingtocommunity",
+      "source": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
+      "target": "actions_sharelistingtocommunity",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L251",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_votepost",
@@ -9620,7 +9689,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L182",
+      "source_location": "L265",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_createcomment",
@@ -9632,7 +9701,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L210",
+      "source_location": "L293",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_deletepost",
@@ -9644,7 +9713,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L244",
+      "source_location": "L327",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_updaterules",
@@ -9656,7 +9725,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L263",
+      "source_location": "L346",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_kickmember",
@@ -9668,7 +9737,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L293",
+      "source_location": "L376",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_promotemember",
@@ -9680,7 +9749,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L314",
+      "source_location": "L397",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_communities_actions_ts",
       "_tgt": "actions_deletecommunity",
@@ -9692,7 +9761,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L248",
+      "source_location": "L331",
       "weight": 1.0,
       "_src": "actions_updaterules",
       "_tgt": "actions_requireownerormod",
@@ -9704,7 +9773,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L267",
+      "source_location": "L350",
       "weight": 1.0,
       "_src": "actions_kickmember",
       "_tgt": "actions_requireownerormod",
@@ -9716,7 +9785,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L298",
+      "source_location": "L381",
       "weight": 1.0,
       "_src": "actions_promotemember",
       "_tgt": "actions_requireownerormod",
@@ -9752,7 +9821,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
-      "source_location": "L58",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "actions_createcommunity",
       "_tgt": "actions_toslug",
@@ -9854,6 +9923,78 @@
       "_src": "actions_createpost",
       "_tgt": "actions_getuser",
       "source": "actions_createpost",
+      "target": "actions_getuser"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L178",
+      "weight": 1.0,
+      "_src": "actions_getsharetargetcommunities",
+      "_tgt": "server_createclient",
+      "source": "actions_getsharetargetcommunities",
+      "target": "server_createclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_src": "actions_getsharetargetcommunities",
+      "_tgt": "actions_getuser",
+      "source": "actions_getsharetargetcommunities",
+      "target": "actions_getuser"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L182",
+      "weight": 1.0,
+      "_src": "actions_getsharetargetcommunities",
+      "_tgt": "safe_points_getcampusfromemail",
+      "source": "actions_getsharetargetcommunities",
+      "target": "safe_points_getcampusfromemail"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "sharetocommunitybutton_openmodal",
+      "_tgt": "actions_getsharetargetcommunities",
+      "source": "actions_getsharetargetcommunities",
+      "target": "sharetocommunitybutton_openmodal"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L216",
+      "weight": 1.0,
+      "_src": "actions_sharelistingtocommunity",
+      "_tgt": "server_createclient",
+      "source": "actions_sharelistingtocommunity",
+      "target": "server_createclient"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\communities\\actions.ts",
+      "source_location": "L217",
+      "weight": 1.0,
+      "_src": "actions_sharelistingtocommunity",
+      "_tgt": "actions_getuser",
+      "source": "actions_sharelistingtocommunity",
       "target": "actions_getuser"
     },
     {
@@ -10232,7 +10373,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L76",
+      "source_location": "L79",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_signup_page_tsx",
       "_tgt": "page_handlesubmit",
@@ -11540,7 +11681,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L49",
+      "source_location": "L52",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_signup_page_tsx",
       "_tgt": "page_validatepassword",
@@ -11552,7 +11693,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L62",
+      "source_location": "L65",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_signup_page_tsx",
       "_tgt": "page_handlepasswordchange",
@@ -11564,7 +11705,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\app\\signup\\page.tsx",
-      "source_location": "L70",
+      "source_location": "L73",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_app_signup_page_tsx",
       "_tgt": "page_handleconfirmpasswordchange",
@@ -11696,7 +11837,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\LoggedInDashboard.tsx",
-      "source_location": "L64",
+      "source_location": "L72",
       "weight": 1.0,
       "_src": "c_users_ruthi_desktop_ume_components_loggedindashboard_tsx",
       "_tgt": "loggedindashboard_handlesearch",
@@ -13022,6 +13163,30 @@
       "_tgt": "searchfilter_handlecategorychange",
       "source": "c_users_ruthi_desktop_ume_components_listings_searchfilter_tsx",
       "target": "searchfilter_handlecategorychange",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
+      "source_location": "L23",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_components_listings_sharetocommunitybutton_tsx",
+      "_tgt": "sharetocommunitybutton_openmodal",
+      "source": "c_users_ruthi_desktop_ume_components_listings_sharetocommunitybutton_tsx",
+      "target": "sharetocommunitybutton_openmodal",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "C:\\Users\\ruthi\\Desktop\\ume\\components\\listings\\ShareToCommunityButton.tsx",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "c_users_ruthi_desktop_ume_components_listings_sharetocommunitybutton_tsx",
+      "_tgt": "sharetocommunitybutton_share",
+      "source": "c_users_ruthi_desktop_ume_components_listings_sharetocommunitybutton_tsx",
+      "target": "sharetocommunitybutton_share",
       "confidence_score": 1.0
     },
     {

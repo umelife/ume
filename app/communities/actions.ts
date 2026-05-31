@@ -3,6 +3,7 @@
 import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { revalidatePath } from 'next/cache'
 import { COMMUNITY_CATEGORY_SLUGS } from '@/data/community-categories'
+import { getCampusFromEmail } from '@/data/safe-points'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -163,6 +164,88 @@ export async function createPost(input: {
   if (error) return { error: error.message }
   revalidatePath(`/communities`)
   return { id: data.id }
+}
+
+// ── Share a marketplace listing into a community ────────────────────────────────
+
+/**
+ * Communities the current user can share a listing into: their campus
+ * communities first, falling back to any communities they've joined.
+ */
+export async function getShareTargetCommunities(): Promise<
+  { id: string; name: string; slug: string; category: string }[]
+> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return []
+
+  const campus = getCampusFromEmail(user.email)
+  if (campus) {
+    const { data } = await supabase
+      .from('communities')
+      .select('id, name, slug, category')
+      .eq('campus', campus.id)
+      .eq('status', 'active')
+      .order('member_count', { ascending: false })
+      .limit(30)
+    if (data && data.length > 0) return data
+  }
+
+  // Fallback: communities the user has joined
+  const { data: memberships } = await supabase
+    .from('community_members')
+    .select('community_id')
+    .eq('user_id', user.id)
+  const ids = (memberships ?? []).map(m => m.community_id)
+  if (ids.length === 0) return []
+
+  const { data } = await supabase
+    .from('communities')
+    .select('id, name, slug, category')
+    .in('id', ids)
+    .eq('status', 'active')
+    .order('member_count', { ascending: false })
+  return data ?? []
+}
+
+/** Post a listing into a community as a link post pointing back to the listing. */
+export async function shareListingToCommunity(input: {
+  listingId: string
+  communityId: string
+}): Promise<{ error?: string; slug?: string }> {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'Not authenticated' }
+
+  const { data: listing } = await supabase
+    .from('listings')
+    .select('id, title, price')
+    .eq('id', input.listingId)
+    .single()
+  if (!listing) return { error: 'Listing not found' }
+
+  const { data: community } = await supabase
+    .from('communities')
+    .select('slug')
+    .eq('id', input.communityId)
+    .single()
+  if (!community) return { error: 'Community not found' }
+
+  const priceStr = listing.price ? `$${(listing.price / 100).toFixed(2)}` : 'Free'
+
+  const { error } = await supabase.from('community_posts').insert({
+    community_id: input.communityId,
+    author_id: user.id,
+    type: 'link',
+    title: listing.title,
+    body: `${priceStr} · For sale on the UME marketplace`,
+    image_urls: [],
+    link_url: `/item/${listing.id}`,
+  })
+  if (error) return { error: error.message }
+
+  revalidatePath(`/communities/${community.slug}`)
+  return { slug: community.slug }
 }
 
 export async function votePost(postId: string, voted: boolean): Promise<{ error?: string }> {

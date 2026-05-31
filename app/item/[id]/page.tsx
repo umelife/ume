@@ -39,6 +39,7 @@ import ViewListingTracker from '@/components/analytics/ViewListingTracker'
 import ListingImages from '@/components/listings/ListingImages'
 import CartToggleButton from '@/components/listings/CartToggleButton'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
+import ShareToCommunityButton from '@/components/listings/ShareToCommunityButton'
 import BuySection from '@/components/listings/BuySection'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
@@ -327,14 +328,17 @@ export default async function ListingDetailPage({
             {/* ── Action card — owner ── */}
             {isOwner && (
               <Card className="border-0 shadow-md rounded-2xl">
-                <CardContent className="p-5 flex gap-3">
-                  <Button
-                    asChild
-                    className="flex-1 bg-ume-indigo text-white hover:bg-ume-indigo-900 font-semibold rounded-full h-11"
-                  >
-                    <Link href={`/edit/${listing.id}`}>Edit Listing</Link>
-                  </Button>
-                  <DeleteListingButton listingId={listing.id} />
+                <CardContent className="p-5 flex flex-col gap-3">
+                  <div className="flex gap-3">
+                    <Button
+                      asChild
+                      className="flex-1 bg-ume-indigo text-white hover:bg-ume-indigo-900 font-semibold rounded-full h-11"
+                    >
+                      <Link href={`/edit/${listing.id}`}>Edit Listing</Link>
+                    </Button>
+                    <DeleteListingButton listingId={listing.id} />
+                  </div>
+                  <ShareToCommunityButton listingId={listing.id} />
                 </CardContent>
               </Card>
             )}

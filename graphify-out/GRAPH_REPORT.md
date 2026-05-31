@@ -1,12 +1,12 @@
-# Graph Report - C:\Users\ruthi\Desktop\ume  (2026-05-29)
+# Graph Report - C:\Users\ruthi\Desktop\ume  (2026-05-30)
 
 ## Corpus Check
-- 269 files · ~782,805 words
+- 270 files · ~792,609 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 804 nodes · 971 edges · 191 communities detected
-- Extraction: 62% EXTRACTED · 34% INFERRED · 0% AMBIGUOUS · INFERRED: 329 edges (avg confidence: 0.81)
+- 809 nodes · 981 edges · 191 communities detected
+- Extraction: 62% EXTRACTED · 34% INFERRED · 0% AMBIGUOUS · INFERRED: 335 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
 ## Community Hubs (Navigation)
@@ -203,8 +203,8 @@
 - [[_COMMUNITY_Community 190|Community 190]]
 
 ## God Nodes (most connected - your core abstractions)
-1. `getUser()` - 74 edges
-2. `createClient()` - 73 edges
+1. `getUser()` - 76 edges
+2. `createClient()` - 75 edges
 3. `POST()` - 48 edges
 4. `GET()` - 33 edges
 5. `log()` - 25 edges
@@ -219,8 +219,8 @@
   C:\Users\ruthi\Desktop\ume\app\api\test\email-log\route.ts → C:\Users\ruthi\Desktop\ume\lib\email\sendEmail.ts
 - `DELETE()` --calls--> `clearEmailTestLog()`  [INFERRED]
   C:\Users\ruthi\Desktop\ume\app\api\test\email-log\route.ts → C:\Users\ruthi\Desktop\ume\lib\email\sendEmail.ts
-- `clearLocation()` --calls--> `DELETE()`  [INFERRED]
-  C:\Users\ruthi\Desktop\ume\components\marketplace\LocationRadiusSlider.tsx → C:\Users\ruthi\Desktop\ume\app\api\test\email-log\route.ts
+- `DELETE()` --calls--> `clearLocation()`  [INFERRED]
+  C:\Users\ruthi\Desktop\ume\app\api\test\email-log\route.ts → C:\Users\ruthi\Desktop\ume\components\marketplace\LocationRadiusSlider.tsx
 - `DELETE()` --calls--> `clearEmailLogs()`  [INFERRED]
   C:\Users\ruthi\Desktop\ume\app\api\test\email-log\route.ts → C:\Users\ruthi\Desktop\ume\e2e\report-listing-email.spec.ts
 - `getCurrentUser()` --calls--> `getUser()`  [INFERRED]
@@ -237,7 +237,7 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.05
-Nodes (67): addToCart(), cancelEvent(), cancelRsvp(), clearCart(), createComment(), createCommunity(), createEvent(), createListing() (+59 more)
+Nodes (69): addToCart(), cancelEvent(), cancelRsvp(), clearCart(), createComment(), createCommunity(), createEvent(), createListing() (+61 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.04
@@ -256,16 +256,16 @@ Cohesion: 0.09
 Nodes (25): checkImageUrl(), checkListings(), fetchListingsByEmail(), createInAppNotification(), generateMessageEmailHtml(), handleMessageNotifications(), sendMessageEmailNotification(), shouldSendEmailNotification() (+17 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.11
-Nodes (11): generatePrefillMessage(), handleAddToCart(), handleContactSeller(), openChat(), generatePrefillMessage(), handleContactSeller(), getOrCreateConversation(), categorySlugToDb() (+3 more)
+Cohesion: 0.12
+Nodes (10): checkUsernameAvailability(), prettyLogError(), reauthenticate(), requestPasswordReset(), signIn(), signOut(), updatePassword(), handleSubmit() (+2 more)
 
 ### Community 6 - "Community 6"
 Cohesion: 0.13
 Nodes (16): getAllReports(), reportListing(), updateReportStatus(), handleReport(), handleUpdateStatus(), clearEmailTestLog(), getEmailTestLogPath(), getTrackingUrl() (+8 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.12
-Nodes (9): checkUsernameAvailability(), prettyLogError(), requestPasswordReset(), signIn(), signOut(), updatePassword(), handleSubmit(), validatePassword() (+1 more)
+Cohesion: 0.11
+Nodes (11): generatePrefillMessage(), handleAddToCart(), handleContactSeller(), openChat(), generatePrefillMessage(), handleContactSeller(), getOrCreateConversation(), categorySlugToDb() (+3 more)
 
 ### Community 8 - "Community 8"
 Cohesion: 0.18
@@ -440,12 +440,12 @@ Cohesion: 0.67
 Nodes (0): 
 
 ### Community 51 - "Community 51"
-Cohesion: 1.0
-Nodes (2): compressToJpeg(), handleFileChange()
+Cohesion: 0.67
+Nodes (1): openModal()
 
 ### Community 52 - "Community 52"
-Cohesion: 0.67
-Nodes (0): 
+Cohesion: 1.0
+Nodes (2): compressToJpeg(), handleFileChange()
 
 ### Community 53 - "Community 53"
 Cohesion: 0.67
@@ -457,7 +457,7 @@ Nodes (0):
 
 ### Community 55 - "Community 55"
 Cohesion: 0.67
-Nodes (1): getCampusFromEmail()
+Nodes (0): 
 
 ### Community 56 - "Community 56"
 Cohesion: 0.67
@@ -1267,15 +1267,15 @@ Nodes (0):
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `getUser()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`?**
+  _High betweenness centrality (0.062) - this node is a cross-community bridge._
+- **Why does `createClient()` connect `Community 0` to `Community 1`, `Community 3`, `Community 5`, `Community 6`, `Community 7`, `Community 44`, `Community 16`?**
   _High betweenness centrality (0.060) - this node is a cross-community bridge._
-- **Why does `createClient()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 44`, `Community 16`?**
-  _High betweenness centrality (0.058) - this node is a cross-community bridge._
-- **Why does `POST()` connect `Community 1` to `Community 0`, `Community 4`, `Community 6`, `Community 7`?**
+- **Why does `POST()` connect `Community 1` to `Community 0`, `Community 4`, `Community 5`, `Community 6`?**
   _High betweenness centrality (0.050) - this node is a cross-community bridge._
-- **Are the 70 inferred relationships involving `getUser()` (e.g. with `middleware()` and `GET()`) actually correct?**
-  _`getUser()` has 70 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 72 inferred relationships involving `createClient()` (e.g. with `sitemap()` and `GET()`) actually correct?**
-  _`createClient()` has 72 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 72 inferred relationships involving `getUser()` (e.g. with `middleware()` and `GET()`) actually correct?**
+  _`getUser()` has 72 INFERRED edges - model-reasoned connections that need verification._
+- **Are the 74 inferred relationships involving `createClient()` (e.g. with `sitemap()` and `GET()`) actually correct?**
+  _`createClient()` has 74 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 17 inferred relationships involving `POST()` (e.g. with `createServiceClient()` and `log()`) actually correct?**
   _`POST()` has 17 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 19 inferred relationships involving `GET()` (e.g. with `createClient()` and `getUser()`) actually correct?**

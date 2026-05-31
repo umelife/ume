@@ -40,6 +40,9 @@ next-env.d.ts
 
 # claude code local settings
 .claude/settings.local.json
+.claude/scheduled_tasks.lock
+.claude/*.lock
+yc-claude-session.md
 
 # Prevent clutter in root directory
 /*.jpg

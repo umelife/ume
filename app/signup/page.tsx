@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { trackEvent } from '@/lib/mixpanel/client'
@@ -45,6 +45,9 @@ export default function SignupPage() {
   const [city, setCity] = useState('')
   const [state, setState] = useState('')
   const router = useRouter()
+
+  // Funnel: signup page reached
+  useEffect(() => { trackEvent('signup_start') }, [])
 
   const isStudent = accountType === 'student'
 

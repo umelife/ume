@@ -1,4 +1,5 @@
 import mixpanel from 'mixpanel-browser'
+import { initPostHog, posthog, posthogEnabled } from '@/lib/posthog/client'
 
 let initialized = false
 
@@ -19,6 +20,9 @@ export function trackEvent(eventName: string, properties?: Record<string, any>) 
   if (typeof window !== 'undefined') {
     initMixpanel()
     mixpanel.track(eventName, properties)
+
+    initPostHog()
+    if (posthogEnabled()) posthog.capture(eventName, properties)
   }
 }
 
@@ -29,6 +33,9 @@ export function identifyUser(userId: string, properties?: Record<string, any>) {
     if (properties) {
       mixpanel.people.set(properties)
     }
+
+    initPostHog()
+    if (posthogEnabled()) posthog.identify(userId, properties)
   }
 }
 

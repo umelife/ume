@@ -1,4 +1,4 @@
-import { createClient } from '@/lib/supabase/server'
+import { createClient, createServiceClient } from '@/lib/supabase/server'
 import { isEduEmail } from '@/lib/utils/helpers'
 import { checkUsernameAvailability } from '@/lib/auth/actions'
 import { NextResponse } from 'next/server'
@@ -12,6 +12,7 @@ export async function POST(request: Request) {
       accountType = 'student',
       collegeName, collegeAddress,
       displayName, orgName, city, state,
+      referralCode,
     } = await request.json()
 
     const isStudent = accountType === 'student'
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
           college_name: collegeName.trim(),
           college_address: collegeAddress.trim(),
           account_type: 'student',
-          student_verified: false,
+          student_verified: true,
         }
       : {
           username,
@@ -147,6 +148,27 @@ export async function POST(request: Request) {
         { error: 'Failed to set username correctly. Please try again.' },
         { status: 500 }
       )
+    }
+
+    // Record referral attribution (best-effort — never blocks signup).
+    // The referral code is the referrer's username.
+    if (referralCode && typeof referralCode === 'string' && referralCode.trim()) {
+      try {
+        const service = await createServiceClient()
+        const { data: referrer } = await service
+          .from('users')
+          .select('id')
+          .ilike('username', referralCode.trim())
+          .maybeSingle()
+        if (referrer && referrer.id !== authData.user.id) {
+          await service.from('referrals').insert({
+            referrer_id: referrer.id,
+            referred_id: authData.user.id,
+          })
+        }
+      } catch (referralError) {
+        console.error('Referral attribution failed (non-fatal):', referralError)
+      }
     }
 
     return NextResponse.json({

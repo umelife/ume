@@ -68,12 +68,10 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Redirect new users who haven't completed student verification.
-    // Only student accounts go through this flow.
-    if (user.user_metadata?.student_verified === false &&
-        (user.user_metadata?.account_type ?? 'student') === 'student') {
-      return NextResponse.redirect(new URL('/verify-student', request.url))
-    }
+    // Verification is the confirmed .edu email itself (Supabase requires the
+    // user to click the email link before they can log in). No separate
+    // verification step. (SheerID remains available but dormant — see
+    // /verify-student git history to re-enable.)
 
     // Block non-students from student-only areas
     const accountType = user.user_metadata?.account_type ?? 'student'

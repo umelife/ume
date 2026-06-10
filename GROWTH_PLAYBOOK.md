@@ -2,7 +2,7 @@
 
 **Campus:** University of the Cumberlands
 **Author:** founding team
-**Written:** 2026-05-29
+**Written:** 2026-05-29 · **Updated:** 2026-06-01
 **Goal:** Turn a stalled, post-move-out marketplace into a daily-habit campus app, launched hard at fall move-in — with zero institutional support, grassroots only.
 
 > ⚠️ **Verify the dates.** Move-in week below is estimated (~Aug 17–23, 2026). Check the actual University of the Cumberlands fall calendar and shift every date to match. The *sequence* matters more than the exact days.
@@ -12,6 +12,22 @@
 ## The thesis (one paragraph)
 
 We don't have a product problem — we have a timing and habit problem. Supply peaked at **move-out (May)**, demand peaks at **move-in (August)**, and a pure marketplace gives nobody a reason to open the app in between. So: (1) the **feed** is the daily hook that keeps people warm through the gap, (2) the **marketplace** cashes in when demand lands in August, (3) the **incoming freshman class (2029)** is the demand beachhead we seed online over the summer, (4) **returning upperclassmen** are the supply we stage for an August relist push, and (5) the **referral loop** is our only growth engine because we have no paid and no official channel.
+
+## ✅ Build status — shipped (updated 2026-06-01)
+
+The product foundation is done and live. What changed this build:
+
+- **Scope tightened to Marketplace + Communities.** Cut Services and the entire Events feature (both were empty / "coming soon"). The app is now honest — no coming-soon lies anywhere. Events code is preserved in git to revive later *if* students actually host them.
+- **Student-only.** Signup is `.edu` students only (account-type chooser removed). The fake "Simulate Verification" screen is gone — a confirmed `.edu` email *is* the verification. SheerID stays dormant (flip on with one env var).
+- **Communities seeded.** 6 starter Cumberlands communities (UC Campus Hub, Free & For Sale, Textbook Exchange, Housing & Roommates, Class of 2029, Patriots Gaming) so the tab isn't empty. ⚠️ *You still owe real posts in them before school.*
+- **Marketplace ↔ Community bridge.** "Share to a community" posts a listing into a community as a link back to it.
+- **Referral loop v1.** Share button on listings + Invite button on profiles, both bake in `?ref=<handle>`; signups attributed into a `referrals` table; profile shows an "invited" count. **No rewards yet — measure first.**
+- **Clean handles + trust.** Random friendly handles (e.g. `HungryHippo482`) instead of email-derived ones; "verified student" badge on profiles + listings.
+- **Analytics.** PostHog wired (events + pageviews + session replay) alongside Mixpanel; `signup_start` added for a clean funnel.
+
+**Still open:** real community posts (you); confirm PostHog env vars; referral rewards (v2); a custom story share-image (v2). The bigger **feed-as-home** restructure is still a *decision, not done* — Communities is a browsable list, not one auto-joined campus feed.
+
+---
 
 ## The two populations (don't confuse them)
 
@@ -25,34 +41,28 @@ We don't have a product problem — we have a timing and habit problem. Supply p
 
 ---
 
-## Phase 0 — Foundation (now → ~June 7)
+## Phase 0 — Foundation (DONE ✅)
 
-Lock the direction and clear the lies before building.
+Direction locked and the lies cleared.
 
-- [ ] Confirm direction: **combined feed + marketplace**, feed-as-home, no "coming soon."
-- [ ] Audit + kill every "coming soon" string (list already mapped):
-  - [ ] `app/services/page.tsx` — cut Services entirely for now
-  - [ ] `app/page.tsx` + `components/MobileHome.tsx` — turn Communities/Events from "coming soon" cards into real live sections
-  - [ ] `components/MobileTabBar.tsx` — remove coming-soon dots/labels
-  - [ ] `components/communities/PostComposer.tsx` — fix image upload (don't ship a feed without images)
-  - [ ] `app/messages/page.tsx:908` — remove the "Image sharing is coming soon" alert or hide the button
-  - [ ] `app/payments-coming-soon` + payment routes — fine to leave hidden (not daily-facing)
-- [ ] Get into the **2029 Snapchat group** (in progress). Goal: a seat, not a sale, yet.
-- [ ] Identify the campus **FB "free & for sale" group** and/or **GroupMe** — confirm it exists, join, observe who posts most.
+- [x] Direction: **Marketplace + Communities**, student-only, no "coming soon."
+- [x] Killed every "coming soon" string: cut Services, surfaced Communities as real, removed the chat/PostComposer "coming soon" affordances. (Events later cut entirely.)
+- [x] Got into the **2029 Snapchat group** (in progress when written; demand-seeding channel).
+- [ ] Identify the campus **FB "free & for sale" group** and/or **GroupMe** — confirm it exists, join, observe who posts most. *(still open — richest supply vein)*
 
 ## Phase 1 — Build the hook + the engine (June)
 
 This is heads-down month. Campus is empty; **do not judge traction**.
 
-- [ ] **Feed-as-home:** every verified student auto-joined to one campus-wide feed. No "discover & join" required.
-- [ ] **Seed 5–6 channels** so it's never blank: `Free & Giveaways`, `Housing & Sublets`, `Textbooks`, `Ride Share`, `Lost & Found`, `What's Happening`.
-- [ ] **Marketplace becomes a tab** inside the feed, not the whole app.
-- [ ] **Referral loop — build it in** (this is the only growth engine, treat it as core, not nice-to-have):
-  - [ ] Invite link per user
-  - [ ] Shareable listing/feed cards designed for an Instagram **story** (vertical, branded, QR/link)
-  - [ ] A simple reward (referral count leaderboard, or invite-to-unlock something)
+- [ ] **Feed-as-home (still a DECISION, not done):** Communities is a browsable list today, not one auto-joined campus feed. Revisit only if engagement says the discover-and-join step is real friction.
+- [x] **Seeded 6 communities** (UC Campus Hub, Free & For Sale, Textbooks, Housing, Class of 2029, Patriots Gaming). ⚠️ *Owe: real posts in them before school.*
+- [x] **Marketplace ↔ Community bridge:** "Share to a community" posts a listing into a community.
+- [x] **Referral loop v1 — built.** Share button (native share sheet) + Invite button, both with `?ref=<handle>`; attribution into a `referrals` table; "invited" count on profiles.
+  - [x] Invite link per user (the code is their username)
+  - [ ] Story-optimized branded share *image* — v1 uses the listing's OG preview; a custom vertical card is a v2 upgrade
+  - [ ] Reward fuel (boost / badge / leaderboard) — deliberately deferred until shares prove out
 - [ ] **Concierge listing** path: "text us a photo + price, we'll post it" — even if it's just a DM to founders for now.
-- [ ] Make posting flawless on a real phone (images included). Time the post-a-listing flow; cut steps.
+- [ ] Make posting flawless on a real phone. Time the post-a-listing flow; cut steps.
 
 ## Phase 2 — Demand seeding + supply prep (July)
 
@@ -124,4 +134,6 @@ Not signups. **Weekly active / returning users** and **D7 retention.**
 
 - [ ] Actual Cumberlands fall move-in date → reset all dates above
 - [ ] Does a campus FB "free & for sale" group / GroupMe exist? (richest supply vein)
-- [ ] Who owns the referral-loop build? (it's the engine — it can't slip)
+- [ ] **Seed real posts** into the 6 communities (free stuff, welcome posts) before school
+- [ ] Confirm PostHog env vars in Vercel (`NEXT_PUBLIC_POSTHOG_KEY`, and `NEXT_PUBLIC_POSTHOG_HOST` if EU); enable Session Replay in the PostHog dashboard
+- [ ] Decide on referral **rewards (v2)** once v1 shares show real conversion in PostHog

@@ -1,4 +1,5 @@
 import { ImageResponse } from 'next/og'
+import sharp from 'sharp'
 import supabasePublic from '@/lib/supabase/public'
 
 export const runtime = 'nodejs'
@@ -9,6 +10,25 @@ function formatPrice(cents: number | null | undefined): string {
   if (!cents) return 'Free'
   const d = cents / 100
   return d % 1 === 0 ? `$${d}` : `$${d.toFixed(2)}`
+}
+
+/**
+ * Fetch the listing photo and normalize it to a PNG data URL. next/og can't
+ * render webp/avif/heic, which many of our uploads are, so we decode + resize
+ * + re-encode to PNG via sharp. Returns null if the image can't be loaded
+ * (e.g. heic, which sharp's default build can't decode) — caller shows a
+ * placeholder.
+ */
+async function loadPhotoAsPng(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const input = Buffer.from(await res.arrayBuffer())
+    const png = await sharp(input).resize(840, 840, { fit: 'cover' }).png().toBuffer()
+    return `data:image/png;base64,${png.toString('base64')}`
+  } catch {
+    return null
+  }
 }
 
 /**
@@ -32,7 +52,8 @@ export async function GET(
 
   const title = (listing?.title ?? 'Check this out on UME').slice(0, 60)
   const price = formatPrice(listing?.price)
-  const photo = listing?.image_urls?.[0] ?? null
+  const photoSrc = listing?.image_urls?.[0] ?? null
+  const photo = photoSrc ? await loadPhotoAsPng(photoSrc) : null
 
   const listingUrl = `${SITE}/item/${id}${ref ? `?ref=${encodeURIComponent(ref)}` : ''}`
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(listingUrl)}`

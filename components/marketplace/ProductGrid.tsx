@@ -102,6 +102,9 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
   // Check if this is the user's own listing
   const isOwnListing = currentUserId && listing.user_id === currentUserId
 
+  const boostedUntil = (listing.user as { boosted_until?: string } | undefined)?.boosted_until
+  const isFeatured = !!boostedUntil && new Date(boostedUntil).getTime() > Date.now()
+
   // Truncate description to ~100 chars
   const shortDescription = listing.description
     ? listing.description.length > 100
@@ -225,9 +228,16 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
             {/* Bottom gradient for depth */}
             <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/30 to-transparent pointer-events-none z-10" />
 
+            {/* Featured badge (boosted seller) */}
+            {isFeatured && (
+              <div className="absolute top-2 left-2 bg-ume-pink text-white px-2.5 py-0.5 rounded-full text-[10px] font-bold shadow-sm z-20">
+                ⭐ Featured
+              </div>
+            )}
+
             {/* Condition Badge (if available) */}
             {listing.condition && (
-              <div className="absolute top-2 left-2 bg-white/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-ume-indigo shadow-sm z-20">
+              <div className={`absolute ${isFeatured ? 'top-9' : 'top-2'} left-2 bg-white/95 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[10px] font-semibold text-ume-indigo shadow-sm z-20`}>
                 {listing.condition}
               </div>
             )}

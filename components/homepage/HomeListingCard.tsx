@@ -23,6 +23,9 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
     : '??'
   const campus = seller?.college_name ?? null
 
+  const boostedUntil = (seller as { boosted_until?: string } | null)?.boosted_until
+  const isFeatured = !!boostedUntil && new Date(boostedUntil).getTime() > Date.now()
+
   return (
     <Link
       href={`/item/${listing.id}`}
@@ -66,6 +69,15 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
           >
             {formattedPrice}
           </Badge>
+
+          {/* Featured badge — top-left (boosted seller) */}
+          {isFeatured && (
+            <Badge
+              className="absolute top-2 left-2 bg-[#fa9ebc] text-white border-0 shadow text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-20"
+            >
+              ⭐ Featured
+            </Badge>
+          )}
 
           {/* Condition badge — top-right, only for non-Used */}
           {listing.condition && listing.condition !== 'Used' && (

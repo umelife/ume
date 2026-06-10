@@ -144,7 +144,18 @@ const fetchListingsCached = unstable_cache(
 
     const { data, error } = await query
     if (error) { console.error('Listings fetch error:', error); return { listings: [], hasMore: false } }
-    return { listings: (data as Listing[]) ?? [], hasMore: (data?.length ?? 0) === PAGE_SIZE }
+    const rows = (data as Listing[]) ?? []
+    // Featured (boosted seller) listings float to the front — but don't override
+    // an explicit price sort.
+    const now = Date.now()
+    const isFeatured = (l: Listing) => {
+      const b = (l.user as { boosted_until?: string } | null)?.boosted_until
+      return !!b && new Date(b).getTime() > now
+    }
+    const sorted = sort === 'price-asc' || sort === 'price-desc'
+      ? rows
+      : [...rows].sort((a, b) => Number(isFeatured(b)) - Number(isFeatured(a)))
+    return { listings: sorted, hasMore: rows.length === PAGE_SIZE }
   },
   ['marketplace-listings'],
   { revalidate: 30, tags: ['listings'] }   // 30 seconds

@@ -157,14 +157,27 @@ export async function POST(request: Request) {
         const service = await createServiceClient()
         const { data: referrer } = await service
           .from('users')
-          .select('id')
+          .select('id, boosted_until')
           .ilike('username', referralCode.trim())
           .maybeSingle()
         if (referrer && referrer.id !== authData.user.id) {
-          await service.from('referrals').insert({
+          const { error: refErr } = await service.from('referrals').insert({
             referrer_id: referrer.id,
             referred_id: authData.user.id,
           })
+          if (!refErr) {
+            // Reward: feature the referrer's listings for 3 more days (capped ~30d out)
+            const now = Date.now()
+            const base =
+              referrer.boosted_until && new Date(referrer.boosted_until).getTime() > now
+                ? new Date(referrer.boosted_until).getTime()
+                : now
+            const next = Math.min(base + 3 * 86_400_000, now + 30 * 86_400_000)
+            await service
+              .from('users')
+              .update({ boosted_until: new Date(next).toISOString() })
+              .eq('id', referrer.id)
+          }
         }
       } catch (referralError) {
         console.error('Referral attribution failed (non-fatal):', referralError)

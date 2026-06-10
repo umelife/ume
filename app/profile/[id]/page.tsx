@@ -46,6 +46,12 @@ export default async function ProfilePage({
     .select('*', { count: 'exact', head: true })
     .eq('referrer_id', id)
 
+  const boostedUntil = (profileUser as { boosted_until?: string }).boosted_until
+  const isBoosted = !!boostedUntil && new Date(boostedUntil).getTime() > Date.now()
+  const boostedUntilLabel = isBoosted
+    ? new Date(boostedUntil!).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+    : null
+
   const isOwnProfile = currentUser?.id === id
   const displayName = profileUser.username || profileUser.display_name || 'User'
 
@@ -153,6 +159,7 @@ export default async function ProfilePage({
                         title="Join me on UME — the verified student marketplace"
                         refCode={profileUser.username}
                         label="Invite friends"
+                        hint={isBoosted ? `⭐ Featured until ${boostedUntilLabel}` : 'Invite friends → feature your listings'}
                       />
                     </div>
                   )}

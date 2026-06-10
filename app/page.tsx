@@ -51,8 +51,15 @@ const getRecentListings = unstable_cache(
       .select('*, user:users!listings_user_id_fkey(*)')
       .not('status', 'in', '("sold","reserved")')
       .order('created_at', { ascending: false })
-      .limit(10)
-    return (data as Listing[]) ?? []
+      .limit(12)
+    const listings = (data as Listing[]) ?? []
+    // Featured (boosted seller) listings float to the front
+    const now = Date.now()
+    const isFeatured = (l: Listing) => {
+      const b = (l.user as { boosted_until?: string } | null)?.boosted_until
+      return !!b && new Date(b).getTime() > now
+    }
+    return [...listings].sort((a, b) => Number(isFeatured(b)) - Number(isFeatured(a)))
   },
   ['homepage-recent-listings'],
   { revalidate: 60, tags: ['listings'] }

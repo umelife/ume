@@ -307,6 +307,7 @@ export default async function ListingDetailPage({
                     title={listing.title}
                     refCode={currentUser?.username}
                     label="Share this listing"
+                    hint={currentUser ? 'Each friend who joins features your listings for 3 more days ⚡' : undefined}
                   />
                 </div>
               </CardContent>

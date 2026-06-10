@@ -40,6 +40,7 @@ import ListingImages from '@/components/listings/ListingImages'
 import CartToggleButton from '@/components/listings/CartToggleButton'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
 import ShareToCommunityButton from '@/components/listings/ShareToCommunityButton'
+import VerifiedBadge from '@/components/VerifiedBadge'
 import BuySection from '@/components/listings/BuySection'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
@@ -75,7 +76,7 @@ export default async function ListingDetailPage({
   // Fetch seller data (include Stripe status for buy section)
   const { data: user } = await supabase
     .from('users')
-    .select('id, display_name, username, college_name, stripe_onboarding_completed')
+    .select('id, display_name, username, college_name, account_type, stripe_onboarding_completed')
     .eq('id', listing.user_id)
     .single()
 
@@ -278,8 +279,9 @@ export default async function ListingDetailPage({
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-sm text-ume-indigo group-hover:text-ume-pink transition-colors truncate">
+                      <p className="font-bold text-sm text-ume-indigo group-hover:text-ume-pink transition-colors truncate inline-flex items-center gap-1">
                         @{sellerHandle}
+                        {user.account_type === 'student' && <VerifiedBadge />}
                       </p>
                       {user.college_name && (
                         <div className="flex items-center gap-1.5 mt-0.5">

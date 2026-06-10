@@ -5,6 +5,7 @@ import ProfileListings from '@/components/profile/ProfileListings'
 import StripeOnboardingBanner from '@/components/seller/StripeOnboardingBanner'
 import { notFound } from 'next/navigation'
 import AvatarUpload from '@/components/profile/AvatarUpload'
+import VerifiedBadge from '@/components/VerifiedBadge'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
@@ -84,8 +85,9 @@ export default async function ProfilePage({
                   {/* Info */}
                   <div className="flex-1 text-center sm:text-left min-w-0">
                     <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 justify-center sm:justify-start">
-                      <h1 className="text-2xl sm:text-3xl font-black text-ume-indigo truncate">
+                      <h1 className="text-2xl sm:text-3xl font-black text-ume-indigo truncate inline-flex items-center gap-1.5">
                         @{displayName}
+                        {profileUser.account_type === 'student' && <VerifiedBadge className="[&>svg]:w-5 [&>svg]:h-5" />}
                       </h1>
                       {profileUser.college_name && (
                         <Badge

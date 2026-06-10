@@ -1,11 +1,11 @@
 # Graph Report - C:\Users\ruthi\Desktop\ume  (2026-06-10)
 
 ## Corpus Check
-- 275 files · ~793,300 words
+- 276 files · ~793,840 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 822 nodes · 993 edges · 196 communities detected
+- 824 nodes · 994 edges · 196 communities detected
 - Extraction: 62% EXTRACTED · 34% INFERRED · 0% AMBIGUOUS · INFERRED: 339 edges (avg confidence: 0.81)
 - Token cost: 0 input · 0 output
 
@@ -241,20 +241,20 @@
 ## Communities
 
 ### Community 0 - "Community 0"
-Cohesion: 0.05
-Nodes (70): addToCart(), cancelEvent(), cancelRsvp(), clearCart(), createComment(), createCommunity(), createEvent(), createListing() (+62 more)
+Cohesion: 0.04
+Nodes (73): addToCart(), cancelEvent(), cancelRsvp(), clearCart(), createComment(), createCommunity(), createEvent(), createListing() (+65 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.04
-Nodes (20): isUserActive(), updateUserActivity(), createNotification(), getUnreadCount(), markAllNotificationsAsRead(), markNotificationAsRead(), notifyBuyerOrderDelivered(), notifyBuyerOrderShipped() (+12 more)
+Nodes (24): getAllReports(), isUserActive(), updateUserActivity(), createNotification(), getUnreadCount(), markAllNotificationsAsRead(), markNotificationAsRead(), notifyBuyerOrderDelivered() (+16 more)
 
 ### Community 2 - "Community 2"
 Cohesion: 0.05
 Nodes (54): Graphify Knowledge Graph Rules, CLAUDE.md Project Instructions, Image Optimization via Vercel CDN, ISR and unstable_cache Caching, Listing Reservation System, GPS Geofencing for Safe-Handshake, QR Code One-Time Token, Stripe Connect V2 Onboarding (+46 more)
 
 ### Community 3 - "Community 3"
-Cohesion: 0.06
-Nodes (23): handleSend(), loadMessages(), identifyUser(), initMixpanel(), initPostHog(), posthogEnabled(), trackEvent(), reportConversation() (+15 more)
+Cohesion: 0.07
+Nodes (24): sendMessage(), handleSend(), loadMessages(), identifyUser(), initMixpanel(), initPostHog(), posthogEnabled(), trackEvent() (+16 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.09
@@ -269,12 +269,12 @@ Cohesion: 0.11
 Nodes (11): generatePrefillMessage(), handleAddToCart(), handleContactSeller(), openChat(), generatePrefillMessage(), handleContactSeller(), getOrCreateConversation(), categorySlugToDb() (+3 more)
 
 ### Community 7 - "Community 7"
-Cohesion: 0.13
-Nodes (16): getAllReports(), reportListing(), updateReportStatus(), handleReport(), handleUpdateStatus(), clearEmailTestLog(), getEmailTestLogPath(), getTrackingUrl() (+8 more)
-
-### Community 8 - "Community 8"
 Cohesion: 0.18
 Nodes (16): applyBrandFilter(), applyCategoryFilter(), applyColorFilter(), applyConditionFilter(), applyFeaturesFilter(), applyFilters(), applyFiltersAndSort(), applyMaterialFilter() (+8 more)
+
+### Community 8 - "Community 8"
+Cohesion: 0.24
+Nodes (11): clearEmailTestLog(), getEmailTestLogPath(), getTrackingUrl(), logEmailToTestFile(), readEmailTestLog(), sendBuyerConfirmation(), sendEmail(), sendReportNotification() (+3 more)
 
 ### Community 9 - "Community 9"
 Cohesion: 0.17
@@ -329,96 +329,96 @@ Cohesion: 0.4
 Nodes (0): 
 
 ### Community 22 - "Community 22"
-Cohesion: 0.5
-Nodes (3): clearEmailLogs(), getEmailLogs(), waitForEmailLog()
-
-### Community 23 - "Community 23"
 Cohesion: 0.6
 Nodes (5): Technology Marketing Illustration, Mobile Connectivity Concept, Network Node Graph, Smartphone Device, WiFi Signal Icon
 
-### Community 24 - "Community 24"
+### Community 23 - "Community 23"
 Cohesion: 0.5
 Nodes (5): Man and Woman (Couple), Circular Wood Disc Wall Art, Upscale Interior Space, Luxury Home or Venue, Couple Selfie Photo
 
-### Community 25 - "Community 25"
+### Community 24 - "Community 24"
 Cohesion: 0.5
 Nodes (5): UME Brand Identity, Indigo / Dark Navy Color, Pink Color, UME Brand Logo, UME Wordmark Typography
 
-### Community 26 - "Community 26"
+### Community 25 - "Community 25"
 Cohesion: 0.5
 Nodes (5): Indigo Background Color (#130170), Pink Brand Color for ME (#fa9ebc), White Color for U Letter, UME Brand Icon (SVG Favicon), UME Wordmark Text
 
-### Community 27 - "Community 27"
+### Community 26 - "Community 26"
 Cohesion: 0.6
 Nodes (5): For Sale Sign, Hero Main Image, Outdoor Campus Marketplace, Second-Hand Goods for Sale, Students at Marketplace Sale
 
-### Community 28 - "Community 28"
+### Community 27 - "Community 27"
 Cohesion: 0.6
 Nodes (5): Campus Marketplace / Student Swap Meet, Hero Students Image, Student Items for Sale (Clothing, Basketball, Books), Peer-to-Peer Selling, Students (Young People)
 
-### Community 29 - "Community 29"
+### Community 28 - "Community 28"
 Cohesion: 0.5
 Nodes (0): 
 
-### Community 30 - "Community 30"
+### Community 29 - "Community 29"
 Cohesion: 0.5
 Nodes (2): getCommunityCategory(), CommunityCard()
+
+### Community 30 - "Community 30"
+Cohesion: 0.5
+Nodes (0): 
 
 ### Community 31 - "Community 31"
 Cohesion: 0.5
 Nodes (0): 
 
 ### Community 32 - "Community 32"
-Cohesion: 0.5
-Nodes (0): 
-
-### Community 33 - "Community 33"
 Cohesion: 0.67
 Nodes (2): compressImage(), handleFiles()
+
+### Community 33 - "Community 33"
+Cohesion: 0.5
+Nodes (0): 
 
 ### Community 34 - "Community 34"
 Cohesion: 0.5
 Nodes (0): 
 
 ### Community 35 - "Community 35"
-Cohesion: 0.5
-Nodes (0): 
-
-### Community 36 - "Community 36"
 Cohesion: 0.83
 Nodes (3): distanceToSafePoint(), getNearestSafePoint(), haversineDistance()
 
-### Community 37 - "Community 37"
+### Community 36 - "Community 36"
 Cohesion: 0.83
 Nodes (4): Dollar Coin, Ecommerce Icon, Purchase Concept, Shopping Cart
 
-### Community 38 - "Community 38"
+### Community 37 - "Community 37"
 Cohesion: 0.83
 Nodes (4): Open Cardboard Box, Green Plant Sprout, Recycling Circular Arrows, Sustainability / Eco-Friendly Reuse Icon
 
-### Community 39 - "Community 39"
+### Community 38 - "Community 38"
 Cohesion: 0.83
 Nodes (4): Brick Building Exterior, Person in White Zip Sweater, Person in Black Jacket, Outdoor Portrait of Two People
 
-### Community 40 - "Community 40"
+### Community 39 - "Community 39"
 Cohesion: 0.67
 Nodes (4): Affordability, E-Commerce, Cost Savings, Shopping Cart with Dollar Coin
 
-### Community 41 - "Community 41"
+### Community 40 - "Community 40"
 Cohesion: 0.67
 Nodes (4): Connectivity Concept, Network Nodes, Connected Smartphone, WiFi Signal
 
-### Community 42 - "Community 42"
+### Community 41 - "Community 41"
 Cohesion: 0.67
 Nodes (4): Navy Blue Brand Color, Pink Brand Color, UME App Logo, UME Brand Identity
 
-### Community 43 - "Community 43"
+### Community 42 - "Community 42"
 Cohesion: 0.67
 Nodes (0): 
 
-### Community 44 - "Community 44"
+### Community 43 - "Community 43"
 Cohesion: 1.0
 Nodes (2): categorySlugToDb(), fetchMoreListings()
+
+### Community 44 - "Community 44"
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 45 - "Community 45"
 Cohesion: 0.67
@@ -442,15 +442,15 @@ Nodes (0):
 
 ### Community 50 - "Community 50"
 Cohesion: 0.67
-Nodes (0): 
-
-### Community 51 - "Community 51"
-Cohesion: 0.67
 Nodes (1): openModal()
 
-### Community 52 - "Community 52"
+### Community 51 - "Community 51"
 Cohesion: 1.0
 Nodes (2): compressToJpeg(), handleFileChange()
+
+### Community 52 - "Community 52"
+Cohesion: 0.67
+Nodes (0): 
 
 ### Community 53 - "Community 53"
 Cohesion: 0.67
@@ -470,19 +470,19 @@ Nodes (0):
 
 ### Community 57 - "Community 57"
 Cohesion: 0.67
-Nodes (0): 
+Nodes (3): Feature Slider Image Placeholders, Hero Section Image Placeholder, Placeholder Images README
 
 ### Community 58 - "Community 58"
 Cohesion: 0.67
-Nodes (3): Feature Slider Image Placeholders, Hero Section Image Placeholder, Placeholder Images README
+Nodes (3): Create Listing UI Rebuild, Messaging Page UI Rebuild, UI Clean-Up Changelog (Dec 2025)
 
 ### Community 59 - "Community 59"
-Cohesion: 0.67
-Nodes (3): Create Listing UI Rebuild, Messaging Page UI Rebuild, UI Clean-Up Changelog (Dec 2025)
+Cohesion: 1.0
+Nodes (3): UME Founders Photo, Female Founder, Male Founder
 
 ### Community 60 - "Community 60"
 Cohesion: 1.0
-Nodes (3): UME Founders Photo, Female Founder, Male Founder
+Nodes (0): 
 
 ### Community 61 - "Community 61"
 Cohesion: 1.0
@@ -1027,9 +1027,11 @@ Nodes (0):
 ## Knowledge Gaps
 - **36 isolated node(s):** `Graphify Knowledge Graph Rules`, `Marketplace`, `Listing Detail Page`, `User Profiles`, `UI/UX` (+31 more)
   These have ≤1 connection - possible missing edges or undocumented components.
-- **Thin community `Community 61`** (2 nodes): `robots.ts`, `robots()`
+- **Thin community `Community 60`** (2 nodes): `robots.ts`, `robots()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 62`** (2 nodes): `page.tsx`, `AboutPage()`
+- **Thin community `Community 61`** (2 nodes): `page.tsx`, `AboutPage()`
+  Too small to be a meaningful cluster - may be noise or needs more connections extracted.
+- **Thin community `Community 62`** (2 nodes): `route.tsx`, `formatPrice()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 63`** (2 nodes): `page.tsx`, `AuthCallbackPage()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
@@ -1301,12 +1303,12 @@ Nodes (0):
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `getUser()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`?**
-  _High betweenness centrality (0.062) - this node is a cross-community bridge._
-- **Why does `createClient()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 44`, `Community 16`?**
+- **Why does `getUser()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`?**
+  _High betweenness centrality (0.061) - this node is a cross-community bridge._
+- **Why does `createClient()` connect `Community 0` to `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 43`, `Community 16`?**
   _High betweenness centrality (0.056) - this node is a cross-community bridge._
-- **Why does `POST()` connect `Community 1` to `Community 0`, `Community 4`, `Community 5`, `Community 7`?**
-  _High betweenness centrality (0.049) - this node is a cross-community bridge._
+- **Why does `POST()` connect `Community 1` to `Community 0`, `Community 8`, `Community 4`, `Community 5`?**
+  _High betweenness centrality (0.048) - this node is a cross-community bridge._
 - **Are the 72 inferred relationships involving `getUser()` (e.g. with `middleware()` and `GET()`) actually correct?**
   _`getUser()` has 72 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 73 inferred relationships involving `createClient()` (e.g. with `sitemap()` and `GET()`) actually correct?**

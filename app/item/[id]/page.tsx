@@ -306,6 +306,7 @@ export default async function ListingDetailPage({
                     path={`/item/${listing.id}`}
                     title={listing.title}
                     refCode={currentUser?.username}
+                    imagePath={`/api/share-image/${listing.id}${currentUser?.username ? `?ref=${encodeURIComponent(currentUser.username)}` : ''}`}
                     label="Share this listing"
                     hint={currentUser ? 'Each friend who joins features your listings for 3 more days ⚡' : undefined}
                   />

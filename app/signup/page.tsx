@@ -125,6 +125,9 @@ export default function SignupPage() {
       }
     }
 
+    let referralCode: string | undefined
+    try { referralCode = localStorage.getItem('ume_ref') || undefined } catch { /* ignore */ }
+
     try {
       const response = await fetch('/api/auth/signup', {
         method: 'POST',
@@ -134,6 +137,7 @@ export default function SignupPage() {
           password,
           username,
           accountType,
+          referralCode,
           collegeName: isStudent ? collegeName.trim() : undefined,
           collegeAddress: isStudent ? collegeAddress.trim() : undefined,
           displayName: !isStudent ? displayName.trim() : undefined,
@@ -151,7 +155,9 @@ export default function SignupPage() {
         return
       }
 
-      trackEvent('signup_success', { email, username, accountType })
+      trackEvent('signup_success', { email, username, accountType, referred: !!referralCode })
+
+      try { localStorage.removeItem('ume_ref') } catch { /* ignore */ }
 
       setUserEmail(email)
       setSuccess(true)

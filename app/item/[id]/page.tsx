@@ -41,6 +41,7 @@ import CartToggleButton from '@/components/listings/CartToggleButton'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
 import ShareToCommunityButton from '@/components/listings/ShareToCommunityButton'
 import VerifiedBadge from '@/components/VerifiedBadge'
+import ShareButton from '@/components/ShareButton'
 import BuySection from '@/components/listings/BuySection'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
@@ -298,6 +299,16 @@ export default async function ListingDetailPage({
                     </svg>
                   </Link>
                 )}
+
+                {/* Share — referral loop */}
+                <div className="mt-5">
+                  <ShareButton
+                    path={`/item/${listing.id}`}
+                    title={listing.title}
+                    refCode={currentUser?.username}
+                    label="Share this listing"
+                  />
+                </div>
               </CardContent>
             </Card>
 

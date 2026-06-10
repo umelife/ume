@@ -6,6 +6,7 @@ import StripeOnboardingBanner from '@/components/seller/StripeOnboardingBanner'
 import { notFound } from 'next/navigation'
 import AvatarUpload from '@/components/profile/AvatarUpload'
 import VerifiedBadge from '@/components/VerifiedBadge'
+import ShareButton from '@/components/ShareButton'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Card, CardContent } from '@/components/ui/card'
@@ -39,6 +40,11 @@ export default async function ProfilePage({
     .select('*')
     .eq('user_id', id)
     .order('created_at', { ascending: false })
+
+  const { count: referralCount } = await supabase
+    .from('referrals')
+    .select('*', { count: 'exact', head: true })
+    .eq('referrer_id', id)
 
   const isOwnProfile = currentUser?.id === id
   const displayName = profileUser.username || profileUser.display_name || 'User'
@@ -122,12 +128,19 @@ export default async function ProfilePage({
                           {listingCount === 1 ? 'listing' : 'listings'}
                         </span>
                       </div>
+
+                      <Separator orientation="vertical" className="h-4 hidden sm:block" />
+
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-sm font-bold text-ume-indigo">{referralCount ?? 0}</span>
+                        <span className="text-sm text-muted-foreground">invited</span>
+                      </div>
                     </div>
                   </div>
 
                   {/* CTA for own profile */}
                   {isOwnProfile && (
-                    <div className="flex-shrink-0 mt-2 sm:mt-0">
+                    <div className="flex-shrink-0 mt-2 sm:mt-0 flex flex-col gap-2 w-full sm:w-44">
                       <Button
                         asChild
                         className="rounded-full font-semibold px-6 text-white"
@@ -135,6 +148,12 @@ export default async function ProfilePage({
                       >
                         <Link href="/create">+ New Listing</Link>
                       </Button>
+                      <ShareButton
+                        path="/"
+                        title="Join me on UME — the verified student marketplace"
+                        refCode={profileUser.username}
+                        label="Invite friends"
+                      />
                     </div>
                   )}
                 </div>

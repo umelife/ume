@@ -3,6 +3,7 @@ import { Archivo_Black, Work_Sans } from "next/font/google";
 import "./fonts.css";
 import "./globals.css";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
+import ReferralCapture from "@/components/ReferralCapture";
 import HeaderWrapper from "@/components/HeaderWrapper";
 import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
 import StripeSetupBanner from "@/components/StripeSetupBanner";
@@ -118,6 +119,7 @@ export default function RootLayout({
       </head>
       <body className={`${workSans.className} bg-ume-bg`} style={{ isolation: 'isolate', fontWeight: 300 }} suppressHydrationWarning>
         <MixpanelProvider />
+        <ReferralCapture />
         <HeaderWrapper />
         <MobileHeaderWrapper />
         <StripeSetupBanner />

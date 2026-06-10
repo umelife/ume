@@ -58,7 +58,7 @@ export async function GET(
   const listingUrl = `${SITE}/item/${id}${ref ? `?ref=${encodeURIComponent(ref)}` : ''}`
   const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=300x300&margin=0&data=${encodeURIComponent(listingUrl)}`
 
-  return new ImageResponse(
+  const image = new ImageResponse(
     (
       <div
         style={{
@@ -112,4 +112,8 @@ export async function GET(
     ),
     { width: 1080, height: 1920 },
   )
+  // Don't cache forever (next/og defaults to immutable 1-year) — listing
+  // photos/prices change, and we need fixes to propagate. One hour is plenty.
+  image.headers.set('cache-control', 'public, max-age=3600, s-maxage=3600')
+  return image
 }

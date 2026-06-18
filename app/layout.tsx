@@ -100,7 +100,10 @@ export default function RootLayout({
                   { "@type": "Person", "name": "Ruthiik Satti" },
                   { "@type": "Person", "name": "Bryndis" }
                 ],
-                "sameAs": []
+                "sameAs": [
+                  "https://www.instagram.com/umelifeofficial",
+                  "https://www.tiktok.com/@umelifeofficial"
+                ]
               },
               {
                 "@type": "WebSite",

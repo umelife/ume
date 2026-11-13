@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <rect width="32" height="32" rx="6" fill="#130170"/>
+  <rect width="32" height="32" rx="6" fill="#20201e"/>
   <text
     x="16"
     y="23"
@@ -8,5 +8,5 @@
     font-weight="900"
     font-size="13"
     letter-spacing="-0.5"
-  ><tspan fill="white">U</tspan><tspan fill="#fa9ebc">ME</tspan></text>
+  ><tspan fill="white">U</tspan><tspan fill="#ff8d54">ME</tspan></text>
 </svg>

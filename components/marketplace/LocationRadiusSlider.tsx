@@ -193,7 +193,7 @@ export default function LocationRadiusSlider({
           width: 18px;
           height: 18px;
           border-radius: 50%;
-          background: #312e81;
+          background: #20201e;
           cursor: pointer;
           box-shadow: 0 1px 3px rgba(0,0,0,0.25);
           transition: transform 0.15s ease;
@@ -204,7 +204,7 @@ export default function LocationRadiusSlider({
           width: 18px;
           height: 18px;
           border-radius: 50%;
-          background: #312e81;
+          background: #20201e;
           cursor: pointer;
           border: none;
           box-shadow: 0 1px 3px rgba(0,0,0,0.25);

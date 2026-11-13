@@ -1,5 +1,7 @@
 'use client'
 
+import { listingTheme } from '@/lib/listing-theme'
+
 import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -40,7 +42,7 @@ export default function ProductGrid({ listings }: ProductGridProps) {
 
   useEffect(() => {
     const grid = gridRef.current
-    if (!grid) return
+    if (!grid || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -130,8 +132,8 @@ function ProductCard({ listing, cardIndex }: { listing: Listing; cardIndex: numb
 
   return (
     <div
-      className="product-card relative bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 overflow-hidden flex flex-col cursor-pointer"
-      style={{ opacity: 0 }}
+      style={listingTheme(listing.id)}
+      className="arcade-listing product-card relative bg-white rounded-2xl shadow-md hover:shadow-xl hover:-translate-y-1 active:scale-[0.98] transition-all duration-200 overflow-hidden flex flex-col cursor-pointer"
     >
       {/* Toast notifications */}
       {(quickMsgSent || heartToast) && (

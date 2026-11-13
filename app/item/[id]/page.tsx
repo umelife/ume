@@ -39,7 +39,6 @@ import ViewListingTracker from '@/components/analytics/ViewListingTracker'
 import ListingImages from '@/components/listings/ListingImages'
 import CartToggleButton from '@/components/listings/CartToggleButton'
 import DeleteListingButton from '@/components/listings/DeleteListingButton'
-import ShareToCommunityButton from '@/components/listings/ShareToCommunityButton'
 import VerifiedBadge from '@/components/VerifiedBadge'
 import ShareButton from '@/components/ShareButton'
 import BuySection from '@/components/listings/BuySection'
@@ -353,7 +352,6 @@ export default async function ListingDetailPage({
                     </Button>
                     <DeleteListingButton listingId={listing.id} />
                   </div>
-                  <ShareToCommunityButton listingId={listing.id} />
                 </CardContent>
               </Card>
             )}

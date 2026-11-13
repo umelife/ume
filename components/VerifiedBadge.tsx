@@ -18,7 +18,7 @@ export default function VerifiedBadge({
     >
       <svg viewBox="0 0 24 24" className="w-4 h-4 shrink-0" aria-hidden="true">
         <path
-          fill="#130170"
+          fill="#20201e"
           d="M12 1.5l2.6 1.9 3.2-.2 1 3 2.7 1.7-1.1 3 1.1 3-2.7 1.7-1 3-3.2-.2L12 22.5l-2.6-1.9-3.2.2-1-3L2.5 16l1.1-3-1.1-3 2.7-1.7 1-3 3.2.2L12 1.5z"
         />
         <path

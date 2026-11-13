@@ -66,7 +66,7 @@ export async function GET(
           flexDirection: 'column',
           width: '100%',
           height: '100%',
-          background: 'linear-gradient(160deg, #130170 0%, #1d01a8 55%, #0a0040 100%)',
+          background: 'linear-gradient(160deg, #20201e 0%, #34342f 55%, #151513 100%)',
           padding: 72,
           color: 'white',
           fontFamily: 'sans-serif',
@@ -75,7 +75,7 @@ export async function GET(
         {/* Wordmark */}
         <div style={{ display: 'flex', fontSize: 72, fontWeight: 800, letterSpacing: -2 }}>
           <span style={{ color: 'white' }}>U</span>
-          <span style={{ color: '#fa9ebc' }}>ME</span>
+          <span style={{ color: '#ff5500' }}>ME</span>
         </div>
 
         {/* Photo */}
@@ -105,7 +105,7 @@ export async function GET(
           <img src={qrUrl} width={200} height={200} style={{ width: 200, height: 200, borderRadius: 20, background: 'white', padding: 12 }} />
           <div style={{ display: 'flex', flexDirection: 'column', marginLeft: 32 }}>
             <div style={{ display: 'flex', fontSize: 44, fontWeight: 700 }}>Scan to grab it</div>
-            <div style={{ display: 'flex', fontSize: 38, color: '#fa9ebc', marginTop: 6 }}>verified students only · ume-life.com</div>
+            <div style={{ display: 'flex', fontSize: 38, color: '#ff5500', marginTop: 6 }}>verified students only · ume-life.com</div>
           </div>
         </div>
       </div>

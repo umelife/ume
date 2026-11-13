@@ -25,7 +25,7 @@ interface ConfettiDotProps {
   delay: number
 }
 
-const COLORS = ['#130170', '#fa9ebc', '#34d399', '#fbbf24', '#60a5fa', '#f472b6']
+const COLORS = ['#20201e', '#ff5500', '#34d399', '#fbbf24', '#60a5fa', '#f472b6']
 
 function ConfettiDot({ seed, delay }: ConfettiDotProps) {
   const frame = useCurrentFrame()
@@ -83,7 +83,7 @@ export function ListingSuccessComposition() {
   return (
     <AbsoluteFill
       style={{
-        background: 'linear-gradient(135deg, #f3f7f8 0%, #eef2ff 100%)',
+        background: 'linear-gradient(135deg, #faf9f5 0%, #eef2ff 100%)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
@@ -107,8 +107,8 @@ export function ListingSuccessComposition() {
           flexDirection: 'column',
           alignItems: 'center',
           gap: 16,
-          boxShadow: '0 12px 40px rgba(19,1,112,0.12)',
-          border: '1.5px solid rgba(19,1,112,0.06)',
+          boxShadow: '0 12px 40px rgba(32,32,30,0.12)',
+          border: '1.5px solid rgba(32,32,30,0.06)',
           transform: `scale(${interpolate(checkScale, [0, 1], [0.6, 1])})`,
           opacity: checkScale,
           zIndex: 10,
@@ -121,7 +121,7 @@ export function ListingSuccessComposition() {
             width: 72,
             height: 72,
             borderRadius: '50%',
-            background: '#130170',
+            background: '#20201e',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -131,7 +131,7 @@ export function ListingSuccessComposition() {
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none">
             <path
               d="M5 13l4 4L19 7"
-              stroke="#fa9ebc"
+              stroke="#ff5500"
               strokeWidth="2.5"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -149,7 +149,7 @@ export function ListingSuccessComposition() {
             fontFamily: "'Archivo Black', Arial Black, sans-serif",
             fontWeight: 900,
             fontSize: 36,
-            color: '#130170',
+            color: '#20201e',
             letterSpacing: '-0.03em',
             opacity: textProgress,
             transform: `translateY(${textY}px)`,
@@ -161,7 +161,7 @@ export function ListingSuccessComposition() {
         {/* Sub-text */}
         <div
           style={{
-            color: 'rgba(19,1,112,0.55)',
+            color: 'rgba(32,32,30,0.55)',
             fontSize: 15,
             textAlign: 'center',
             opacity: subProgress,

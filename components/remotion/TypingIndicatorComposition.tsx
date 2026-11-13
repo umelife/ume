@@ -22,7 +22,7 @@ function Dot({ delay }: { delay: number }) {
         width: 8,
         height: 8,
         borderRadius: '50%',
-        background: 'rgba(19,1,112,0.45)',
+        background: 'rgba(32,32,30,0.45)',
         transform: `translateY(${y}px) scale(${scale})`,
       }}
     />

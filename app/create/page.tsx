@@ -21,7 +21,7 @@ export default function CreateListingPage() {
       {/* ── Top banner strip ───────────────────────────────────────────── */}
       <div
         className="h-2 w-full"
-        style={{ background: 'linear-gradient(90deg, #130170 0%, #fa9ebc 100%)' }}
+        style={{ background: 'linear-gradient(90deg, #20201e 0%, #ff5500 100%)' }}
         aria-hidden="true"
       />
 
@@ -44,7 +44,7 @@ export default function CreateListingPage() {
           <Card className="border-0 shadow-md overflow-hidden">
             <div
               className="h-1.5 w-full"
-              style={{ background: 'linear-gradient(90deg, #130170, #fa9ebc)' }}
+              style={{ background: 'linear-gradient(90deg, #20201e, #ff5500)' }}
               aria-hidden="true"
             />
             <CardHeader className="pb-3">
@@ -68,7 +68,7 @@ export default function CreateListingPage() {
           <Card className="border-0 shadow-md overflow-hidden">
             <div
               className="h-1.5 w-full"
-              style={{ background: 'linear-gradient(90deg, #130170, #fa9ebc)' }}
+              style={{ background: 'linear-gradient(90deg, #20201e, #ff5500)' }}
               aria-hidden="true"
             />
             <CardHeader className="pb-3">
@@ -125,7 +125,7 @@ export default function CreateListingPage() {
           <Card className="border-0 shadow-md overflow-hidden">
             <div
               className="h-1.5 w-full"
-              style={{ background: 'linear-gradient(90deg, #130170, #fa9ebc)' }}
+              style={{ background: 'linear-gradient(90deg, #20201e, #ff5500)' }}
               aria-hidden="true"
             />
             <CardHeader className="pb-3">
@@ -173,7 +173,7 @@ export default function CreateListingPage() {
           <Card className="border-0 shadow-md overflow-hidden">
             <div
               className="h-1.5 w-full"
-              style={{ background: 'linear-gradient(90deg, #130170, #fa9ebc)' }}
+              style={{ background: 'linear-gradient(90deg, #20201e, #ff5500)' }}
               aria-hidden="true"
             />
             <CardHeader className="pb-3">
@@ -196,7 +196,7 @@ export default function CreateListingPage() {
               size="lg"
               aria-label="Submit listing"
               className="w-full sm:w-auto rounded-full px-12 text-base font-bold text-white shadow-pink hover:opacity-90 transition-opacity"
-              style={{ background: '#fa9ebc' }}
+              style={{ background: '#ff5500' }}
             >
               Post Listing
             </Button>

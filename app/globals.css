@@ -9,7 +9,7 @@ html, body, #__next {
 @layer base {
   :root {
     /* ── Canvas ── */
-    --background:          240 27% 97%;   /* ume-bg #f3f7f8  */
+    --background:          240 27% 97%;   /* ume-bg #faf9f5  */
     --foreground:          240 10%  10%;  /* near-black      */
 
     /* ── Cards / surfaces ── */
@@ -18,7 +18,7 @@ html, body, #__next {
     --popover:             0 0% 100%;
     --popover-foreground:  240 10%  10%;
 
-    /* ── Primary = UME Indigo #130170 ── */
+    /* ── Primary = UME Indigo #20201e ── */
     --primary:             249 97%  22%;
     --primary-foreground:  0 0% 100%;
 
@@ -30,7 +30,7 @@ html, body, #__next {
     --muted:               220 14%  94%;
     --muted-foreground:    220 9%   46%;
 
-    /* ── Accent = UME Pink #fa9ebc ── */
+    /* ── Accent = UME Pink #ff5500 ── */
     --accent:              340 90%  80%;
     --accent-foreground:   249 97%  22%;
 
@@ -228,7 +228,7 @@ body {
 @layer utilities {
   /* Pampas Background Color */
   .pampas-bg {
-    background-color: #f5f5f0;
+    background-color: #f2efe7;
   }
 
   /* Primary Heading - Granika Style (All Caps, Centered, Large) */
@@ -240,7 +240,7 @@ body {
     text-align: center;
     letter-spacing: -0.03em;
     line-height: 1.2;
-    color: #130170; /* UME Indigo */
+    color: #20201e; /* UME Indigo */
   }
 
   /* Responsive heading sizes */

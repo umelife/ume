@@ -57,7 +57,7 @@ test.describe('Report Email API Tests', () => {
 
     // Verify environment variables are set correctly
     expect(reportResult.env.EMAIL_TEST_MODE).toBe('true')
-    expect(reportResult.env.BREVO_SENDER_EMAIL).toBe('no-reply@ume-life.com')
+    expect(reportResult.env.BREVO_SENDER_EMAIL).toBe('umelife.official@gmail.com')
 
     // Now check the email log
     const logResponse = await request.get('/api/test/email-log')
@@ -69,8 +69,8 @@ test.describe('Report Email API Tests', () => {
     const email = logs.logs[0]
 
     // Verify sender (FROM)
-    expect(email.payload.sender.email).toBe('no-reply@ume-life.com')
-    expect(email.payload.sender.name).toBe('UME Support')
+    expect(email.payload.sender.email).toBe('umelife.official@gmail.com')
+    expect(email.payload.sender.name).toBe('UME Marketplace')
 
     // Verify recipient (TO) - should be SUPPORT_EMAIL
     expect(email.payload.to.length).toBe(1)
@@ -99,7 +99,7 @@ test.describe('Report Email API Tests', () => {
     const logs: EmailLogResponse = await logResponse.json()
 
     // Sender should match BREVO_SENDER_EMAIL or default
-    const expectedSender = 'no-reply@ume-life.com' // Set in playwright.config.ts
+    const expectedSender = 'umelife.official@gmail.com' // Set in playwright.config.ts
     expect(logs.logs[0].payload.sender.email).toBe(expectedSender)
   })
 
@@ -214,7 +214,7 @@ test.describe('Email Payload Validation', () => {
     expect(logs.logs[0].payload.subject).toMatch(/^\[UME\]/)
   })
 
-  test('email sender name is "UME Support"', async ({ request }) => {
+  test('email sender name is "UME Marketplace"', async ({ request }) => {
     await request.post('/api/test/send-test-report', {
       data: { reason: 'Sender name test' },
     })
@@ -223,7 +223,7 @@ test.describe('Email Payload Validation', () => {
       await request.get('/api/test/email-log')
     ).json()
 
-    expect(logs.logs[0].payload.sender.name).toBe('UME Support')
+    expect(logs.logs[0].payload.sender.name).toBe('UME Marketplace')
   })
 
   test('email timestamp is valid ISO format', async ({ request }) => {

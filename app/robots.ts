@@ -5,8 +5,8 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: '*',
-        allow: ['/', '/marketplace', '/item/', '/communities', '/events', '/about', '/safety', '/contact'],
-        disallow: ['/api/', '/login', '/signup', '/verify-student', '/orders', '/profile/edit', '/create', '/communities/create', '/events/create', '/messages', '/cart', '/admin'],
+        allow: ['/', '/marketplace', '/item/', '/safety', '/contact'],
+        disallow: ['/api/', '/login', '/signup', '/verify-student', '/orders', '/profile/edit', '/create', '/communities', '/events', '/about', '/messages', '/cart', '/admin'],
       },
     ],
     sitemap: 'https://ume-life.com/sitemap.xml',

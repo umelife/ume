@@ -79,11 +79,11 @@ function FloatCard({ delay, x, y, rotation, label, price, emoji, color }: FloatC
         background: '#ffffff',
         borderRadius: 16,
         padding: '12px 14px',
-        boxShadow: '0 8px 32px rgba(19,1,112,0.18)',
+        boxShadow: '0 8px 32px rgba(32,32,30,0.18)',
         display: 'flex',
         flexDirection: 'column',
         gap: 6,
-        border: '1.5px solid rgba(19,1,112,0.07)',
+        border: '1.5px solid rgba(32,32,30,0.07)',
       }}
     >
       {/* Thumbnail */}
@@ -101,12 +101,12 @@ function FloatCard({ delay, x, y, rotation, label, price, emoji, color }: FloatC
       >
         {emoji}
       </div>
-      <div style={{ fontSize: 11, fontWeight: 600, color: '#130170', lineHeight: 1.2, fontFamily: 'system-ui' }}>
+      <div style={{ fontSize: 11, fontWeight: 600, color: '#20201e', lineHeight: 1.2, fontFamily: 'system-ui' }}>
         {label}
       </div>
       <div
         style={{
-          background: '#130170',
+          background: '#20201e',
           color: '#fff',
           borderRadius: 20,
           padding: '2px 8px',
@@ -170,7 +170,7 @@ function TrustPill({ text, delay }: { text: string; delay: number }) {
         fontWeight: 500,
       }}
     >
-      <span style={{ color: '#fa9ebc' }}>✓</span>
+      <span style={{ color: '#ff5500' }}>✓</span>
       {text}
     </div>
   )
@@ -199,7 +199,7 @@ export function UmeHeroComposition() {
   return (
     <AbsoluteFill
       style={{
-        background: `linear-gradient(135deg, #130170 0%, #1d01a8 45%, #0a0040 100%)`,
+        background: `linear-gradient(135deg, #20201e 0%, #34342f 45%, #151513 100%)`,
         opacity: bgOpacity,
         display: 'flex',
         flexDirection: 'column',
@@ -229,7 +229,7 @@ export function UmeHeroComposition() {
           width: 420,
           height: 420,
           borderRadius: '50%',
-          background: `radial-gradient(circle, rgba(250,158,188,${glow1}) 0%, transparent 70%)`,
+          background: `radial-gradient(circle, rgba(255,85,0,${glow1}) 0%, transparent 70%)`,
         }}
       />
 
@@ -258,8 +258,8 @@ export function UmeHeroComposition() {
         {/* Logo */}
         <div style={{ display: 'flex', gap: 2, marginBottom: 24 }}>
           <LogoLetter char="U" delay={0}  color="#ffffff" />
-          <LogoLetter char="M" delay={6}  color="#fa9ebc" />
-          <LogoLetter char="E" delay={12} color="#fa9ebc" />
+          <LogoLetter char="M" delay={6}  color="#ff5500" />
+          <LogoLetter char="E" delay={12} color="#ff5500" />
         </div>
 
         {/* Headline */}
@@ -283,7 +283,7 @@ export function UmeHeroComposition() {
               fontSize: 44,
               lineHeight: 1.08,
               letterSpacing: '-0.03em',
-              color: '#fa9ebc',
+              color: '#ff5500',
               opacity: h2.opacity,
               transform: `translateY(${h2.y}px)`,
             }}

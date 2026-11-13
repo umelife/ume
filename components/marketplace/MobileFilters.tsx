@@ -123,7 +123,7 @@ export default function MobileFilters({
     <>
       <div className="fixed inset-0 bg-black/50 z-40 md:hidden" onClick={onClose} aria-hidden="true" />
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-2xl z-50 md:hidden max-h-[85vh] overflow-y-auto">
+      <div className="fixed bottom-0 left-0 right-0 arcade-filter-drawer bg-white rounded-t-2xl shadow-2xl z-50 md:hidden max-h-[85vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-black">Filters</h2>

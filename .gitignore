@@ -71,3 +71,12 @@ Screenshot*.png
 
 # Graphify knowledge graph cache
 graphify-out/cache/
+
+# Isolated local preview verification builds
+/.next-verify/
+/.next-playwright/
+/.next-release/
+
+# Local UI review artifacts
+/site_screenshots/studio-redesign/
+/site_screenshots/arcade-redesign/

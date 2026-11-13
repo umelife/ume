@@ -74,7 +74,7 @@ export default async function ProfilePage({
         <div
           className="h-36 sm:h-44 w-full"
           style={{
-            background: 'linear-gradient(135deg, #130170 0%, #2d01e0 50%, #fa9ebc 100%)',
+            background: 'linear-gradient(115deg, #ffb58f 0%, #f4ee67 100%)',
           }}
           aria-hidden="true"
         />
@@ -104,7 +104,7 @@ export default async function ProfilePage({
                       {profileUser.college_name && (
                         <Badge
                           className="self-center sm:self-auto text-xs font-semibold"
-                          style={{ background: '#f3f4ff', color: '#130170', border: '1px solid #d0d5ff' }}
+                          style={{ background: '#f2efe7', color: '#20201e', border: '1px solid #c7c2b6' }}
                         >
                           {profileUser.college_name}
                         </Badge>
@@ -150,7 +150,7 @@ export default async function ProfilePage({
                       <Button
                         asChild
                         className="rounded-full font-semibold px-6 text-white"
-                        style={{ background: '#fa9ebc' }}
+                        style={{ background: '#ff5500' }}
                       >
                         <Link href="/create">+ New Listing</Link>
                       </Button>

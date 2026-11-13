@@ -109,7 +109,7 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 EASYPOST_API_KEY=your_key
 
 BREVO_API_KEY=xkeysib-...
-BREVO_SENDER_EMAIL=no-reply@ume-life.com
+BREVO_SENDER_EMAIL=umelife.official@gmail.com
 
 NEXT_PUBLIC_MIXPANEL_TOKEN=your_token
 
@@ -131,6 +131,12 @@ npm run dev
 
 ## Testing
 
+Playwright starts its own local app at `http://127.0.0.1:3100` with a separate
+build folder and mocked email delivery. The normal preview on port 3000 stays
+available. The marketplace regression suite runs on desktop Chrome and a phone
+viewport; the existing API and email suites also run. Tests requiring dedicated
+user/admin credentials are skipped when those credentials are absent.
+
 ```bash
 # Install Playwright browsers (first time)
 npx playwright install chromium
@@ -143,6 +149,13 @@ npm run test:auth
 
 # Smoke tests
 npm run test:smoke
+```
+
+To use an already installed Chrome instead of downloading Chromium (PowerShell):
+
+```powershell
+$env:PLAYWRIGHT_CHANNEL = 'chrome'
+npm run test:e2e
 ```
 
 ---

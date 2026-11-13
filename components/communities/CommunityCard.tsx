@@ -8,7 +8,7 @@ export default function CommunityCard({ community }: { community: Community }) {
   return (
     <Link
       href={`/communities/${community.slug}`}
-      className="group block bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden border border-gray-100 hover:-translate-y-0.5"
+      className="studio-tile group block bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden border border-gray-100 hover:-translate-y-0.5"
     >
       <div className="relative w-full aspect-[3/2] bg-gradient-to-br from-ume-indigo/5 to-ume-pink/10 overflow-hidden">
         {community.cover_image_url ? (

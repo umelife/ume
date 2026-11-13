@@ -72,6 +72,13 @@ export default function FeatureSlider({
 }: FeatureSliderProps) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isPaused, setIsPaused] = useState(false)
+  useEffect(() => {
+    const preference = window.matchMedia('(prefers-reduced-motion: reduce)')
+    const update = () => setIsPaused(preference.matches)
+    update()
+    preference.addEventListener('change', update)
+    return () => preference.removeEventListener('change', update)
+  }, [])
   const [isAnimating, setIsAnimating] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 

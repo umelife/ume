@@ -3,6 +3,10 @@ import { updateSession } from '@/lib/supabase/middleware'
 import { createServerClient } from '@supabase/ssr'
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname
+  if (['/communities', '/events', '/about'].some(route => path === route || path.startsWith(route + '/'))) {
+    return NextResponse.redirect(new URL('/marketplace', request.url), 303)
+  }
   // Public routes that don't need session updates or auth checks
   // Note: /reset-password needs session updates to verify the reset token
   const publicPaths = ['/forgot-password', '/login', '/signup', '/verify-student', '/reauth']
@@ -78,7 +82,7 @@ export async function middleware(request: NextRequest) {
     const studentOnlyPaths = ['/marketplace', '/create', '/cart', '/orders']
     if (accountType !== 'student' &&
         studentOnlyPaths.some(p => request.nextUrl.pathname.startsWith(p))) {
-      return NextResponse.redirect(new URL('/communities', request.url))
+      return NextResponse.redirect(new URL('/', request.url))
     }
 
     // Annual reauthentication check — only if timestamp is set (won't affect

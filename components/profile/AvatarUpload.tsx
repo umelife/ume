@@ -88,7 +88,7 @@ export default function AvatarUpload({ userId, displayName, currentAvatarUrl, is
         )}
         <AvatarFallback
           className="text-4xl sm:text-5xl font-black text-white select-none"
-          style={{ background: 'linear-gradient(135deg, #130170, #fa9ebc)' }}
+          style={{ background: 'linear-gradient(135deg, #20201e, #ff5500)' }}
         >
           {initial}
         </AvatarFallback>

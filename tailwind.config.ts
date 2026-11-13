@@ -16,6 +16,7 @@ export default {
         display: ['Maintanker', 'var(--font-archivo-black)', 'Arial Black', 'sans-serif'],
       },
       colors: {
+        indigo: { 50: '#fff4ed', 100: '#ffe4d4', 200: '#ffc6a5', 300: '#ffa070', 400: '#f97938', 500: '#db4500', 600: '#b93c05', 700: '#90330d', 800: '#34342f', 900: '#20201e', 950: '#151513' },
         // ── shadcn/ui semantic tokens (map to CSS vars) ────────────────
         background:  'hsl(var(--background))',
         foreground:  'hsl(var(--foreground))',
@@ -58,13 +59,13 @@ export default {
           '5': 'hsl(var(--chart-5))',
         },
         // ── UME Brand (kept for legacy class names) ────────────────────
-        'ume-indigo':     '#130170',
-        'ume-indigo-900': '#0d0050',
-        'ume-indigo-800': '#1a0190',
-        'ume-pink':       '#fa9ebc',
-        'ume-pink-400':   '#f87eaa',
-        'ume-cream':      '#f5f5f0',
-        'ume-bg':         '#f3f7f8',
+        'ume-indigo':     '#20201e',
+        'ume-indigo-900': '#151513',
+        'ume-indigo-800': '#34342f',
+        'ume-pink':       '#c34100',
+        'ume-pink-400':   '#a43600',
+        'ume-cream':      '#f2efe7',
+        'ume-bg':         '#faf9f5',
         'ume-emerald':    '#34d399',
         'ume-amber':      '#fbbf24',
         'ume-sky':        '#60a5fa',
@@ -75,11 +76,11 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       boxShadow: {
-        sm:     '0 1px 2px rgba(19,1,112,0.06)',
-        md:     '0 4px 12px rgba(19,1,112,0.08)',
-        lg:     '0 12px 32px rgba(19,1,112,0.12)',
-        pink:   '0 10px 24px rgba(250,158,188,0.35)',
-        indigo: '0 10px 24px rgba(19,1,112,0.25)',
+        sm:     '0 1px 2px rgba(32,32,30,0.06)',
+        md:     '0 4px 12px rgba(32,32,30,0.08)',
+        lg:     '0 12px 32px rgba(32,32,30,0.12)',
+        pink:   '0 10px 24px rgba(255,85,0,0.35)',
+        indigo: '0 10px 24px rgba(32,32,30,0.25)',
       },
       keyframes: {
         'accordion-down': {

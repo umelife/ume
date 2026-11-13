@@ -50,7 +50,7 @@ export async function POST(request: Request) {
       success: true,
       emailResult: result,
       env: {
-        BREVO_SENDER_EMAIL: process.env.BREVO_SENDER_EMAIL || 'no-reply@ume-life.com',
+        BREVO_SENDER_EMAIL: process.env.BREVO_SENDER_EMAIL || 'umelife.official@gmail.com',
         SUPPORT_EMAIL: process.env.SUPPORT_EMAIL || 'umelife.official@gmail.com',
         EMAIL_TEST_MODE: process.env.EMAIL_TEST_MODE,
       },

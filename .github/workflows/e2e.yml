@@ -43,7 +43,7 @@ jobs:
           # Test mode - no real emails sent
           EMAIL_TEST_MODE: 'true'
           # Test email configuration (no real API key needed)
-          BREVO_SENDER_EMAIL: 'no-reply@ume-life.com'
+          BREVO_SENDER_EMAIL: 'umelife.official@gmail.com'
           SUPPORT_EMAIL: 'test@example.com'
           # Dummy Supabase config for app to start
           NEXT_PUBLIC_SUPABASE_URL: 'https://test.supabase.co'

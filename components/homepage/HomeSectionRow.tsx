@@ -6,7 +6,7 @@
  * Props:
  *  - title: section heading
  *  - icon: SVG ReactNode shown next to the title
- *  - viewAllHref: href for the "View All" link
+ *  - viewAllHref: href for the "Explore" link
  *  - children: the cards to render inside the scroll row (live sections only)
  *  - comingSoon: if true, renders a polished "Coming Soon" placeholder
  *  - accentColor: Tailwind bg class for the icon badge (default ume-indigo)
@@ -38,7 +38,7 @@ export default function HomeSectionRow({
   features = [],
 }: HomeSectionRowProps) {
   return (
-    <section className="w-full py-6 sm:py-8 bg-ume-bg">
+    <section className="home-section w-full py-10 sm:py-16 bg-ume-bg">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-4 sm:px-6 mb-1">
@@ -50,12 +50,12 @@ export default function HomeSectionRow({
               {icon}
             </div>
 
-            <h2 className="font-black text-lg sm:text-xl uppercase tracking-tight text-[#130170]">
+            <h2 className="font-heading text-2xl sm:text-4xl uppercase tracking-tight text-[#20201e]">
               {title}
             </h2>
 
             {comingSoon && (
-              <Badge className="bg-[#fa9ebc]/15 text-[#fa9ebc] border-0 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
+              <Badge className="bg-[#ff5500]/15 text-[#ff5500] border-0 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full">
                 Coming Soon
               </Badge>
             )}
@@ -64,9 +64,9 @@ export default function HomeSectionRow({
           {!comingSoon && (
             <Link
               href={viewAllHref}
-              className="inline-flex items-center gap-1 text-sm text-[#fa9ebc] font-semibold hover:underline underline-offset-2 shrink-0 transition-colors hover:text-[#fa9ebc]/80"
+              className="inline-flex items-center gap-1 text-sm text-[#ff5500] font-semibold hover:underline underline-offset-2 shrink-0 transition-colors hover:text-[#ff5500]/80"
             >
-              View All
+              Explore
               <svg
                 className="w-3.5 h-3.5"
                 viewBox="0 0 24 24"
@@ -82,7 +82,7 @@ export default function HomeSectionRow({
         </div>
 
         {/* Separator under header */}
-        <Separator className="mx-4 sm:mx-6 mb-4 bg-[#130170]/8 w-auto" />
+        <Separator className="mx-4 sm:mx-6 mb-4 bg-[#20201e]/8 w-auto" />
 
         {comingSoon ? (
           /* ── Coming Soon: full-width rich teaser ── */
@@ -102,7 +102,7 @@ export default function HomeSectionRow({
                   <h3 className="font-black text-xl sm:text-2xl uppercase tracking-tight text-ume-indigo">
                     {title}
                   </h3>
-                  <span className="text-[10px] bg-[#fa9ebc]/15 text-[#fa9ebc] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#fa9ebc]/20">
+                  <span className="text-[10px] bg-[#ff5500]/15 text-[#ff5500] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full border border-[#ff5500]/20">
                     Coming Soon
                   </span>
                 </div>
@@ -127,8 +127,8 @@ export default function HomeSectionRow({
               {/* In development pulse */}
               <div className="relative z-10 flex items-center gap-2 text-xs text-gray-400 font-medium shrink-0 self-center">
                 <span className="flex h-2.5 w-2.5 relative">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fa9ebc] opacity-60" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#fa9ebc]" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ff5500] opacity-60" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#ff5500]" />
                 </span>
                 In development
               </div>

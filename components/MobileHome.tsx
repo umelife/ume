@@ -113,7 +113,7 @@ export default function MobileHome({ recentListings, recentCommunities }: Mobile
                 asChild
                 size="lg"
                 className="w-full max-w-xs rounded-full font-bold text-base shadow-pink hover:scale-105 transition-transform duration-200 border-0"
-                style={{ background: '#fa9ebc', color: '#fff' }}
+                style={{ background: '#ff5500', color: '#fff' }}
               >
                 <Link href="/signup">Sign Up Free</Link>
               </Button>

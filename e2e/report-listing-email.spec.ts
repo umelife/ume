@@ -166,7 +166,7 @@ test.describe('Report Listing Email Flow', () => {
     expect(latestEmail.success).toBe(true)
 
     // Verify sender email (FROM)
-    const expectedSenderEmail = process.env.BREVO_SENDER_EMAIL || 'no-reply@ume-life.com'
+    const expectedSenderEmail = process.env.BREVO_SENDER_EMAIL || 'umelife.official@gmail.com'
     expect(latestEmail.payload.sender.email).toBe(expectedSenderEmail)
     expect(latestEmail.payload.sender.name).toBe('UME Support')
 
@@ -273,7 +273,7 @@ test.describe('Report Listing Email - Unit-style Tests', () => {
     expect(response.status()).toBe(200) // Means EMAIL_TEST_MODE=true
 
     // If we had an endpoint to check env vars, we'd verify:
-    // - BREVO_SENDER_EMAIL = 'no-reply@ume-life.com'
+    // - BREVO_SENDER_EMAIL = 'umelife.official@gmail.com'
     // - SUPPORT_EMAIL = test email
     // - EMAIL_TEST_MODE = 'true'
   })

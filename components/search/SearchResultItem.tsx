@@ -7,6 +7,7 @@
  */
 
 import Link from 'next/link'
+import { listingTheme } from '@/lib/listing-theme'
 import type { Listing } from '@/types/database'
 
 interface SearchResultItemProps {
@@ -22,7 +23,8 @@ export default function SearchResultItem({ listing, onSelect }: SearchResultItem
     <Link
       href={`/item/${listing.id}`}
       onClick={onSelect}
-      className="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer rounded-md"
+      style={listingTheme(listing.id)}
+      className="arcade-listing flex items-center gap-3 px-4 py-3 hover:bg-gray-50 transition-colors cursor-pointer rounded-md"
     >
       {/* Thumbnail */}
       <div className="flex-shrink-0 w-12 h-12 bg-gray-100 rounded overflow-hidden">

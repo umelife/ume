@@ -44,7 +44,7 @@ export default function EventPaywall({ accountType, onClose, onSuccess }: Props)
         className="w-full sm:max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
         onClick={e => e.stopPropagation()}
       >
-        <div className="bg-gradient-to-br from-ume-indigo to-purple-700 text-white p-5">
+        <div className="bg-ume-indigo text-white p-5">
           <h2 className="text-xl font-black" style={{ fontFamily: "'Archivo Black', sans-serif" }}>
             Host this event
           </h2>

@@ -15,7 +15,7 @@ export default function EventCard({ event }: { event: UMEEvent }) {
   return (
     <Link
       href={`/events/${event.id}`}
-      className="group block bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden border border-gray-100 hover:-translate-y-0.5"
+      className="studio-tile group block bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-200 overflow-hidden border border-gray-100 hover:-translate-y-0.5"
     >
       <div className="relative w-full aspect-[16/9] bg-gradient-to-br from-ume-indigo/5 to-ume-pink/10 overflow-hidden">
         {cover ? (

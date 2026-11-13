@@ -6,7 +6,7 @@
  *
  * Prerequisites:
  *   - BREVO_API_KEY set in .env.local
- *   - BREVO_SENDER_EMAIL verified in Brevo (or defaults to no-reply@ume-life.com)
+ *   - BREVO_SENDER_EMAIL verified in Brevo (or defaults to umelife.official@gmail.com)
  *   - SUPPORT_EMAIL set to receiving Gmail address
  */
 
@@ -24,7 +24,7 @@ async function testEmail() {
   // Check env vars
   console.log('\nEnvironment Variables:')
   console.log('  BREVO_API_KEY:', process.env.BREVO_API_KEY ? '✓ Set' : '✗ Not set')
-  console.log('  BREVO_SENDER_EMAIL:', process.env.BREVO_SENDER_EMAIL || '(default: no-reply@ume-life.com)')
+  console.log('  BREVO_SENDER_EMAIL:', process.env.BREVO_SENDER_EMAIL || '(default: umelife.official@gmail.com)')
   console.log('  SUPPORT_EMAIL:', process.env.SUPPORT_EMAIL || '(default: umelife.official@gmail.com)')
 
   if (!process.env.BREVO_API_KEY) {

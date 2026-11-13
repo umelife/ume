@@ -48,7 +48,7 @@ export default async function CampusPage({ params }: Props) {
     <div className="min-h-screen bg-ume-bg">
 
       {/* Hero */}
-      <section className="bg-gradient-to-br from-ume-indigo via-indigo-800 to-purple-900 text-white">
+      <section className="studio-masthead text-white">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <p className="text-xs font-bold uppercase tracking-widest text-ume-pink mb-4">
             {college.city}, {college.state}

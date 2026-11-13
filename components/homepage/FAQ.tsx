@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useId, useState } from 'react'
 
 const faqs = [
   {
     q: 'What is UME and who can use it?',
-    a: 'UME is a campus marketplace and community platform built exclusively for college students. Only people with a verified .edu email address can sign up — no outside buyers, no strangers from the internet. Just real students from your campus.',
+    a: 'UME is a campus marketplace built exclusively for college students. Only people with a verified .edu email address can sign up — no outside buyers, no strangers from the internet. Just real students from your campus.',
   },
   {
     q: 'Is UME free to use?',
@@ -28,24 +28,23 @@ const faqs = [
     a: 'UME supports Stripe payments with buyer protection built in. For in-person meetups, your card is authorized but only charged once the QR code is scanned at the meetup — acting as an escrow. For shipped items, payment is processed immediately and EasyPost generates a real shipping label.',
   },
   {
-    q: 'What are Communities on UME?',
-    a: 'Communities are student-run groups on UME for any interest — study groups, sports teams, Greek life, gaming, fitness, and more. You can post, vote, comment, and join communities from any campus across the US.',
-  },
-  {
     q: 'What if I have a problem with a buyer or seller?',
     a: 'You can report any listing or user directly from the app. Our moderation team reviews every report. For payment disputes on Stripe transactions, UME offers buyer protection — if a seller does not ship within 3 days of payment, you can request a full refund.',
   },
   {
     q: 'How is UME different from Facebook Marketplace or Craigslist?',
-    a: 'Facebook Marketplace and Craigslist are open to anyone. UME is only for verified students. That means safer meetups, more relevant listings, and a community of people who go to the same school as you. We also built campus-specific features — Safe-Handshake meetups and .edu-only communities — that general marketplaces will never build.',
+    a: 'Facebook Marketplace and Craigslist are open to anyone. UME is only for verified students. That means safer meetups, more relevant listings, and a community of people who go to the same school as you. We also built campus-specific features — Safe-Handshake meetups and student-only listings — that general marketplaces will never build.',
   },
 ]
 
 function Item({ q, a }: { q: string; a: string }) {
   const [open, setOpen] = useState(false)
+  const answerId = useId()
   return (
     <div className="border-b border-gray-100 last:border-0">
       <button
+        aria-expanded={open}
+        aria-controls={answerId}
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between py-4 text-left gap-4 group"
       >
@@ -59,7 +58,7 @@ function Item({ q, a }: { q: string; a: string }) {
         </span>
       </button>
       {open && (
-        <p className="text-sm text-gray-600 leading-relaxed pb-4 pr-10">
+        <p id={answerId} className="text-sm text-gray-600 leading-relaxed pb-4 pr-10">
           {a}
         </p>
       )}

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import { Archivo_Black, Work_Sans } from "next/font/google";
 import "./fonts.css";
 import "./globals.css";
+import "./studio.css";
+import "./arcade.css";
+import StudioMotion from "@/components/StudioMotion";
 import MixpanelProvider from "@/components/analytics/MixpanelProvider";
 import PostHogProvider from "@/components/analytics/PostHogProvider";
 import ReferralCapture from "@/components/ReferralCapture";
@@ -9,7 +12,6 @@ import HeaderWrapper from "@/components/HeaderWrapper";
 import MobileHeaderWrapper from "@/components/MobileHeaderWrapper";
 import StripeSetupBanner from "@/components/StripeSetupBanner";
 import SimpleFooter from "@/components/homepage/SimpleFooter";
-import MobileFooter from "@/components/MobileFooter";
 import PushNotificationWrapper from "@/components/push/PushNotificationWrapper"
 import InstallPrompt from "@/components/ui/InstallPrompt";
 import WhatsNewModal from "@/components/WhatsNewModal";
@@ -42,28 +44,28 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "default",
     title: "UME",
-    startupImage: "/icon.png",
+    startupImage: "/studio-icon.png",
   },
   icons: {
     icon: [
       { url: '/icon.svg', type: 'image/svg+xml' },
-      { url: '/icon.png', type: 'image/png' },
+      { url: '/studio-icon.png', type: 'image/png' },
     ],
     shortcut: '/icon.svg',
-    apple: '/icon.png',
+    apple: '/studio-icon.png',
   },
   openGraph: {
     type: 'website',
     siteName: 'UME',
     title: 'UME — University Marketplace',
     description: 'Buy and sell items safely within your university community.',
-    images: [{ url: '/icon.png', width: 1024, height: 1024, alt: 'UME' }],
+    images: [{ url: '/studio-icon.png', width: 1024, height: 1024, alt: 'UME' }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'UME — University Marketplace',
     description: 'Buy and sell items safely within your university community.',
-    images: ['/icon.png'],
+    images: ['/studio-icon.png'],
   },
 };
 
@@ -72,7 +74,7 @@ export const viewport = {
   initialScale: 1,
   minimumScale: 1,
   maximumScale: 5,
-  themeColor: '#312e81',
+  themeColor: '#20201e',
 };
 
 export default function RootLayout({
@@ -93,7 +95,7 @@ export default function RootLayout({
                 "@id": "https://ume-life.com/#organization",
                 "name": "UME",
                 "url": "https://ume-life.com",
-                "logo": "https://ume-life.com/icon.png",
+                "logo": "https://ume-life.com/studio-icon.png",
                 "description": "UME is a university marketplace where college students buy and sell items safely within their campus community.",
                 "foundingDate": "2024",
                 "founders": [
@@ -121,16 +123,16 @@ export default function RootLayout({
           })}}
         />
       </head>
-      <body className={`${workSans.className} bg-ume-bg`} style={{ isolation: 'isolate', fontWeight: 300 }} suppressHydrationWarning>
+      <body className={`${workSans.className} bg-ume-bg`} style={{ isolation: 'isolate', fontWeight: 400 }} suppressHydrationWarning>
         <MixpanelProvider />
         <PostHogProvider />
         <ReferralCapture />
         <HeaderWrapper />
         <MobileHeaderWrapper />
         <StripeSetupBanner />
-        {children}
+        <StudioMotion>{children}</StudioMotion>
         <SimpleFooter />
-        <MobileFooter />
+
         <PushNotificationWrapper />
         <InstallPrompt />
         <WhatsNewModal />

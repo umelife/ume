@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { categoryTheme } from '@/lib/listing-theme'
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
@@ -58,7 +59,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
   }, [])
 
   useEffect(() => {
-    if (!heroRef.current) return
+    if (!heroRef.current || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
     const els = heroRef.current.querySelectorAll<HTMLElement>('.dash-in')
     animate(els, {
       translateY: [32, 0],
@@ -75,7 +76,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f7f8]">
+    <div className="min-h-screen bg-[#faf9f5]">
 
       {/* ══════════ HERO ══════════ */}
       <div
@@ -83,7 +84,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
         className="relative overflow-hidden flex flex-col justify-between text-white"
         style={{
           minHeight: 'clamp(520px, 70vh, 680px)',
-          background: 'linear-gradient(140deg, #1e1b4b 0%, #312e81 38%, #4338ca 68%, #7c3aed 100%)',
+          background: 'linear-gradient(120deg, #20201e 0%, #34342f 100%)',
         }}
       >
         {/* Dot grid overlay */}
@@ -91,14 +92,14 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
           style={{ backgroundImage: 'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)', backgroundSize: '22px 22px' }} />
         {/* Pink glow */}
         <div className="absolute -top-32 -right-20 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(250,158,188,0.28) 0%, transparent 65%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(255,85,0,0.28) 0%, transparent 65%)' }} />
         {/* Violet glow */}
         <div className="absolute -bottom-24 -left-12 w-80 h-80 rounded-full pointer-events-none"
-          style={{ background: 'radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%)' }} />
+          style={{ background: 'radial-gradient(circle, rgba(255,85,0,0.15) 0%, transparent 70%)' }} />
 
         {/* ── Top bar: greeting + campus ── */}
         <div className="relative z-10 px-5 sm:px-10 pt-8 max-w-4xl mx-auto w-full">
-          <div className="dash-in flex items-center justify-between" style={{ opacity: 0 }}>
+          <div className="dash-in flex items-center justify-between">
             <div>
               <p className="text-white/55 text-sm font-medium">{greeting},</p>
               <h1
@@ -122,14 +123,14 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
         <div className="relative z-10 px-5 sm:px-10 max-w-4xl mx-auto w-full">
           <h2
             className="dash-in text-3xl sm:text-5xl font-black uppercase tracking-tight leading-none mb-6"
-            style={{ fontFamily: "'Archivo Black', sans-serif", opacity: 0 }}
+            style={{ fontFamily: "'Archivo Black', sans-serif" }}
           >
             What are you<br />
             <span className="text-ume-pink">looking for?</span>
           </h2>
 
           {/* Search bar */}
-          <form onSubmit={handleSearch} className="dash-in relative mb-5" style={{ opacity: 0 }}>
+          <form onSubmit={handleSearch} className="dash-in relative mb-5">
             <div className="relative flex items-center">
               <svg className="absolute left-4 w-5 h-5 text-white/50 pointer-events-none" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
                 <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
@@ -150,12 +151,13 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
           </form>
 
           {/* Category chips */}
-          <div className="dash-in flex gap-2 overflow-x-auto pb-1 scrollbar-hide" style={{ opacity: 0 }}>
-            {QUICK_CATS.map(cat => (
+          <div className="dash-in flex gap-2 overflow-x-auto pb-1 scrollbar-hide">
+            {QUICK_CATS.map((cat, index) => (
               <Link
                 key={cat.slug}
+                style={categoryTheme(index)}
                 href={`/marketplace?category=${cat.slug}`}
-                className="flex items-center gap-1.5 bg-white/12 hover:bg-white/22 border border-white/20 rounded-full px-3.5 py-1.5 text-xs font-semibold text-white/90 whitespace-nowrap active:scale-95 transition-all duration-150 shrink-0"
+                className="arcade-chip flex items-center gap-1.5 bg-white/12 hover:bg-white/22 border border-white/20 rounded-full px-3.5 py-1.5 text-xs font-semibold text-white/90 whitespace-nowrap active:scale-95 transition-all duration-150 shrink-0"
               >
                 <span>{cat.icon}</span>
                 {cat.label}
@@ -166,7 +168,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
 
         {/* ── Bottom: stat pills + actions ── */}
         <div className="relative z-10 px-5 sm:px-10 pb-8 max-w-4xl mx-auto w-full">
-          <div className="dash-in flex flex-wrap items-center gap-3" style={{ opacity: 0 }}>
+          <div className="dash-in flex flex-wrap items-center gap-3">
             {/* Stats */}
             <div className="flex items-center gap-1.5 text-white/55 text-xs">
               <span className="font-bold text-emerald-400">{totalListings.toLocaleString()}</span>
@@ -199,7 +201,7 @@ export default function LoggedInDashboard({ user, campusListings, savedListings,
 
       {/* Discover — always shows */}
       {discoverListings.length > 0 && (
-        <HomeSectionRow title="Discover on UME" icon={<SparkleIcon />} viewAllHref="/marketplace" accentColor="bg-violet-600">
+        <HomeSectionRow title="Discover on UME" icon={<SparkleIcon />} viewAllHref="/marketplace" accentColor="bg-ume-indigo">
           {discoverListings.map(l => <HomeListingCard key={l.id} listing={l} />)}
         </HomeSectionRow>
       )}

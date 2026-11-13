@@ -11,6 +11,7 @@
 'use client'
 
 import Link from 'next/link'
+import { categoryTheme } from '@/lib/listing-theme'
 import CategoryIcon from '@/components/marketplace/CategoryIcon'
 
 interface Category {
@@ -21,6 +22,7 @@ interface Category {
 }
 
 const categories: Category[] = [
+  { id: 'books', name: 'Books', categoryKey: 'Books', href: '/marketplace?category=books' },
   {
     id: 'dorm',
     name: 'Dorm & Decor',
@@ -78,7 +80,7 @@ export default function CategoryGrid() {
         <div className="flex justify-center mb-6 sm:mb-8">
           <Link
             href="/marketplace"
-            className="inline-block px-12 py-3 bg-ume-pink text-white font-semibold text-sm tracking-wide uppercase rounded-full hover:bg-pink-400 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-ume-pink/30 shadow-md"
+            className="inline-block px-12 py-3 bg-ume-pink text-white font-semibold text-sm tracking-wide uppercase rounded-full hover:bg-ume-pink-400 transition-all duration-200 hover:scale-105 focus:outline-none focus:ring-4 focus:ring-ume-pink/30 shadow-md"
           >
             ALL
           </Link>
@@ -89,12 +91,12 @@ export default function CategoryGrid() {
           {/* Mobile: Horizontal scroll */}
           <div className="md:hidden overflow-x-auto scrollbar-hide">
             <div className="flex gap-3 justify-start">
-              {categories.map((category) => (
+              {categories.map((category, index) => (
                 <Link
                   key={category.id}
                   href={category.href}
-                  className="flex flex-col items-center group focus:outline-none rounded-lg p-2 flex-shrink-0"
-                  style={{ width: '80px' }}
+                  className="arcade-category-tile flex flex-col items-center group focus:outline-none rounded-lg p-2 flex-shrink-0"
+                  style={{ ...categoryTheme(index), width: '100px' }}
                 >
                   {/* Icon */}
                   <div className="w-12 h-12 flex items-center justify-center mb-2 text-ume-indigo group-hover:text-ume-pink group-hover:scale-110 transition-all duration-200">
@@ -110,12 +112,13 @@ export default function CategoryGrid() {
           </div>
 
           {/* Desktop: Grid */}
-          <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-7 md:gap-6 lg:gap-8">
-            {categories.map((category) => (
+          <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-4 md:gap-6 lg:gap-8">
+            {categories.map((category, index) => (
               <Link
                 key={category.id}
                 href={category.href}
-                className="flex flex-col items-center group focus:outline-none rounded-lg p-4"
+                style={categoryTheme(index)}
+                className="arcade-category-tile flex flex-col items-center group focus:outline-none rounded-lg p-4"
               >
                 {/* Icon */}
                 <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center mb-3 text-ume-indigo group-hover:text-ume-pink group-hover:scale-110 transition-all duration-200">

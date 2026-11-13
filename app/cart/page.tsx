@@ -1,5 +1,7 @@
 'use client'
 
+import { listingTheme } from '@/lib/listing-theme'
+
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
@@ -155,7 +157,7 @@ export default function CartPage() {
             const isRemoving = loadingIds[listing.id] === true
 
             return (
-              <div key={listing.id} className="bg-white rounded-2xl shadow-md p-6 relative">
+              <div key={listing.id} style={listingTheme(listing.id)} className="arcade-listing bg-white rounded-2xl shadow-md p-6 relative">
                 <div className="flex gap-4">
                   {/* Image */}
                   <Link href={`/item/${listing.id}`} className="flex-shrink-0">

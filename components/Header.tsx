@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { usePathname } from 'next/navigation'
 import HeaderInlineSearch from './search/HeaderInlineSearch'
 import UnreadCountBadge from './UnreadCountBadge'
 import { Button } from '@/components/ui/button'
@@ -17,6 +18,7 @@ interface HeaderProps {
 
 export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvatar, userId }: HeaderProps) {
   const [searchOpen, setSearchOpen] = useState(false)
+  const pathname = usePathname()
 
   return (
     <header className="hidden md:block bg-white border-b border-gray-100 sticky top-0 z-50 shadow-sm">
@@ -50,10 +52,7 @@ export default function Header({ unreadMessages = 0, cartItemCount = 0, userAvat
           /* Centre — Nav links */
           <nav className="flex items-center gap-1">
             <Button variant="ghost" size="sm" asChild className="text-ume-indigo/80 hover:text-ume-indigo hover:bg-ume-indigo/5 font-medium">
-              <Link href="/marketplace">Marketplace</Link>
-            </Button>
-            <Button variant="ghost" size="sm" asChild className="text-ume-indigo/80 hover:text-ume-indigo hover:bg-ume-indigo/5 font-medium">
-              <Link href="/communities">Communities</Link>
+              <Link href="/marketplace" aria-current={pathname.startsWith("/marketplace") ? "page" : undefined}>Marketplace</Link>
             </Button>
           </nav>
         )}

@@ -70,12 +70,12 @@ export default function SafeHandshakeMap({
           className: '',
           html: `<div style="
             background: white;
-            border: 2px solid #130170;
+            border: 2px solid #20201e;
             border-radius: 8px;
             padding: 3px 8px;
             font-size: 11px;
             font-weight: 600;
-            color: #130170;
+            color: #20201e;
             white-space: nowrap;
             box-shadow: 0 1px 4px rgba(0,0,0,0.2);
           ">${point.name}</div>`,

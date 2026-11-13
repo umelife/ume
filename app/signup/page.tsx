@@ -172,14 +172,14 @@ export default function SignupPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-[#f3f7f8] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center p-4">
         <Card className="w-full max-w-md shadow-lg">
           <CardContent className="pt-10 pb-10 px-8 text-center space-y-4">
             <div
               className="mx-auto flex items-center justify-center h-14 w-14 rounded-full mb-2"
               style={{ backgroundColor: '#eef0ff' }}
             >
-              <svg className="h-7 w-7" style={{ color: '#130170' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="h-7 w-7" style={{ color: '#20201e' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
               </svg>
             </div>
@@ -192,7 +192,7 @@ export default function SignupPage() {
             <Link
               href="/login"
               className="inline-block text-sm font-semibold transition-colors hover:opacity-80"
-              style={{ color: '#130170' }}
+              style={{ color: '#20201e' }}
             >
               Go to log in
             </Link>
@@ -203,20 +203,20 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f7f8] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center p-4">
       <div className="w-full max-w-4xl flex rounded-2xl overflow-hidden shadow-xl">
 
         {/* Left brand panel — hidden on mobile */}
         <div
           className="hidden md:flex flex-col justify-between w-[40%] p-10"
-          style={{ backgroundColor: '#130170' }}
+          style={{ backgroundColor: '#20201e' }}
         >
           <div>
             <div className="text-4xl font-extrabold tracking-tight">
               <span className="text-white">U</span>
-              <span style={{ color: '#fa9ebc' }}>ME</span>
+              <span style={{ color: '#ff5500' }}>ME</span>
             </div>
-            <p className="mt-3 text-sm font-medium" style={{ color: '#fa9ebc' }}>
+            <p className="mt-3 text-sm font-medium" style={{ color: '#ff5500' }}>
               University Marketplace Exchange
             </p>
           </div>
@@ -231,7 +231,7 @@ export default function SignupPage() {
                 <li key={item} className="flex items-start gap-3">
                   <span
                     className="mt-0.5 flex-shrink-0 h-4 w-4 rounded-full flex items-center justify-center"
-                    style={{ backgroundColor: '#fa9ebc' }}
+                    style={{ backgroundColor: '#ff5500' }}
                   >
                     <svg className="h-2.5 w-2.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -242,7 +242,7 @@ export default function SignupPage() {
               ))}
             </ul>
             <div className="flex gap-2">
-              <div className="h-1 w-8 rounded-full" style={{ backgroundColor: '#fa9ebc' }} />
+              <div className="h-1 w-8 rounded-full" style={{ backgroundColor: '#ff5500' }} />
               <div className="h-1 w-4 rounded-full bg-white/30" />
               <div className="h-1 w-4 rounded-full bg-white/30" />
             </div>
@@ -256,8 +256,8 @@ export default function SignupPage() {
           <CardHeader className="pt-10 pb-4 px-8">
             {/* Mobile logo */}
             <div className="md:hidden text-center mb-2">
-              <span className="text-3xl font-extrabold" style={{ color: '#130170' }}>U</span>
-              <span className="text-3xl font-extrabold" style={{ color: '#fa9ebc' }}>ME</span>
+              <span className="text-3xl font-extrabold" style={{ color: '#20201e' }}>U</span>
+              <span className="text-3xl font-extrabold" style={{ color: '#ff5500' }}>ME</span>
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Create your account</CardTitle>
             <CardDescription className="text-sm text-gray-500">
@@ -295,7 +295,7 @@ export default function SignupPage() {
                   type="email"
                   required
                   placeholder={isStudent ? 'you@university.edu' : 'you@example.com'}
-                  className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                  className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                 />
               </div>
 
@@ -311,7 +311,7 @@ export default function SignupPage() {
                       value={collegeName}
                       onChange={(e) => setCollegeName(e.target.value)}
                       placeholder="e.g., University of the Cumberlands"
-                      className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                      className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -332,7 +332,7 @@ export default function SignupPage() {
                       value={displayName}
                       onChange={(e) => setDisplayName(e.target.value)}
                       placeholder={accountType === 'organization' ? 'Your organization name' : 'Your full name'}
-                      className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                      className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                     />
                   </div>
                   {accountType === 'organization' && (
@@ -344,7 +344,7 @@ export default function SignupPage() {
                         value={orgName}
                         onChange={(e) => setOrgName(e.target.value)}
                         placeholder="e.g., Campus Coffee Co."
-                        className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                        className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                       />
                     </div>
                   )}
@@ -357,7 +357,7 @@ export default function SignupPage() {
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
                         placeholder="Nashville"
-                        className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                        className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                       />
                     </div>
                     <div className="space-y-1.5">
@@ -369,7 +369,7 @@ export default function SignupPage() {
                         value={state}
                         onChange={(e) => setState(e.target.value.toUpperCase())}
                         placeholder="TN"
-                        className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                        className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                       />
                     </div>
                   </div>
@@ -392,7 +392,7 @@ export default function SignupPage() {
                     value={password}
                     onChange={handlePasswordChange}
                     placeholder="Enter your password"
-                    className="rounded-lg border-gray-300 focus-visible:ring-[#130170] pr-10"
+                    className="rounded-lg border-gray-300 focus-visible:ring-[#20201e] pr-10"
                   />
                   <button
                     type="button"
@@ -441,7 +441,7 @@ export default function SignupPage() {
                     value={confirmPassword}
                     onChange={handleConfirmPasswordChange}
                     placeholder="Re-enter your password"
-                    className={`rounded-lg pr-10 focus-visible:ring-[#130170] ${
+                    className={`rounded-lg pr-10 focus-visible:ring-[#20201e] ${
                       confirmPassword && !passwordsMatch
                         ? 'border-red-400 focus-visible:ring-red-400'
                         : 'border-gray-300'
@@ -481,7 +481,7 @@ export default function SignupPage() {
                   (!isStudent && !displayName.trim())
                 }
                 className="w-full h-11 rounded-lg text-sm font-semibold text-white mt-2"
-                style={{ backgroundColor: '#130170' }}
+                style={{ backgroundColor: '#20201e' }}
               >
                 {loading ? 'Creating account…' : 'Create account'}
               </Button>
@@ -497,7 +497,7 @@ export default function SignupPage() {
                 <Link
                   href="/login"
                   className="font-semibold transition-colors hover:opacity-80"
-                  style={{ color: '#130170' }}
+                  style={{ color: '#20201e' }}
                 >
                   Log in
                 </Link>
@@ -518,7 +518,7 @@ function PasswordRequirement({ met, text }: { met: boolean; text: string }) {
         className={`flex-shrink-0 w-3.5 h-3.5 rounded-full flex items-center justify-center transition-all duration-200 ${
           met ? '' : 'bg-gray-200'
         }`}
-        style={met ? { backgroundColor: '#130170' } : {}}
+        style={met ? { backgroundColor: '#20201e' } : {}}
       >
         {met && (
           <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

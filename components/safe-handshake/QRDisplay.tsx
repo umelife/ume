@@ -30,7 +30,7 @@ export default function QRDisplay({ token, expiresAt }: Props) {
         <QRCode
           value={token}
           size={200}
-          fgColor="#130170"
+          fgColor="#20201e"
           bgColor="#ffffff"
           level="M"
         />

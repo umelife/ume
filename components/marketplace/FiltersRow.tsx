@@ -178,7 +178,7 @@ export default function FiltersRow({
   const hasActiveFilters = activeCount > 0
 
   return (
-    <div className="hidden md:block mb-6">
+    <div className="arcade-filters hidden md:block mb-6">
       {/* ── Filter controls row ── */}
       <div className="flex items-center gap-1.5 flex-wrap">
 
@@ -195,7 +195,7 @@ export default function FiltersRow({
             variant="outline"
             size="sm"
             onClick={() => { setSortOpen(!sortOpen); setConditionOpen(false); setPriceOpen(false) }}
-            className={`h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
+            className={`arcade-filter-trigger h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
               sortActive
                 ? 'border-ume-indigo bg-ume-indigo text-white hover:bg-ume-indigo/90 hover:text-white shadow-sm'
                 : 'border-gray-200 bg-white text-gray-600 hover:border-ume-indigo/40 hover:text-ume-indigo'
@@ -225,7 +225,7 @@ export default function FiltersRow({
             variant="outline"
             size="sm"
             onClick={() => { setConditionOpen(!conditionOpen); setSortOpen(false); setPriceOpen(false) }}
-            className={`h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
+            className={`arcade-filter-trigger h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
               conditionActive
                 ? 'border-ume-indigo bg-ume-indigo text-white hover:bg-ume-indigo/90 hover:text-white shadow-sm'
                 : 'border-gray-200 bg-white text-gray-600 hover:border-ume-indigo/40 hover:text-ume-indigo'
@@ -259,7 +259,7 @@ export default function FiltersRow({
             variant="outline"
             size="sm"
             onClick={() => { setPriceOpen(!priceOpen); setSortOpen(false); setConditionOpen(false) }}
-            className={`h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
+            className={`arcade-filter-trigger h-8 rounded-full text-xs font-medium gap-1 px-3 border transition-all duration-150 ${
               priceActive
                 ? 'border-ume-indigo bg-ume-indigo text-white hover:bg-ume-indigo/90 hover:text-white shadow-sm'
                 : 'border-gray-200 bg-white text-gray-600 hover:border-ume-indigo/40 hover:text-ume-indigo'

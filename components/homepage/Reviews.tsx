@@ -24,12 +24,6 @@ const reviews = [
     rating: 5,
   },
   {
-    name: 'Sophie L.',
-    school: 'Boston University',
-    text: 'Joined a study group community through UME and ended up finding people in my major I never would have met otherwise.',
-    rating: 5,
-  },
-  {
     name: 'Dev P.',
     school: 'Georgia Tech',
     text: 'Sold my old laptop for a fair price without having to deal with lowball offers from strangers. The chat feature makes negotiating easy.',

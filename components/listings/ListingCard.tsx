@@ -1,5 +1,7 @@
 'use client'
 
+import { listingTheme } from '@/lib/listing-theme'
+
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -31,7 +33,7 @@ export default function ListingCard({ listing }: { listing: Listing }) {
   const isOwnListing = currentUserId && listing.user_id === currentUserId
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow animate-materialize">
+    <div style={listingTheme(listing.id)} className="arcade-listing bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow animate-materialize">
       <Link href={`/item/${listing.id}`}>
         <div>
           <div className="relative h-48 bg-gray-200">

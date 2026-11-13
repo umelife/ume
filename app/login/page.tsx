@@ -35,21 +35,21 @@ function LoginForm() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f3f7f8] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center p-4">
       <div className="w-full max-w-4xl flex rounded-2xl overflow-hidden shadow-xl">
 
         {/* Left brand panel — hidden on mobile */}
         <div
           className="hidden md:flex flex-col justify-between w-[45%] p-10"
-          style={{ backgroundColor: '#130170' }}
+          style={{ backgroundColor: '#20201e' }}
         >
           <div>
             {/* UME logotype */}
             <div className="text-4xl font-extrabold tracking-tight">
               <span className="text-white">U</span>
-              <span style={{ color: '#fa9ebc' }}>ME</span>
+              <span style={{ color: '#ff5500' }}>ME</span>
             </div>
-            <p className="mt-3 text-sm font-medium" style={{ color: '#fa9ebc' }}>
+            <p className="mt-3 text-sm font-medium" style={{ color: '#ff5500' }}>
               University Marketplace Exchange
             </p>
           </div>
@@ -59,7 +59,7 @@ function LoginForm() {
               "Buy, sell, and trade with students at your campus — all in one place."
             </blockquote>
             <div className="flex gap-2">
-              <div className="h-1 w-8 rounded-full" style={{ backgroundColor: '#fa9ebc' }} />
+              <div className="h-1 w-8 rounded-full" style={{ backgroundColor: '#ff5500' }} />
               <div className="h-1 w-4 rounded-full bg-white/30" />
               <div className="h-1 w-4 rounded-full bg-white/30" />
             </div>
@@ -73,8 +73,8 @@ function LoginForm() {
           <CardHeader className="pt-10 pb-4 px-8">
             {/* Mobile logo */}
             <div className="md:hidden text-center mb-2">
-              <span className="text-3xl font-extrabold" style={{ color: '#130170' }}>U</span>
-              <span className="text-3xl font-extrabold" style={{ color: '#fa9ebc' }}>ME</span>
+              <span className="text-3xl font-extrabold" style={{ color: '#20201e' }}>U</span>
+              <span className="text-3xl font-extrabold" style={{ color: '#ff5500' }}>ME</span>
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Welcome back</CardTitle>
             <CardDescription className="text-sm text-gray-500">
@@ -107,7 +107,7 @@ function LoginForm() {
                   type="text"
                   required
                   placeholder="Enter username or email"
-                  className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                  className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                 />
               </div>
 
@@ -121,7 +121,7 @@ function LoginForm() {
                   type="password"
                   required
                   placeholder="Enter your password"
-                  className="rounded-lg border-gray-300 focus-visible:ring-[#130170]"
+                  className="rounded-lg border-gray-300 focus-visible:ring-[#20201e]"
                 />
               </div>
 
@@ -129,7 +129,7 @@ function LoginForm() {
                 type="submit"
                 disabled={loading}
                 className="w-full h-11 rounded-lg text-sm font-semibold text-white"
-                style={{ backgroundColor: '#130170' }}
+                style={{ backgroundColor: '#20201e' }}
               >
                 {loading ? 'Signing in…' : 'Log in'}
               </Button>
@@ -145,7 +145,7 @@ function LoginForm() {
                 <Link
                   href="/signup"
                   className="font-semibold transition-colors hover:opacity-80"
-                  style={{ color: '#130170' }}
+                  style={{ color: '#20201e' }}
                 >
                   Sign up
                 </Link>
@@ -161,7 +161,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-[#f3f7f8] flex items-center justify-center">
+      <div className="min-h-screen bg-[#faf9f5] flex items-center justify-center">
         <div className="text-gray-500 text-sm">Loading…</div>
       </div>
     }>

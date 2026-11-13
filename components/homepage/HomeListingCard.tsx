@@ -1,3 +1,4 @@
+import { listingTheme } from '@/lib/listing-theme'
 /**
  * HomeListingCard
  * Compact listing card designed for horizontal-scroll sections on the homepage.
@@ -29,9 +30,9 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
   return (
     <Link
       href={`/item/${listing.id}`}
-      className="flex-shrink-0 w-40 sm:w-48 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#130170] focus-visible:ring-offset-2 rounded-2xl"
+      className="flex-shrink-0 w-40 sm:w-48 group cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-[#20201e] focus-visible:ring-offset-2 rounded-2xl"
     >
-      <Card className="border-0 shadow-md bg-white rounded-2xl overflow-hidden transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-xl group-active:scale-[0.97]">
+      <Card style={listingTheme(listing.id)} className="arcade-listing border-0 shadow-md bg-white rounded-2xl overflow-hidden transition-all duration-200 group-hover:-translate-y-1.5 group-hover:shadow-xl group-active:scale-[0.97]">
         {/* Image */}
         <div className="relative w-full aspect-square bg-gray-100">
           {imageUrl ? (
@@ -65,7 +66,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
 
           {/* Price badge — indigo, bottom-left */}
           <Badge
-            className="absolute bottom-2 left-2 bg-[#130170] text-white border-0 shadow-lg text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none z-20"
+            className="absolute bottom-2 left-2 bg-[#20201e] text-white border-0 shadow-lg text-xs font-bold px-2.5 py-1 rounded-full pointer-events-none z-20"
           >
             {formattedPrice}
           </Badge>
@@ -73,7 +74,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
           {/* Featured badge — top-left (boosted seller) */}
           {isFeatured && (
             <Badge
-              className="absolute top-2 left-2 bg-[#fa9ebc] text-white border-0 shadow text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-20"
+              className="absolute top-2 left-2 bg-[#ff5500] text-[#20201e] border-0 shadow text-[10px] font-bold px-2 py-0.5 rounded-full pointer-events-none z-20"
             >
               ⭐ Featured
             </Badge>
@@ -83,7 +84,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
           {listing.condition && listing.condition !== 'Used' && (
             <Badge
               variant="outline"
-              className="absolute top-2 right-2 bg-white/90 text-[#130170] border-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full pointer-events-none backdrop-blur-sm"
+              className="absolute top-2 right-2 bg-white/90 text-[#20201e] border-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-full pointer-events-none backdrop-blur-sm"
             >
               {listing.condition}
             </Badge>
@@ -92,7 +93,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
 
         <CardContent className="p-2.5 pt-2">
           {/* Title */}
-          <p className="text-xs text-[#130170] font-semibold line-clamp-2 leading-snug mb-1.5">
+          <p className="text-xs text-[#20201e] font-semibold line-clamp-2 leading-snug mb-1.5">
             {listing.title}
           </p>
 
@@ -101,7 +102,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
             <div className="flex items-center gap-1.5 mb-1.5">
               <Avatar className="h-4 w-4 shrink-0">
                 <AvatarImage src={undefined} alt={seller.display_name} />
-                <AvatarFallback className="bg-[#fa9ebc]/20 text-[#130170] text-[8px] font-bold">
+                <AvatarFallback className="bg-[#ff5500]/20 text-[#20201e] text-[8px] font-bold">
                   {sellerInitials}
                 </AvatarFallback>
               </Avatar>
@@ -119,7 +120,7 @@ export default function HomeListingCard({ listing }: { listing: Listing }) {
             <div className="mt-1.5">
               <Badge
                 variant="outline"
-                className="text-[9px] border-[#130170]/20 text-[#130170]/60 px-1.5 py-0 rounded-full font-medium bg-transparent truncate max-w-full"
+                className="text-[9px] border-[#20201e]/20 text-[#20201e]/60 px-1.5 py-0 rounded-full font-medium bg-transparent truncate max-w-full"
               >
                 {campus}
               </Badge>

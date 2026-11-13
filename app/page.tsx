@@ -9,7 +9,6 @@
  *  1. Hero — headline, subheadline, two CTA buttons, indigo gradient bg
  *  2. Trust/Safety Banner — indigo strip with key trust points
  *  3. Recent Marketplace — horizontal scroll of real listings
- *  4. Communities — horizontal scroll of real communities
  *  5. How It Works — 3 steps in a horizontal row
  *  6. Category Grid — browse by category
  *  7. CTA — join UME
@@ -20,9 +19,7 @@ import FeatureSlider from '@/components/homepage/FeatureSlider'
 import CategoryGrid from '@/components/homepage/CategoryGrid'
 import HomeSectionRow from '@/components/homepage/HomeSectionRow'
 import HomeListingCard from '@/components/homepage/HomeListingCard'
-import CommunityCard from '@/components/communities/CommunityCard'
-import { ShopIcon, CommunityIcon } from '@/components/homepage/SectionIcons'
-import MobileHome from '@/components/MobileHome'
+import { ShopIcon } from '@/components/homepage/SectionIcons'
 import Hero from '@/components/homepage/Hero'
 import Reviews from '@/components/homepage/Reviews'
 import FAQ from '@/components/homepage/FAQ'
@@ -32,12 +29,11 @@ import supabasePublic from '@/lib/supabase/public'
 import { createClient } from '@/lib/supabase/server'
 import { getUser } from '@/lib/auth/actions'
 import { getCampusFromEmail } from '@/data/safe-points'
-import type { Listing, Community } from '@/types/database'
+import type { Listing } from '@/types/database'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
-import RemotionHeroPlayer from '@/components/remotion/RemotionHeroPlayer'
 
 // Logged-in page is fully personalised — no ISR cache
 // Logged-out page keeps the 60s ISR via getRecentListings unstable_cache
@@ -65,120 +61,8 @@ const getRecentListings = unstable_cache(
   { revalidate: 60, tags: ['listings'] }
 )
 
-const getRecentCommunities = unstable_cache(
-  async (): Promise<Community[]> => {
-    const { data } = await supabasePublic
-      .from('communities')
-      .select('*, creator:users!creator_id(id, username, display_name, avatar_url)')
-      .eq('status', 'active')
-      .order('member_count', { ascending: false })
-      .limit(8)
-    return (data as Community[]) ?? []
-  },
-  ['homepage-recent-communities'],
-  { revalidate: 300, tags: ['communities'] }
-)
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
-
-function HeroSection() {
-  return (
-    <section
-      className="relative w-full overflow-hidden"
-      style={{
-        background:
-          'linear-gradient(135deg, #130170 0%, #1d01a8 45%, #0a0040 100%)',
-      }}
-    >
-      {/* Remotion animated background — client-only, plays in loop */}
-      <RemotionHeroPlayer />
-
-      {/* Subtle dot-grid overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-[0.04]"
-        aria-hidden="true"
-        style={{
-          backgroundImage:
-            'radial-gradient(circle, rgba(255,255,255,0.9) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-        }}
-      />
-
-      {/* Soft pink glow top-left */}
-      <div
-        className="absolute -top-24 -left-12 w-96 h-96 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(250,158,188,0.18) 0%, transparent 70%)' }}
-        aria-hidden="true"
-      />
-
-      {/* Soft lighter indigo glow bottom-right */}
-      <div
-        className="absolute -bottom-20 -right-16 w-80 h-80 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%)' }}
-        aria-hidden="true"
-      />
-
-      <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-10 lg:px-16 py-20 sm:py-28 text-center">
-        {/* Eyebrow badge */}
-        <div className="inline-flex items-center gap-2 bg-white/10 border border-white/15 rounded-full px-4 py-1.5 mb-8">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#fa9ebc] opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-[#fa9ebc]" />
-          </span>
-          <span className="text-white/80 text-xs font-medium tracking-wide">
-            Campus-only marketplace
-          </span>
-        </div>
-
-        {/* Headline */}
-        <h1 className="font-black text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.05] tracking-tight mb-6 max-w-3xl mx-auto">
-          Buy and sell within your{' '}
-          <span style={{ color: '#fa9ebc' }}>campus community</span>
-        </h1>
-
-        {/* Subheadline */}
-        <p className="text-white/65 text-base sm:text-lg lg:text-xl leading-relaxed mb-10 max-w-xl mx-auto">
-          UME connects verified students to trade textbooks, electronics, furniture,
-          and more — safely and for free.
-        </p>
-
-        {/* CTA buttons */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <Link href="/marketplace">
-            <Button
-              size="lg"
-              className="w-full sm:w-auto px-8 py-3 rounded-full font-bold text-base shadow-lg hover:scale-105 transition-transform duration-200"
-              style={{ background: '#fa9ebc', color: '#fff', border: 'none' }}
-            >
-              Browse Marketplace
-            </Button>
-          </Link>
-          <Link href="/sell">
-            <Button
-              size="lg"
-              variant="outline"
-              className="w-full sm:w-auto px-8 py-3 rounded-full font-bold text-base border-2 text-white hover:bg-white/10 hover:text-white hover:scale-105 transition-all duration-200"
-              style={{ borderColor: 'rgba(255,255,255,0.35)', background: 'transparent' }}
-            >
-              List an Item
-            </Button>
-          </Link>
-        </div>
-
-        {/* Social proof micro-stats */}
-        <div className="flex items-center justify-center gap-6 mt-10 text-white/50 text-xs font-medium">
-          <span>5,000+ listings</span>
-          <span style={{ color: '#fa9ebc' }}>•</span>
-          <span>.edu verified only</span>
-          <span style={{ color: '#fa9ebc' }}>•</span>
-          <span>100% free</span>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-// ─── Trust / Safety Banner ────────────────────────────────────────────────────
 
 function TrustBanner() {
   const points = [
@@ -224,12 +108,12 @@ function TrustBanner() {
   return (
     <div
       className="w-full py-5 px-4"
-      style={{ background: '#130170' }}
+      style={{ background: '#20201e' }}
     >
       <div className="max-w-5xl mx-auto flex flex-wrap items-center justify-center gap-6 sm:gap-10">
         {points.map((point, i) => (
           <div key={i} className="flex items-center gap-2.5">
-            <span style={{ color: '#fa9ebc' }}>{point.icon}</span>
+            <span style={{ color: '#ff5500' }}>{point.icon}</span>
             <span className="text-white text-sm font-medium">{point.text}</span>
             {i < points.length - 1 && (
               <span className="hidden sm:inline ml-4 sm:ml-6 text-white/20 text-lg leading-none select-none">|</span>
@@ -284,19 +168,19 @@ function HowItWorksSection() {
   ]
 
   return (
-    <section className="w-full py-14 sm:py-20 bg-[#f3f7f8]">
+    <section className="w-full py-14 sm:py-20 bg-[#faf9f5]">
       <div className="max-w-5xl mx-auto px-6 sm:px-10">
         {/* Heading */}
         <div className="text-center mb-12">
           <Badge
             className="mb-4 font-semibold uppercase tracking-widest text-xs px-4 py-1.5 rounded-full border-0"
-            style={{ background: 'rgba(19,1,112,0.08)', color: '#130170' }}
+            style={{ background: 'rgba(32,32,30,0.08)', color: '#20201e' }}
           >
             Simple process
           </Badge>
           <h2
             className="font-black text-3xl sm:text-4xl tracking-tight mb-3"
-            style={{ color: '#130170' }}
+            style={{ color: '#20201e' }}
           >
             How it works
           </h2>
@@ -316,7 +200,7 @@ function HowItWorksSection() {
                 {/* Number badge */}
                 <div
                   className="inline-flex items-center justify-center w-10 h-10 rounded-full font-black text-sm mb-5"
-                  style={{ background: '#130170', color: '#fa9ebc' }}
+                  style={{ background: '#20201e', color: '#ff5500' }}
                 >
                   {step.number}
                 </div>
@@ -324,14 +208,14 @@ function HowItWorksSection() {
                 {/* Icon */}
                 <div
                   className="mb-4"
-                  style={{ color: '#130170' }}
+                  style={{ color: '#20201e' }}
                 >
                   {step.icon}
                 </div>
 
                 <h3
                   className="font-bold text-lg mb-2"
-                  style={{ color: '#130170' }}
+                  style={{ color: '#20201e' }}
                 >
                   {step.title}
                 </h3>
@@ -360,11 +244,11 @@ function HowItWorksSection() {
 
 function CTASection() {
   return (
-    <section className="w-full py-16 sm:py-20 relative overflow-hidden" style={{ background: '#130170' }}>
+    <section className="w-full py-16 sm:py-20 relative overflow-hidden" style={{ background: '#20201e' }}>
       {/* Decorative blobs */}
       <div
         className="absolute -top-16 -right-16 w-64 h-64 rounded-full pointer-events-none"
-        style={{ background: 'radial-gradient(circle, rgba(250,158,188,0.12) 0%, transparent 70%)' }}
+        style={{ background: 'radial-gradient(circle, rgba(255,85,0,0.12) 0%, transparent 70%)' }}
         aria-hidden="true"
       />
       <div
@@ -376,7 +260,7 @@ function CTASection() {
       <div className="max-w-4xl mx-auto px-6 sm:px-10 text-center relative z-10">
         <p
           className="font-semibold text-xs sm:text-sm uppercase tracking-widest mb-3"
-          style={{ color: '#fa9ebc' }}
+          style={{ color: '#ff5500' }}
         >
           Ready to get started?
         </p>
@@ -391,7 +275,7 @@ function CTASection() {
             <Button
               size="lg"
               className="w-full sm:w-auto px-10 py-4 rounded-full font-bold text-base hover:scale-105 transition-transform duration-200 shadow-lg"
-              style={{ background: '#fa9ebc', color: '#fff', border: 'none' }}
+              style={{ background: '#ff5500', color: '#20201e', border: 'none' }}
             >
               Sign Up Free
             </Button>
@@ -493,10 +377,7 @@ export default async function Home() {
   }
 
   // ── Logged-out: marketing landing page ──────────────────────────────────────
-  const [recentListings, recentCommunities] = await Promise.all([
-    getRecentListings(),
-    getRecentCommunities(),
-  ])
+  const recentListings = await getRecentListings()
 
   const marketplaceRow =
     recentListings.length > 0
@@ -509,34 +390,9 @@ export default async function Home() {
           </p>
         )
 
-  const communitiesRow =
-    recentCommunities.length > 0
-      ? recentCommunities.map((c) => (
-          <div key={c.id} className="w-44 sm:w-52 shrink-0">
-            <CommunityCard community={c} />
-          </div>
-        ))
-      : (
-          <Link
-            href="/communities"
-            className="block py-4 text-sm text-ume-indigo font-semibold hover:underline"
-          >
-            Be the first to start a community →
-          </Link>
-        )
-
   return (
     <>
-      {/* ── MOBILE HOMEPAGE ── */}
-      <div className="md:hidden">
-        <MobileHome
-          recentListings={recentListings}
-          recentCommunities={recentCommunities}
-        />
-      </div>
-
-      {/* ── DESKTOP HOMEPAGE ── */}
-      <main className="hidden md:block min-h-screen bg-[#f3f7f8]">
+      <main className="min-h-screen bg-ume-bg">
         {/* 1. Hero */}
         <Hero />
 
@@ -544,24 +400,16 @@ export default async function Home() {
         <TrustBanner />
 
         {/* 3. Recent Marketplace */}
+        <div id="campus-discover" className="scroll-mt-24" />
         <HomeSectionRow
-          title="Marketplace"
+          title="Fresh on campus"
           icon={<ShopIcon />}
           viewAllHref="/marketplace"
         >
           {marketplaceRow}
         </HomeSectionRow>
 
-        {/* 4. Communities */}
-        <HomeSectionRow
-          title="Communities"
-          icon={<CommunityIcon />}
-          viewAllHref="/communities"
-        >
-          {communitiesRow}
-        </HomeSectionRow>
-
-        {/* 5. How It Works */}
+        {/* How it works */}
         <HowItWorksSection />
 
         {/* 8. Feature Slider */}

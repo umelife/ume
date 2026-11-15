@@ -39,8 +39,7 @@ function wasDismissedRecently() {
 export default function InstallPrompt() {
   const [show, setShow] = useState(false)
   const [isIosDevice, setIsIosDevice] = useState(false)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
 
   useEffect(() => {
     // Never show if already installed or dismissed recently

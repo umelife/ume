@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test:auth": "node scripts/test-auth-protection.js",
     "test:smoke": "node scripts/smoke-test.js",
-    "test:listings": "npx ts-node scripts/check-listings.ts",
+    "test:listings": "npx tsx scripts/check-listings.ts",
     "test:email": "npx tsx scripts/test-email.ts",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
